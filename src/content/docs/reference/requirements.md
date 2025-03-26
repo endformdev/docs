@@ -3,29 +3,46 @@ title: Requirements
 description: Our requirements on your playwright setup.
 ---
 
-## Your test environment
+Endform is a _fully parallel_, _remote_ test runner.
+Each of your playwright tests will be run on a separate machine in the cloud.
 
-Endform is a _remote_ test runner that runs your tests on cloud infrastructure.
+### Fully parallel
 
-This means that your test environment needs to be accessible on the public internet.
+All of your tests will run at the same time with endform, which means that your tests need to be _completely independent_ of each other.
+
+If you keep your tests decoupled from your application already by, for example, using apis to generate data, you are probably ready to use endform.
+
+### Remote
+
+Since your tests will be running on remote machines, your test environment needs to be accessible on the public internet.
 Endform does not support servers running "locally" / on `localhost`.
 
 We reccomend using playwright directly when creating tests / running against `localhost`, and to run endform in your ci environment / against your test/stage/preview environments.
 
-Alternatively, you can use a tunneling service to expose your local services to the public internet, and configure endform to run tests against that.
+## Playwright Requirements
 
-## Playwright
+### Playwright Version
 
-- The latest minor version of playwright (`1.51.0` at the time of writing).
-- Currently unsupported configuration options:
-  - Playwright projects. Let us know if you need this, and we will prioritize it.
+We currently only support the latest minor version of playwright (`1.51.0` at the time of writing).
+
+### Playwright Configuration Options
+
+Endform tries to directly use or replicate all playwright configuration options.
+To understand how most of these options work, please refer to the [Playwright documentation](https://playwright.dev/docs/test-configuration).
+
+There are a few exceptions to this.
+
+Options that we currently don't support, but will do in the future (let us know and we will prioritize them):
+  - Playwright projects.
   - `forbidOnly`
+
+Options that aren't supported since they don't make sense in a remote context:
   - `webWorkers`
 
-## Node
+## Node Requirements
 
-- A version of Node.js that is more recent than the latest LTS version (Node 20+).
+- A version of Node.js that is more recent than the latest LTS version (Node 22+).
 
-## Browser
+## Browser Requirements
 
-- We currently only support Chrome. We run the same version of Chrome as the playwright version you are running.
+- We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with.
