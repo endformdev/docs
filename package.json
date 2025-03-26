@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro build && wrangler dev",
     "astro": "astro",
-    "deploy": "astro build && wrangler deploy",
+    "deploy": "astro build && cp .assetsignore dist/ && wrangler deploy",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
@@ -20,5 +20,10 @@
   },
   "devDependencies": {
     "wrangler": "^4.4.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

@@ -17,4 +17,10 @@
 	"observability": {
 		"enabled": false
 	},
+  "routes": [
+    {
+      "pattern": "endform.dev/docs/*",
+      "zone_name": "endform.dev"
+    }
+  ]
 }

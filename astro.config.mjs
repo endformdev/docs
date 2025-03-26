@@ -5,6 +5,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
+	base: '/docs',
   integrations: [
       starlight({
           title: 'Endform Docs',
@@ -28,8 +29,10 @@ export default defineConfig({
 	],
 
   adapter: cloudflare({
+			imageService: 'cloudflare',
       platformProxy: {
-          enabled: true
+          enabled: true,
+					
       }
   }),
 });
