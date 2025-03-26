@@ -19,7 +19,7 @@
 	},
   "routes": [
     {
-      "pattern": "endform.dev/docs/*",
+      "pattern": "endform.dev/docs*",
       "zone_name": "endform.dev"
     }
   ]
