@@ -12,6 +12,9 @@ export default defineConfig({
           social: {
               github: 'https://github.com/endformdev/docs',
           },
+					customCss: [
+						'./src/styles/custom.css',
+					],
           sidebar: [
               {
                   label: 'Guides',
