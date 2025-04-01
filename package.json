@@ -1,29 +1,28 @@
 {
-  "name": "endform-docs",
-  "type": "module",
-  "packageManager": "pnpm@10.6.5",
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro build && wrangler dev",
-    "astro": "astro",
-    "deploy": "astro build && cp .assetsignore dist/ && wrangler deploy",
-    "cf-typegen": "wrangler types"
-  },
-  "dependencies": {
-    "@astrojs/cloudflare": "^12.3.0",
-    "@astrojs/starlight": "^0.32.4",
-    "astro": "^5.5.3",
-    "sharp": "^0.32.6"
-  },
-  "devDependencies": {
-    "wrangler": "^4.4.1"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
-  }
+	"name": "endform-docs",
+	"type": "module",
+	"packageManager": "pnpm@10.6.5",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro build",
+		"preview": "astro build && wrangler dev",
+		"astro": "astro",
+		"deploy": "astro build && cp .assetsignore dist/ && wrangler deploy",
+		"cf-typegen": "wrangler types"
+	},
+	"dependencies": {
+		"@astrojs/cloudflare": "^12.3.0",
+		"@astrojs/starlight": "^0.32.4",
+		"astro": "^5.5.3",
+		"sharp": "^0.32.6"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"wrangler": "^4.4.1"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": ["sharp"]
+	}
 }

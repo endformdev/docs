@@ -7,9 +7,7 @@
 	"name": "endform-docs",
 	"main": "./dist/_worker.js/index.js",
 	"compatibility_date": "2025-03-21",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
+	"compatibility_flags": ["nodejs_compat"],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./dist"
@@ -17,10 +15,10 @@
 	"observability": {
 		"enabled": false
 	},
-  "routes": [
-    {
-      "pattern": "endform.dev/docs*",
-      "zone_name": "endform.dev"
-    }
-  ]
+	"routes": [
+		{
+			"pattern": "endform.dev/docs*",
+			"zone_name": "endform.dev"
+		}
+	]
 }
