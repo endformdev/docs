@@ -34,7 +34,7 @@ The easiest way to do this is to replace your "playwright test" command with "en
 Here's an example of a what a GitHub Actions workflow might look like:
 
 ```
-name: Endform
+name: Run Playwright tests with Endform
 on:
   push:
     branches:
@@ -59,4 +59,4 @@ jobs:
           ENDFORM_API_KEY: ${{ secrets.ENDFORM_API_KEY }}
 ```
 
-You will need an Endform API key to run your tests in CI, which you can in the settings page of the endform dashboard.
+You will need an Endform API key to run your tests in CI, which you can find in the settings page of the endform dashboard.
