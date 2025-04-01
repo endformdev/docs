@@ -3,6 +3,8 @@ title: Getting Started
 description: Running your tests with Endform for the first time.
 ---
 
+import { Aside } from '@astrojs/starlight/components';
+
 Make sure to check out the [requirements](/docs/reference/requirements) before you start.
 
 # Getting Started
@@ -14,6 +16,12 @@ npx endform@latest test
 ```
 
 This will prompt you to login and run your tests.
+
+<Aside>
+
+Since endform is currently in beta, we recommend _not_ pinning the version of endform in your `package.json`, and instead "always running latest" by running `npx endform@latest test`.
+
+</Aside>
 
 # Running your tests in CI
 
@@ -46,7 +54,7 @@ jobs:
         run: npm install
 
       - name: Run tests with Endform
-        run: npm run endform test
+        run: npx endform@latest test
         env:
           ENDFORM_API_KEY: ${{ secrets.ENDFORM_API_KEY }}
 ```

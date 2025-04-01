@@ -21,6 +21,8 @@ We reccomend using playwright directly when creating tests / running against `lo
 
 ## Playwright Requirements
 
+We support playwright projects written in typescript and javascript.
+
 ### Playwright Version
 
 We currently only support the latest minor version of playwright (`1.51.0` at the time of writing).
@@ -42,7 +44,12 @@ Options that aren't supported since they don't make sense in a remote context:
 ## Node Requirements
 
 - A version of Node.js that is more recent than the latest LTS version (Node 22+).
+- In the remote test environment, your tests will run on node lts.
 
 ## Browser Requirements
 
 - We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with.
+
+## Operating System Requirements
+
+- We currently only support Linux and MacOS.
