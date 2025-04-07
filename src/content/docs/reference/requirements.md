@@ -34,11 +34,15 @@ To understand how most of these options work, please refer to the [Playwright do
 There are a few exceptions to this.
 
 Options that we currently don't support, but will do in the future (let us know and we will prioritize them):
-  - Playwright projects.
-  - `forbidOnly`
+
+- Playwright projects.
+- `forbidOnly`
+- the `on-all-retries`, `on-first-retry`, `retain-on-first-failure` trace recording options. `off`, `on` and `retain-on-failure` are our reccomended options for trace recording.
 
 Options that aren't supported since they don't make sense in a remote context:
-  - `webWorkers`
+
+- `webWorkers`
+- `fullyParallel` is always `true`
 
 ## Node Requirements
 
