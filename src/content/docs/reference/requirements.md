@@ -1,6 +1,8 @@
 ---
 title: Requirements
 description: Our requirements on your playwright setup.
+sidebar:
+  order: 1
 ---
 
 Endform is a _fully parallel_, _remote_ test runner.
