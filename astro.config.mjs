@@ -9,6 +9,13 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Endform docs",
+			logo: {
+				dark: "./src/assets/endform-logo-wordmark-colored-on-dark-padding.svg",
+				light:
+					"./src/assets/endform-logo-wordmark-colored-on-light-padding.svg",
+				replacesTitle: true,
+				alt: "Endform logo",
+			},
 			social: {
 				github: "https://github.com/endformdev/docs",
 			},
