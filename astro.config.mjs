@@ -1,6 +1,6 @@
+// @ts-check
 import cloudflare from "@astrojs/cloudflare";
 import starlight from "@astrojs/starlight";
-// @ts-check
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
