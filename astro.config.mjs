@@ -8,7 +8,7 @@ export default defineConfig({
 	base: "/docs",
 	integrations: [
 		starlight({
-			title: "Endform Documentation",
+			title: "Endform docs",
 			social: {
 				github: "https://github.com/endformdev/docs",
 			},
