@@ -1,0 +1,36 @@
+---
+title: How Your Tests Are Run
+description: How Endform Runs Your Playwright Tests
+---
+
+Endform provides a distributed test runner optimized specifically for Playwright, designed to run your end-to-end tests faster and more efficiently.
+Here's a breif explanation of how our test runner works.
+
+## How It Works
+
+### Step 1: Dependency Analysis
+
+- When you start your tests using our CLI, Endform first analyzes your project’s `js`/`ts` test files.
+- It calculates the exact JavaScript files required for each test to run.
+- The CLI determines common dependencies across your entire test suite.
+- The set of tests to run, and the dependencies required for each test, are then sent our test runner service.
+
+### Step 2: Distributed Execution
+
+- Endform starts a fully isolated machine for each test. Your tests run in dedicated Firecracker MicroVMs.
+- Each machine receives only the specific test files and dependencies it requires.
+- Each machine only ever runs one attempt of a test, the test runner can immidately schedule _more than one_ retry of a test when the first run fails.
+
+### Step 3: Result Coordination
+
+- Each test collects a playwright `blob-report` containing the result of the test.
+- We always send your blob reports back to the cli. Once all your tests have finished, we run playwright's [`merge-reports` command](https://playwright.dev/docs/test-sharding#merge-reports-cli)
+  for you. This means that all of your existing playwright reporters will work as expected.
+- We also collect the results of your tests and the traces they produce for you to view in the dashboard.
+
+## Benefits
+
+- Fast and Scalable: Run hundreds of tests in parallel without being limited by browser or network bottlenecks.
+- Efficient: Minimized resource usage by isolating each test and its dependencies.
+- Local Convenience: Execute large test suites effortlessly from your local machine.
+
