@@ -37,7 +37,6 @@ There are a few exceptions to this.
 
 Options that we currently don't support, but will do in the future (let us know and we will prioritize them):
 
-- Playwright projects.
 - `forbidOnly`
 - the `on-all-retries`, `on-first-retry`, `retain-on-first-failure` trace recording options. `off`, `on` and `retain-on-failure` are our reccomended options for trace recording.
 
