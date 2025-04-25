@@ -41,9 +41,3 @@ By default the following environment variables are automatically transferred:
 
 - Environment variables that start with `E2E_`
 - All environment variables that are set in your `playwright.config.ts`
-- Environment variables are directly inlined into the test command `URL=https://my-url.com npx endform@latest test`
-
-
-
-
-

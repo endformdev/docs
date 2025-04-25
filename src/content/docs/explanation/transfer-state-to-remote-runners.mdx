@@ -47,7 +47,6 @@ In order for endform to reduce it's exposure to sensitive data, only some enviro
 
 - `E2E_*` - any environment variables that start with `E2E_` are transferred
 - All environment variables that are set in your `playwright.config.ts` are transferred - using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your playwright config is supported, and those environment variables are picked up.
-- Environment variables are directly inlined into the test command `URL=https://my-url.com npx endform@latest test`
 
 In order to get a better understanding of which environment variables are transferred, you can use the `--debug` flag when running your tests `endform test --debug`.
 This will print out the environment variables that are transferred to the remote runners.
