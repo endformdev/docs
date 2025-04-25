@@ -26,3 +26,24 @@ Currently, `endform.jsonc` supports the following options:
 
 If your playwright config already specifies `storageState`, this parameter should not be needed - endform will read and send those automatically.
 However if your tests have implicit dependencies on more files, use this parameter.
+
+### `environmentVariables`
+
+`environmentVariables`: an array of string regular expressions that are used to match environment variables that should be transferred to the remote runners.
+
+```
+{
+  "environmentVariables": ["VERCEL_.*"]
+}
+```
+
+By default the following environment variables are automatically transferred:
+
+- Environment variables that start with `E2E_`
+- All environment variables that are set in your `playwright.config.ts`
+- Environment variables are directly inlined into the test command `URL=https://my-url.com npx endform@latest test`
+
+
+
+
+
