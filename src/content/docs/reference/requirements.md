@@ -25,7 +25,7 @@ We reccomend using playwright directly when creating tests / running against `lo
 
 - We support playwright projects written in typescript and javascript.
 - The length of an individual test run is limited to 4 minutes (same as the `testConfig.timeout` option). The playwright default timeout is 30 seconds. This does not include retries.
-- We currently only support the latest minor version of playwright (`1.51.0` at the time of writing).
+- We currently only support the latest minor version of playwright (`1.52.0` at the time of writing).
 - We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with.
 
 ### Playwright Configuration Options
