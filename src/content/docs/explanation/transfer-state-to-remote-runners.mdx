@@ -10,9 +10,9 @@ import EndformArchitecture from "../../../assets/endform-architecture.png";
 
 Let's breifly review endform's architecture.
 
-<Image 
-  src={EndformArchitecture} 
-  alt="A diagram of endform's local CLI speaking to a remote coordination server, which then schedules tests on remote runners." 
+<Image
+  src={EndformArchitecture}
+  alt="A diagram of endform's local CLI speaking to a remote coordination server, which then schedules tests on remote runners."
   height={500}
 />
 
@@ -46,7 +46,9 @@ Environment variables are often highly sensitive in nature.
 In order for endform to reduce it's exposure to sensitive data, only some environment variables are automatically transferred to the remote runners.
 
 - `E2E_*` - any environment variables that start with `E2E_` are transferred
-- All environment variables that are set in your `playwright.config.ts` are transferred - using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your playwright config is supported, and those environment variables are picked up.
+- Environment variables that are used / referenced from your tests via `process.env` are picked up.
+
+The _values_ of the environment variables are taken while running your `playwright.config.ts` so - using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your playwright config is supported.
 
 In order to get a better understanding of which environment variables are transferred, you can use the `--debug` flag when running your tests `endform test --debug`.
 This will print out the environment variables that are transferred to the remote runners.
@@ -58,20 +60,4 @@ Endform has two additional ways of transferring state to the remote runners:
 - **Environment Variables** - `environmentVariables` in your `endform.jsonc` config
 - **Files** - `additionalFiles` in your `endform.jsonc` config
 
-
 For more information on these options, see the [endform config reference](/docs/reference/endform-config).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
