@@ -23,7 +23,7 @@ import type {
 
 class MyCustomReporter implements Reporter {
   onBegin(config: FullConfig, suite: Suite) {
-    console.log("onBegin", config.metadata);
+    console.log("Endform Report URL:", config.metadata.endformReportURL);
     console.log(`Running ${suite.allTests().length} tests`);
   }
 
@@ -33,6 +33,12 @@ class MyCustomReporter implements Reporter {
 
   onTestEnd(test: TestCase, result: TestResult) {
     console.log(`Finished test: ${test.title}`);
+    const endformTraceUrl = result.annotations.find(
+      (annotation) => annotation.type === "endformTestAttemptTraceURL",
+    )?.description;
+    if (endformTraceUrl) {
+      console.log(`Endform trace URL: ${endformTraceUrl}`);
+    }
   }
 
   onEnd(result: FullResult) {
@@ -57,6 +63,8 @@ For more information on Playwright's sharding and how test reports are merged, s
 
 Endform extends Playwright's reporter interface with additional properties to enhance your reporting experience.
 
+### Endform Report URL
+
 In the `onBegin` hook, Endform provides an `endformReportURL` in the `config.metadata` parameter that links directly to your test run in the Endform dashboard:
 
 ```javascript
@@ -68,4 +76,23 @@ onBegin(config: FullConfig, suite: Suite) {
 ```
 
 You can use this URL in your custom reporting to provide direct links to the suite run results in the Endform dashboard.
+
+### Endform Test Attempt URL
+
+In the `onTestEnd` hook, Endform adds an annotation with the type `endformTestAttemptTraceURL` that contains a link to the specific test attempt trace if one was created:
+
+```javascript
+onTestEnd(test: TestCase, result: TestResult) {
+  // Access the Endform trace URL for this specific test attempt
+  const endformTraceUrl = result.annotations.find(
+    (annotation) => annotation.type === "endformTestAttemptTraceURL",
+  )?.description;
+  if (endformTraceUrl) {
+    console.log(`Endform trace URL: ${endformTraceUrl}`);
+    // Example output: https://enform.dev/app/org/xyz...
+  }
+}
+```
+
+You can use this URL in your custom reporting to link directly to the detailed trace information for each test attempt.
 
