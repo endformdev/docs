@@ -1,0 +1,23 @@
+---
+title: Organization Settings
+description: Configurable settings that are applied organization-wide.
+sidebar:
+  order: 3
+---
+
+import { Image } from "astro:assets";
+import ConcurrencyLimits from "../../../assets/concurrency-limits-settings.png";
+
+
+## Concurrent Tests Limits
+
+Sometimes it's useful to limit the number of concurrently running test attempts in your suite. For example, if you have slow backend or preview environments with limited resources.
+
+It is possible to limit the maximum number of concurrent test attempts in progress within a suite run at any one time in the Organization Settings page.
+
+<Image
+  src={ConcurrencyLimits}
+  alt="A screenshot of limiting suite run concurrency in the endform dashboard"
+/>
+
+This setting limits the number of actively running test attempts within an individual suite run. So if you have several suite runs running concurrently, for example in different PRs, then you may get more concurrently running tests than this limit.
