@@ -5,7 +5,15 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
+	site: "https://endform.dev",
 	base: "/docs",
+	trailingSlash: "never",
+
+	build: {
+		// This is needed when you want to remove trailing slashes with static output.
+		format: "file",
+	},
+
 	integrations: [
 		starlight({
 			title: "Endform docs",
