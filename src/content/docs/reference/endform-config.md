@@ -18,7 +18,7 @@ Currently, `endform.jsonc` supports the following options:
 
 `additionalFiles`: an array of strings used as globs to send extra files to your test machines.
 
-```
+```json
 {
   "additionalFiles": ["user-state/*"]
 }
@@ -31,7 +31,7 @@ However if your tests have implicit dependencies on more files, use this paramet
 
 `environmentVariables`: an array of string regular expressions that are used to match environment variables that should be transferred to the remote runners.
 
-```
+```json
 {
   "environmentVariables": ["VERCEL_.*"]
 }
@@ -41,3 +41,20 @@ By default the following environment variables are automatically transferred:
 
 - Environment variables that start with `E2E_`
 - All environment variables that are set in your `playwright.config.ts`
+
+### `proxyNetworkHosts`
+
+Choose which host names will have their traffic redirected to the CLI from the remote runners.
+All the traffic sent from the remote runners to your CLI is sent encrypted over direct peer-to-peer connections. Read more about [traffic to local servers here](/docs/guides/proxy-via-local).
+
+```json
+{
+    "proxyNetworkHosts": ["*.test.internal-domain", "*.staging.internal-domain", "<loopback>"]
+}
+```
+
+Each string in the array is a match rule. Either:
+
+- A hostname pattern `my-domain.com`, `*.interal.org`
+- An IP literal like `127.0.0.1`
+- `<loopback>` to match interfaces `localhost`, `*.localhost`, `127.0.0.1`, `[::1]`

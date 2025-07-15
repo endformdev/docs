@@ -3,7 +3,7 @@ title: Getting Started
 description: Running your tests with Endform for the first time.
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Make sure to check out the [requirements](/docs/reference/requirements) before you start.
 
@@ -11,17 +11,42 @@ Make sure to check out the [requirements](/docs/reference/requirements) before y
 
 The easiest way to get started with endform, and to check if your setup is compatible with endform at the moment, is to run the endform cli from your playwright project directory.
 
-```
+```sh
 npx endform@latest test
 ```
 
 This will prompt you to login and run your tests.
 
+
+# Install the `endform` CLI
+
+<Tabs syncKey="pkg">
+   <TabItem label="npm">
+   ```sh
+   npm install endform
+   ```
+   </TabItem>
+   <TabItem label="pnpm">
+   ```sh
+   pnpm install endform
+   ```
+   </TabItem>
+   <TabItem label="Yarn">
+   ```sh
+   yarn install endform
+   ```
+   </TabItem>
+   <TabItem label="Bun">
+   ```sh
+   bun install endform
+   ```
+   </TabItem>
+</Tabs>
+
 <Aside>
-
-Since endform is currently in beta, we recommend _not_ pinning the version of endform in your `package.json`, and instead "always running latest" by running `npx endform@latest test`.
-
+Since endform is currently in beta, we reccomend a very high update cadence of the CLI. Please try to keep within the _last 2 weeks_ of releases.
 </Aside>
+
 
 # Running your tests in CI
 
@@ -33,7 +58,7 @@ The easiest way to do this is to replace your "playwright test" command with "en
 
 Here's an example of a what a GitHub Actions workflow might look like:
 
-```
+```yml
 name: Run Playwright tests with Endform
 on:
   push:
@@ -54,7 +79,7 @@ jobs:
         run: npm install
 
       - name: Run tests with Endform
-        run: npx endform@latest test
+        run: npx endform@latest test # or npm run endform test
         env:
           ENDFORM_API_KEY: ${{ secrets.ENDFORM_API_KEY }}
 ```

@@ -16,17 +16,18 @@ If you keep your tests decoupled from your application already by, for example, 
 
 ### Remote
 
-Since your tests will be running on remote machines, your test environment needs to be accessible on the public internet.
-Endform does not support servers running "locally" / on `localhost`.
+Since your tests will be running on remote machines, the servers you are testing against need to be accesible to the remote runners.
+There are two ways to acheive this:
 
-We reccomend using playwright directly when creating tests / running against `localhost`, and to run endform in your ci environment / against your test/stage/preview environments.
+- You are running preview infrastructure or a testing environment that is exposed to the internet anyway.
+- You can use the `endform-proxy-network` addon to shuttle traffic between the remote runners and the machine your CLI runs on. Check out the [guide on proxying traffic via your local network](/docs/guides/proxy-via-local) for more information about this approach.
 
 ## Playwright Requirements
 
 - We support playwright projects written in typescript and javascript.
 - The length of an individual test run is limited to 4 minutes (same as the `testConfig.timeout` option). The playwright default timeout is 30 seconds. This does not include retries.
 - We currently only support the latest minor version of playwright (`1.53.0` at the time of writing).
-- We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with.
+- We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with. Let us know if you are in need of more browsers and we can prioritise this.
 
 ### Playwright Configuration Options
 
@@ -42,8 +43,7 @@ Options that we currently don't support, but will do in the future (let us know 
 
 Options that aren't supported since they don't make sense in a remote context:
 
-- `webWorkers`
-- `fullyParallel` is always `true`
+- `fullyParallel` is always `true`, but you can limit concurrency using settings in the endform dashboard.
 
 ## Node Requirements
 

@@ -1,0 +1,92 @@
+---
+title: Proxy traffic via your local network
+description: How to proxy traffic from your remote runners to your local network. This helps to run tests against local servers.
+---
+
+import { Steps, Tabs, TabItem, Code, Aside } from '@astrojs/starlight/components';
+
+import { Image } from "astro:assets";
+import LocalTraffic from "../../../assets/local-server-traffic.png";
+
+Servers that you want to test against that are either running locally or within a private network are not automatically exposed to the internet.
+These servers are not reachable by default from the remotely running Playwright instances.
+Trying to reach them without this extra setup, would likely result in connection errors in your tests.
+
+
+When this happens, we need a method of shuttling traffic between the remote runners and the servers running on your local network. 
+
+<Image
+  src={LocalTraffic}
+  alt="A diagram of the traffic from the remote runners through your CLI to your local server."
+  height={500}
+/>
+
+Endform has the ability to connect the remote Playwright runners to the servers on your local network via direct, hole-punched, encrypted, peer-to-peer connections.
+We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/overview).
+
+## Setting up endform to proxy traffic
+
+<Aside>
+Proxying traffic via your local network is currently in alpha, we would be grateful for any feedback you have on this feature.
+</Aside>
+
+
+<Steps>
+
+1. ### Install the addon package
+
+   In order for traffic to be proxied, we need to install the extra `endform-proxy-network` package in the same place as you installed the main `endform` CLI.
+
+   <Tabs syncKey="pkg">
+      <TabItem label="npm">
+      ```sh
+      npm install endform-proxy-network
+      ```
+      </TabItem>
+      <TabItem label="pnpm">
+      ```sh
+      pnpm install endform-proxy-network
+      ```
+      </TabItem>
+      <TabItem label="Yarn">
+      ```sh
+      yarn install endform-proxy-network
+      ```
+      </TabItem>
+      <TabItem label="Bun">
+      ```sh
+      bun install endform-proxy-network
+      ```
+      </TabItem>
+   </Tabs>
+
+2. ### Configure which traffic to proxy.
+   
+   #### As a playwright `webServer`
+   If you want to run your local server as a [playwright `webServer`](https://playwright.dev/docs/api/class-testconfig#test-config-web-server)
+   then you're done! Leave your web server configuration as is, and we will automatically proxy the traffic to your local server.
+
+   #### With your own custom server
+   If you're running a server outside of playwright - that's fine. You can tell endform which traffic to proxy by using a `endform.jsonc` file.
+
+   <Code language="json" title="endform.jsonc" code={`
+   {
+      "proxyNetworkHosts": [
+        "<loopback>",
+        "*.my-special-domain.com"
+      ]
+   }
+   `} />
+
+   You can read more about the `proxyNetworkHosts` configuration in the [endform config reference](/docs/reference/endform-config#proxy-network-hosts).
+
+3. ### Run your tests!
+
+   That's it! You can now run your tests as normal, and the traffic will be proxied via the cli to your target server.
+
+
+
+
+
+
+</Steps>
