@@ -2,6 +2,7 @@
 import cloudflare from "@astrojs/cloudflare";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import starlightThemeRapide from "starlight-theme-rapide";
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,6 +18,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Endform docs",
+			plugins: [starlightThemeRapide()],
 			logo: {
 				dark: "./src/assets/endform-logo-wordmark-colored-on-dark-padding.svg",
 				light:
@@ -31,7 +33,6 @@ export default defineConfig({
 					href: "https://github.com/endformdev/docs",
 				},
 			],
-			customCss: ["./src/styles/custom.css"],
 			sidebar: [
 				{
 					label: "Explanation",
