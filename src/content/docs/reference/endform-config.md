@@ -58,3 +58,8 @@ Each string in the array is a match rule. Either:
 - A hostname pattern `my-domain.com`, `*.interal.org`
 - An IP literal like `127.0.0.1`
 - `<loopback>` to match interfaces `localhost`, `*.localhost`, `127.0.0.1`, `[::1]`
+
+
+### `organizationId`
+
+Specify which organization id this project should run within. Is the highest precedence configuration for organization id when running suites. Makes suite runs fail if the authenticated user does not have access to that organization.
