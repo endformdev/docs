@@ -1,7 +1,7 @@
 {
 	"name": "endform-docs",
 	"type": "module",
-	"packageManager": "pnpm@10.6.5",
+	"packageManager": "pnpm@10.15.0",
 	"version": "0.0.1",
 	"engines": {
 		"node": "22"
@@ -16,15 +16,15 @@
 		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {
-		"@astrojs/cloudflare": "^12.5.2",
-		"@astrojs/starlight": "^0.34.2",
-		"astro": "^5.7.10",
-		"sharp": "^0.34.1",
+		"@astrojs/cloudflare": "^12.6.6",
+		"@astrojs/starlight": "^0.35.2",
+		"astro": "^5.13.4",
+		"sharp": "^0.34.3",
 		"starlight-theme-rapide": "^0.5.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"wrangler": "^4.14.2"
+		"@biomejs/biome": "^2.2.2",
+		"wrangler": "^4.33.0"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
