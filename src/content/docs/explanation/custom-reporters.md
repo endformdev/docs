@@ -1,11 +1,11 @@
 ---
-title: Custom Playwright Reporters
+title: Custom Playwright reporters
 description: Using custom playwright reports with endform
 sidebar:
   order: 3
 ---
 
-## Custom Playwright Reporters in Endform
+## Custom Playwright reporters in Endform
 
 Endform fully supports Playwright's custom reporter functionality. You can use all standard Playwright reporter configurations and methods to create custom reports for your test runs.
 
@@ -51,7 +51,7 @@ export default MyCustomReporter;
 
 For more details on creating custom reporters, see the [Playwright documentation on custom reporters](https://playwright.dev/docs/test-reporters#custom-reporters).
 
-## When Custom Reporters Run
+## When custom reporters run
 
 In Endform, custom reporters run **after all tests have completed**, not while they are running live on remote runners. This approach models Playwright's shareded test execution.
 
@@ -59,11 +59,11 @@ Endform runs each of your tests on a remote runner, which creates a blob report 
 
 For more information on Playwright's sharding and how test reports are merged, see the [Playwright documentation on sharded runs](https://playwright.dev/docs/test-sharding).
 
-## Endform-specific Properties in Custom Reporters
+## Endform-specific properties in custom reporters
 
 Endform extends Playwright's reporter interface with additional properties to enhance your reporting experience.
 
-### Endform Report URL
+### Endform report URL
 
 In the `onBegin` hook, Endform provides an `endformReportURL` in the `config.metadata` parameter that links directly to your test run in the Endform dashboard:
 
@@ -77,7 +77,7 @@ onBegin(config: FullConfig, suite: Suite) {
 
 You can use this URL in your custom reporting to provide direct links to the suite run results in the Endform dashboard.
 
-### Endform Test Attempt URL
+### Endform test attempt URL
 
 In the `onTestEnd` hook, Endform adds an annotation with the type `endformTestAttemptTraceURL` that contains a link to the specific test attempt trace if one was created:
 

@@ -1,5 +1,5 @@
 ---
-title: Transfer State to Remote Runners
+title: Transfer state to remote runners
 description: How to handle environment variable and file state transfer to endform runners
 sidebar:
   order: 2
@@ -31,7 +31,7 @@ You may need to do some additional configuration to transfer more state, dependi
 
 If you want to understand exactly which state endform will transfer to the remote runners, you can use the `--dry-run` flag to show the files and environment variables that need to be transferred in order to run your tests: `endform test --dry-run`.
 
-## Automatically Transferred State
+## Automatically transferred state
 
 Endform can detect and transfer the following pieces of state automatically:
 
@@ -39,9 +39,9 @@ Endform can detect and transfer the following pieces of state automatically:
 - **Your playwright config** - [for more information on supported options, see the requirements](/docs/reference/requirements/#playwright-configuration-options)
 - **`storageState`** - any files that are listed in the `storageState` option of your playwright config
 
-## Partially Transferred State
+## Partially transferred state
 
-### Environment Variables
+### Environment variables
 
 Environment variables are often highly sensitive in nature.
 
@@ -55,7 +55,7 @@ The _values_ of the environment variables are taken while running your `playwrig
 In order to get a better understanding of which environment variables are transferred, you can use the `--dry-run` flag to show the complete set of dependencies of your tests: `endform test --debug`.
 This will print out the environment variables that are transferred to the remote runners.
 
-## Additional Configuration
+## Additional configuration
 
 Endform has two additional ways of transferring state to the remote runners:
 

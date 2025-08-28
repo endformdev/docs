@@ -1,6 +1,6 @@
 ---
-title: Endform Config - endform.jsonc
-description: Configure endform further with an `endform.jsonc` file.
+title: Endform config - endform.jsonc
+description: Configure endform further with an `endform.jsonc` file
 sidebar:
   order: 2
 ---
@@ -10,7 +10,7 @@ To further configure endform, place an `endform.jsonc` file in your repository. 
 - In the same folder as your playwright suite -> applies to that suite
 - In the root of your repository -> applies to all suites in your repository
 
-## `endform.jsonc` Config Parameters
+## `endform.jsonc` config parameters
 
 Currently, `endform.jsonc` supports the following options:
 
