@@ -5,6 +5,8 @@ sidebar:
   order: 1
 ---
 
+import { Aside } from '@astrojs/starlight/components';
+
 Endform provides a distributed test runner optimized specifically for Playwright, designed to run your end-to-end tests faster and more efficiently.
 Here's a breif explanation of how our test runner works.
 
@@ -16,6 +18,10 @@ Here's a breif explanation of how our test runner works.
 - It calculates the exact JavaScript files required for each test to run.
 - The CLI determines common dependencies across your entire test suite.
 - The set of tests to run, and the dependencies required for each test, are then sent our test runner service.
+
+<Aside>
+To see what code and environment variables endform detects before running your tests, run `npx endform test --dry-run`.
+</Aside>
 
 ### Step 2: Distributed Execution
 
