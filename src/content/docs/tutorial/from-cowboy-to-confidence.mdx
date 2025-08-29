@@ -24,14 +24,32 @@ So come along, and let's get you from cowboy to confidence.
 
 ## Source code
 
-The full repository for this tutorial can be found [here](https://github.com/endformdev/saas-starter-playwright). 
+The full repository for this tutorial can be found [here](https://github.com/endformdev/playwright-tutorial). 
 
 The repository contains a software as a service application that has login logout, user modification and checkout functionality. 
 The application is built with Next.js and can either be run locally from your command line or you can test against our pre-deployed version of it. 
 
+## Getting started with the tutorial repository
+
+To get started, you will need to:
+
+- [Clone the repository](https://github.com/endformdev/playwright-tutorial): `git clone https://github.com/endformdev/playwright-tutorial && cd playwright-tutorial`
+- Make sure you have [`pnpm` installed on your system](https://pnpm.io/installation#using-corepack)
+- Install the dependencies: `pnpm install`
+- Checkout the branch for the stage you want to start from, for example: `git checkout stage-0-baseline`
+
+We will be testing against a realistic dummy application.
+You can either:
+
+- Run the tests against our pre-deployed application at [https://endform-playwright-tutorial.vercel.app](https://endform-playwright-tutorial.vercel.app)
+- Run the application locally, for this option you will need to:
+  - Set up `.env` and run migrations on a local SQLite database: `pnpm db:setup`
+  - Run the application: `pnpm dev`, or for better performance `pnpm build && pnpm start`
+  - Check that it loads correctly at [http://localhost:3000](http://localhost:3000)
+
 ## Choose where to start
 
-Each step of the tutorial has a [branch associated with it](https://github.com/endformdev/saas-starter-playwright/branches), with all of the work included from the previous tutorial steps. 
+Each step of the tutorial has a [branch associated with it](https://github.com/endformdev/playwright-tutorial/branches), with all of the work included from the previous tutorial steps.
 You can choose to start from the beginning, or you can start from a specific step, depending on what you're interested in and what your previous experiences with playwright are. 
 
 Here's what we'll cover in each step:
