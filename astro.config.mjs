@@ -35,12 +35,16 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: "Explanation",
-					autogenerate: { directory: "explanation" },
-				},
-				{
 					label: "Guides",
 					autogenerate: { directory: "guides" },
+				},
+				{
+					label: "Tutorial",
+					autogenerate: { directory: "tutorial" },
+				},
+				{
+					label: "Explanation",
+					autogenerate: { directory: "explanation" },
 				},
 				{
 					label: "Reference",
