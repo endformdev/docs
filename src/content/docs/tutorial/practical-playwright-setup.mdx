@@ -5,12 +5,112 @@ sidebar:
   order: 2
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Image } from "astro:assets";
+import StepOverDebug from "../../../assets/step-over-debug.png";
+
+In this part of the tutorial, we will both set up a Playwright project from scratch, but we will also learn to use the most important features to be more productive with Playwright when using a real-world application.
+
+Some Playwright features we will cover include:
+
+- Automatically creating and deleting test users
+- Using `storageState`
+- Playwright projects & global setup
+
+Let's get started!
 
 <Aside>
 To start from this step, checkout the [`stage-0-baseline` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-0-baseline) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
+For more information about getting started with the tutorial repository, go [here](/docs/tutorial/from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
+## Create the base file structure
 
+### Initializing with `create playwright`
 
+Following the [Playwright documentation](https://playwright.dev/docs/intro#using-npm-yarn-or-pnpm), let's set up our base Playwright file structure.
 
+```bash
+pnpm create playwright
+```
+
+Follow the wizard. You should now have a `playwright.config.ts` file, a `tests` directory, and also a `tests-examples` directory.
+You can remove the `tests-examples` directory, we won't be using it.
+
+### Modifying `playwright.config.ts` for our needs
+
+Take a look at the `playwright.config.ts` file - it's the primary way of configuring Playwright.
+Peruse the [docs](https://playwright.dev/docs/test-configuration) for more information about the different options that are available here.
+
+Let's modify the `baseURL` to point to our application.
+
+```ts
+export default defineConfig({
+	use: {
+    // If you want to run tests against the pre-deployed application
+		baseURL: "https://endform-playwright-tutorial.vercel.app",
+    // If you want to run tests against a locally running application
+    // baseURL: "http://localhost:3000",
+	}
+});
+```
+
+At the moment the Playwright project is configured with three projects that test against three different browsers. Let's simplify this by just testing against Chrome for now.
+
+```ts
+projects: [
+	{
+		name: "chromium",
+		use: { ...devices["Desktop Chrome"] },
+	}
+  // Remove the other firefox and webkit projects
+]
+```
+
+### Run your first test
+
+Let's check that this works by modifying the `example.spec.ts` test file in the `tests` directory.
+
+- Remove the second test "get started link"
+- Modify the first test to go to the default url `await page.goto("/")`
+- Modify the expectation to check for our page title `/Playwright Tutorial/`
+- Watch your test run `pnpm playwright test --debug`
+
+You can watch your test step by step by using the "step over" button.
+<Image src={StepOverDebug} alt="Step over button in Playwrights inspector" width={600} />
+
+## Alternatives for creating temporary test data (like users)
+
+Almost all of the tests that you will end up making will require some amount of initial test data, so that you don't have to completely re-create the world within each separate test.
+
+There are two schools of thought about how to create this test data.
+Either you can create it by using the browser and clicking through your application to create that data, or you can use either your public API or create internal APIs in order to create this data more efficiently.
+
+Playwright has two methods of globally setting up test data before your suite runs. Project dependencies, which runs a browser, or global setup, which is more like a simple script more suited to API calls.
+
+If we look at [Playwrights documentation](https://playwright.dev/docs/test-global-setup-teardown), we can see that it slightly prefers using project dependencies to globally set up and tear down test data.
+The table in the documentation there outlines how using project dependencies provides more visibility into how the set up and tear down steps work.
+
+In our experience, having an API endpoint available to create data (like test users), instead of requiring a whole browser, makes your Playwright project more flexible long term.
+Initially you will feel like one user is enough, in which case the browser-based setup method is the simplest.
+However, further down the line, you will likely need to make several users, some for cases where users collide such as your "delete user" flow.
+When this happens, you will find that your API endpoints will make it much easier to create these tests.
+
+If you learn to create and use API endpoints like this, it will be much easier for you to extend them to create more kinds of useful test data, such as organisations or organisation memberships.
+This will really take your ability to test end to end test your application to a whole new level.
+
+Today we will learn to use both kinds of set up approaches.
+
+### Creating / deleting users through a project
+
+### Creating / deleting users through an API
+
+This starter has a `seed.ts` file that does something similar.
+
+Let's make an API route that enables us to do the same.
+
+Let's secure the API route using a token.
+
+## Using `storageState` to make use of the test user in multiple tests
+
+## Wrapping up
