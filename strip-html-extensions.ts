@@ -24,9 +24,10 @@ async function findHtmlFiles(dir: string) {
 }
 
 async function stripHtmlExtensions(filePath: string) {
-  const content = await readFile(filePath, 'utf-8');
-  const modifiedContent = content.replace(/\.html/g, '');
-  await writeFile(filePath, modifiedContent);
+  let content = await readFile(filePath, 'utf-8');
+   content = content.replace(/\/index\.html/g, '');
+   content = content.replace(/\.html/g, '');
+  await writeFile(filePath, content);
 }
 
 const distDir = './dist';
