@@ -4,7 +4,7 @@
 	"packageManager": "pnpm@10.15.0",
 	"version": "0.0.1",
 	"engines": {
-		"node": "22"
+		"node": "24"
 	},
 	"scripts": {
 		"dev": "astro dev",
