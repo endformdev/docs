@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 import { Image } from "astro:assets";
 import StepOverDebug from "../../../assets/step-over-debug.png";
 
@@ -101,16 +101,352 @@ This will really take your ability to test end to end test your application to a
 
 Today we will learn to use both kinds of set up approaches.
 
-### Creating / deleting users through a project
+### Setup & teardown with Playwright project dependencies
+
+First let's make the test files for setup and teardown:
+
+```bash
+touch tests/setup.spec.ts && touch tests/teardown.spec.ts
+```
+
+For us to use project dependencies to declare our setup and teardown steps, we need to make more modifications to our `playwright.config.ts` file.
+
+<Tabs>
+<TabItem label="Hint">
+```ts
+export default defineConfig({
+	projects: [
+		{
+			// A setup project that defines its teardown
+			// Match only the setup test
+		},
+		{
+			name: "chromium",
+			use: { ...devices["Desktop Chrome"] },
+			// Ignore setup/teardown files
+			// Depend on the setup project
+		},
+		{
+			// A teardown project
+			// Match only the teardown test
+		},
+	],
+});
+```
+</TabItem>
+<TabItem label="Completed">
+```ts
+export default defineConfig({
+	projects: [
+		{
+			name: "setup",
+			testMatch: "setup.spec.ts",
+			teardown: "teardown",
+		},
+		{
+			name: "chromium",
+			use: { ...devices["Desktop Chrome"] },
+			testIgnore: ["setup.spec.ts", "teardown.spec.ts"],
+			dependencies: ["setup"],
+		},
+		{
+			name: "teardown",
+			testMatch: "teardown.spec.ts",
+		},
+	],
+});
+```
+</TabItem>
+</Tabs>
+
+We'll talk more about generating tests in the next step, so here's the completed setup / teardonwn and modified example tests to copy for now.
+
+
+<Tabs>
+<TabItem label="setup.spec.ts">
+```ts
+import { expect, test } from "@playwright/test";
+
+const authFile = ".auth/shared-user.json";
+
+test("user signup and login flow", async ({ page }) => {
+	const randomEmail = `${Math.random().toString(36).substring(2, 15)}@example.com`;
+	const testPassword = "testpassword123";
+
+	await test.step("navigate to signup page", async () => {
+		await page.goto("/sign-up");
+		await expect(
+			page.getByRole("heading", { name: "Create your account" }),
+		).toBeVisible();
+	});
+
+	await test.step("fill signup form and submit", async () => {
+		await page.getByRole("textbox", { name: "Email" }).fill(randomEmail);
+		await page.getByRole("textbox", { name: "Password" }).fill(testPassword);
+		await page.getByRole("button", { name: "Sign up" }).click();
+	});
+
+	await test.step("verify successful signup redirects to dashboard", async () => {
+		await expect(page).toHaveURL("/dashboard");
+		await expect(
+			page.getByRole("heading", { name: "Team Settings" }),
+		).toBeVisible();
+		await expect(page.getByText(randomEmail)).toBeVisible();
+	});
+
+	await page.context().storageState({ path: authFile });
+});
+```
+</TabItem>
+<TabItem label="teardown.spec.ts">
+```ts
+import { expect, test } from "@playwright/test";
+
+test("delete current user account", async ({ page }) => {
+	const testPassword = "testpassword123";
+
+	await test.step("navigate to security page", async () => {
+		await page.goto("/dashboard/security");
+		await expect(
+			page.getByRole("heading", { name: "Security Settings" }),
+		).toBeVisible();
+	});
+
+	await test.step("delete account with password confirmation", async () => {
+		await page
+			.getByRole("textbox", { name: "Confirm Password" })
+			.fill(testPassword);
+		await page.getByRole("button", { name: "Delete Account" }).click();
+	});
+
+	await test.step("verify redirect to sign-in page after account deletion", async () => {
+		await expect(page).toHaveURL("/sign-in");
+		await expect(
+			page.getByRole("heading", { name: "Sign in to your account" }),
+		).toBeVisible();
+	});
+});
+```
+</TabItem>
+<TabItem label="example.spec.ts">
+```ts
+import { expect, test } from "@playwright/test";
+
+test("has title", async ({ page }) => {
+	await page.goto("/");
+
+	await expect(page).toHaveTitle(/Playwright Tutorial/);
+});
+
+test("is already logged in", async ({ page }) => {
+	await page.goto("/dashboard");
+
+	await expect(
+		page.getByRole("heading", { name: "Team Settings" }),
+	).toBeVisible();
+});
+```
+</TabItem>
+</Tabs>
+
+### Using `storageState` to use the authenticated user in multiple tests
+
+Running the tests at the moment will break, since we haven't asked Playwright to use the authenticated user state in the other tests.
+
+To do this, we need to modify our `playwright.config.ts` file to use the `storageState` option:
+
+```ts
+export default defineConfig({
+	projects: [
+		{
+			name: "setup",
+			// does not need the storage state, makes it
+		},
+		{
+			name: "chromium",
+			use: {
+				storageState: ".auth/shared-user.json",
+			},
+		},
+		{
+			name: "teardown",
+			use: {
+				// needs the storage state to delete the user
+				storageState: ".auth/shared-user.json",
+			},
+		},
+	],
+});
+```
+
 
 ### Creating / deleting users through an API
 
-This starter has a `seed.ts` file that does something similar.
+Let's explore the alternative to creating users through the browser, which is to create and use API endpoints for our test data. 
 
-Let's make an API route that enables us to do the same.
+Let's make ourselves an internal API endpoint for our tests to use.
 
-Let's secure the API route using a token.
+```bash
+git checkout stage-1-setup -- app/api/internal/user/route.ts
+```
 
-## Using `storageState` to make use of the test user in multiple tests
+This file contains a `POST` and `DELETE` endpoint for creating and deleting users.
+
+```ts
+function isAuthorized(request: Request) {
+	const authHeader = request.headers.get("authorization");
+	if (!authHeader) return false;
+	const [scheme, token] = authHeader.split(" ");
+	return scheme === "Bearer" && token === "VerySecretDummyToken";
+}
+
+export async function POST(request: Request) {
+	if (!isAuthorized(request)) {
+		return new Response("Unauthorized", { status: 401 });
+	}
+
+	// Create user in DB
+}
+
+export async function DELETE(request: Request) {
+	if (!isAuthorized(request)) {
+		return new Response("Unauthorized", { status: 401 });
+	}
+
+	// Delete user from DB
+}
+```
+
+Let's set up a global setup and global teardown script to use these API endpoints. 
+First we need to modify the `playwright.config.ts` file.
+
+```ts
+export default defineConfig({
+	globalSetup: "./global-setup.ts",
+	globalTeardown: "./global-teardown.ts",
+});
+```
+
+Then we need to create the `global-setup.ts` and `global-teardown.ts` files.
+
+```bash
+touch global-setup.ts global-teardown.ts
+```
+
+Can you figure out what these scripts should contain?
+
+Here's an outline of the setup script:
+
+<Tabs>
+<TabItem label="global-setup.ts (Hint)">
+```ts
+import type { FullConfig } from "@playwright/test";
+
+export default async function globalSetup(config: FullConfig) {
+	const { baseURL } = config.projects[0]?.use || {};
+	if (!baseURL) {
+		throw new Error("baseURL is required");
+	}
+
+    // Create a random email and password
+
+	// Make a POST request to the API to create a user
+	await fetch(`${baseURL}/api/internal/user`);
+}
+
+```
+</TabItem>
+<TabItem label="global-setup.ts (Completed)">
+```ts
+import type { FullConfig } from "@playwright/test";
+
+export default async function globalSetup(config: FullConfig) {
+	const { baseURL } = config.projects[0]?.use || {};
+	if (!baseURL) {
+		throw new Error("baseURL is required");
+	}
+
+	const email = `${Math.random().toString(36).substring(2, 15)}@example.com`;
+	const password = "testpassword123";
+
+	try {
+		const response = await fetch(`${baseURL}/api/internal/user`, {
+			method: "POST",
+			headers: {
+				"content-type": "application/json",
+				authorization: "Bearer VerySecretDummyToken",
+			},
+			body: JSON.stringify({ email, password }),
+		});
+		const data = await response.json().catch(() => null);
+		console.log("[globalSetup] create user status:", response.status);
+		console.log("[globalSetup] create user body:", data);
+	} catch (error) {
+		console.error("[globalSetup] error creating user:", error);
+	}
+}
+
+```
+</TabItem>
+</Tabs>
+
+Here's an outline of the teardown script:
+
+<Tabs>
+<TabItem label="global-teardown.ts (Hint)">
+```ts
+import type { FullConfig } from "@playwright/test";
+
+export default async function globalTeardown(config: FullConfig) {
+	const { baseURL } = config.projects[0]?.use || {};
+	if (!baseURL) {
+		throw new Error("baseURL is required");
+	}
+
+	// Make a DELETE request to the API to delete the user
+	await fetch(`${baseURL}/api/internal/user`);
+}
+```
+</TabItem>
+<TabItem label="global-teardown.ts (Completed)">
+```ts
+import type { FullConfig } from "@playwright/test";
+
+export default async function globalTeardown(config: FullConfig) {
+	const { baseURL } = config.projects[0]?.use || {};
+	if (!baseURL) {
+		throw new Error("baseURL is required");
+	}
+
+	// How to get the email of the test user?
+	const email = "pw-global@example.com";
+
+	try {
+		const response = await fetch(`${baseURL}/api/internal/user`, {
+			method: "DELETE",
+			headers: {
+				"content-type": "application/json",
+				authorization: "Bearer VerySecretDummyToken",
+			},
+			body: JSON.stringify({ email }),
+		});
+		const data = await response.json().catch(() => null);
+		console.log("[globalTeardown] delete user status:", response.status);
+		console.log("[globalTeardown] delete user body:", data);
+	} catch (error) {
+		console.error("[globalTeardown] error deleting user:", error);
+	}
+}
+```
+</TabItem>
+</Tabs>
 
 ## Wrapping up
+
+At this point in time, we don't just have a basic playwright project set up, but we have a very practical playwright set up for our future testing needs. 
+
+We have:
+
+- A file structure and config file for running a Playwright suite in typescript
+- A set of projects that depend on each other where we can create shared test data
+- API endpoints for easily creating more test data when needed
