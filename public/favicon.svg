@@ -1,13 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="742" height="742"><svg width="742" height="742" viewBox="0 0 742 742" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="742" height="742" rx="120" fill="#222222"></rect>
-<mask id="SvgjsMask1001" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="742" height="742">
-<rect width="742" height="742" rx="120" fill="white"></rect>
-</mask>
-<g mask="url(#mask0_654_66)">
-<path d="M203.625 484.75H691.125L641.212 609.534C632.1 632.313 610.037 647.25 585.503 647.25H138.625L203.625 484.75Z" fill="white"></path>
-<path d="M-23.875 484.75H171.125L106.125 647.25H-81.4898C-85.0271 647.25 -87.4459 643.677 -86.1322 640.393L-23.875 484.75Z" fill="#C86250"></path>
-<path d="M46 289.75H587.125L522.125 452.25H-19L46 289.75Z" fill="#F5E645"></path>
-<path d="M100.788 132.467C109.9 109.687 131.963 94.75 156.497 94.75H823.49C827.027 94.75 829.446 98.3226 828.132 101.607L765.875 257.25H50.875L100.788 132.467Z" fill="#38C874"></path>
-</g></svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
-@media (prefers-color-scheme: dark) { :root { filter: none; } }
-</style></svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1093)"><rect width="1000" height="1000" fill="#101010"></rect><g transform="matrix(1.2578616352201257,0,0,1.2578616352201257,100,254.7169811320755)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="636" height="390"><svg width="636" height="390" viewBox="0 0 636 390" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M202.125 274.75H539.625L509.712 349.533C500.6 372.313 478.537 387.25 454.003 387.25H157.125L202.125 274.75Z" fill="white"></path>
+<path d="M44.625 274.75H179.625L134.625 387.25H7.01017C3.47285 387.25 1.05407 383.677 2.3678 380.393L44.625 274.75Z" fill="#C86250"></path>
+<path d="M93 139.75H467.625L422.625 252.25H48L93 139.75Z" fill="#F5E645"></path>
+<path d="M126.288 42.4665C135.4 19.687 157.463 4.75 181.997 4.75H628.99C632.527 4.75 634.946 8.32263 633.632 11.607L591.375 117.25H96.375L126.288 42.4665Z" fill="#38C874"></path>
+</svg></svg></g></g><defs><clipPath id="SvgjsClipPath1093"><rect width="1000" height="1000" x="0" y="0" rx="350" ry="350"></rect></clipPath></defs></svg>
