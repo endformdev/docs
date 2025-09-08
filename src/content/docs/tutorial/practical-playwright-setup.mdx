@@ -167,7 +167,7 @@ We'll talk more about generating tests in the next step, so here's the completed
 ```ts
 import { expect, test } from "@playwright/test";
 
-const authFile = ".auth/shared-user.json";
+const authFile = ".auth/shared-ui-user.json";
 
 test("user signup and login flow", async ({ page }) => {
 	const randomEmail = `${Math.random().toString(36).substring(2, 15)}@example.com`;
@@ -265,14 +265,14 @@ export default defineConfig({
 		{
 			name: "chromium",
 			use: {
-				storageState: ".auth/shared-user.json",
+				storageState: ".auth/shared-ui-user.json",
 			},
 		},
 		{
 			name: "teardown",
 			use: {
 				// needs the storage state to delete the user
-				storageState: ".auth/shared-user.json",
+				storageState: ".auth/shared-ui-user.json",
 			},
 		},
 	],
@@ -352,12 +352,19 @@ export default async function globalSetup(config: FullConfig) {
 
 	// Make a POST request to the API to create a user
 	await fetch(`${baseURL}/api/internal/user`);
+
+	// Save the user to the storage state
+	// The response contains a JSON object with the form:
+	// { user: { id: number, email: string }, session: string }
+	// Look at your existing .auth/shared-ui-user.json file to see how to save the user to the storage state
+	// Save it to the .auth/api-user.json file so that we can use both states
 }
 
 ```
 </TabItem>
 <TabItem label="global-setup.ts (Completed)">
 ```ts
+import fs from "node:fs";
 import type { FullConfig } from "@playwright/test";
 
 export default async function globalSetup(config: FullConfig) {
@@ -378,14 +385,38 @@ export default async function globalSetup(config: FullConfig) {
 			},
 			body: JSON.stringify({ email, password }),
 		});
-		const data = await response.json().catch(() => null);
-		console.log("[globalSetup] create user status:", response.status);
-		console.log("[globalSetup] create user body:", data);
+		const data = (await response.json()) as { session: string };
+		if (!data.session) {
+			throw new Error("Failed to create user");
+		}
+
+		writeSessionFile(data.session, baseURL);
 	} catch (error) {
 		console.error("[globalSetup] error creating user:", error);
 	}
 }
 
+function writeSessionFile(session: string, baseURL: string) {
+	fs.writeFileSync(
+		".auth/api-user.json",
+		JSON.stringify({
+			cookies: [
+				{
+					name: "session",
+					value: session,
+					domain: new URL(baseURL).hostname,
+					path: "/",
+					// Playwright will delete the cookie when the test is done
+					expires: -1,
+					httpOnly: true,
+					secure: true,
+					sameSite: "Lax",
+				},
+			],
+			origins: [],
+		}),
+	);
+}
 ```
 </TabItem>
 </Tabs>
@@ -440,6 +471,21 @@ export default async function globalTeardown(config: FullConfig) {
 ```
 </TabItem>
 </Tabs>
+
+Don't forget to modify the `playwright.config.ts` file to use the new `storageState` file. Then try running your tests again to make sure everything is working.
+
+```ts
+export default defineConfig({
+	projects: [
+		{
+			name: "chromium",
+			use: {
+				storageState: ".auth/api-user.json",
+			},
+		},
+	],
+});
+```
 
 ## Wrapping up
 

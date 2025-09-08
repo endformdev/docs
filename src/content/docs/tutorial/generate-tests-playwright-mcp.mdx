@@ -5,7 +5,9 @@ sidebar:
   order: 3
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from "astro:assets";
+import CursorActivityTodo from "../../../assets/cursor-activity-todo.png";
 
 In this guide, we will use the Playwright MCP to generate tests for your application.
 
@@ -14,6 +16,370 @@ To start from this step, checkout the [`stage-1-setup` branch](https://github.co
 For more information about getting started with the tutorial repository, go [here](/docs/tutorial/from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
-<Aside type="caution">
-This tutorial is a work in progress! More coming soon.
-</Aside>
+## Setting up the Playwright MCP Server
+
+In this part of the tutorial, we will be using the [Playwright MCP server](https://github.com/microsoft/playwright-mcp).
+
+We will use Cursor for the purposes of this tutorial, but you could use any IDE or CLI tool that supports MCP in its place.
+
+Be sure to check out the installation instructions in the [Playwright MCP repository](https://github.com/microsoft/playwright-mcp) to correctly set up the Playwright MCP server before continuing.
+
+For example for Cursor, your `mcp.json` file could look like this:
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
+```
+
+## Authenticating with the Playwright MCP Server
+
+At the time of writing, the Playwright MCP server doesn't have support for the projects or storage states that we set up in our Playwright config in the previous step. 
+
+You can achieve something similar by using the following flags to the MCP server:
+
+```
+--isolated                   keep the browser profile in memory, do not save it to disk.
+--storage-state <path>       path to the storage state file for isolated sessions.
+```
+
+Our mcp command with these arguments could look like this:
+
+```
+npx @playwright/mcp@latest --isolated --storage-state .auth/api-user.json
+```
+
+It's just that at the moment, our projects are configured to create and delete users during the course of a suite run, so that user won't exist!
+
+Let's add a script to help us create and remove users for the MCP server when we need them.
+
+<Tabs>
+<TabItem label="mcp-user.ts (Hint)">
+```ts
+// import existing user creation and deletion functions
+
+const scriptArg = process.argv[2];
+
+if (scriptArg !== "create" && scriptArg !== "delete") {
+	console.error(
+		`Error: Invalid argument "${scriptArg}". Expected "create" or "delete".`,
+	);
+	process.exit(1);
+}
+
+// create or delete user based on script arg
+```
+</TabItem>
+<TabItem label="mcp-user.ts (Completed)">
+```ts
+import { createUser, deleteUser } from "./setup-utils";
+
+const scriptArg = process.argv[2];
+
+if (scriptArg !== "create" && scriptArg !== "delete") {
+	console.error(
+		`Error: Invalid argument "${scriptArg}". Expected "create" or "delete".`,
+	);
+	process.exit(1);
+}
+
+// Can you come up with a way of getting the baseURL from the playwright.config.ts file
+// instead of hardcoding it here?
+const baseURL = "https://endform-playwright-tutorial.vercel.app";
+
+if (scriptArg === "create") {
+	await createUser(baseURL, "mcp");
+} else if (scriptArg === "delete") {
+	await deleteUser(baseURL, "mcp");
+}
+
+```
+</TabItem>
+</Tabs>
+
+Now we can make an mcp user by running:
+
+```bash
+bun run mcp-user create
+```
+
+And delete it by running:
+
+```bash
+bun run mcp-user delete
+```
+
+Don't forget to update our MCP server configuration for our new user.
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--isolated",
+        "--storage-state",
+        "/full/path/to/your/project/.auth/mcp-user.json"
+      ]
+    }
+  }
+}
+```
+
+## Generating our first test
+
+Now that we have an MCP user saved to a file and our MCP server configured to use that storage state file when running the browser,
+we are in a good position to start generating tests that require authenticated users.
+
+When using an AI in tandem with an MCP server, it's a good idea to take the time to craft a good prompt to help your AI as much as possible when you're trying to generate tests.
+
+Here we will be inspired by [Debbie from the Playwright team's prompts](https://github.com/debs-obrien/playwright-mcp-prompts/blob/main/.github/prompts/generate-tests.prompt.md) to get started:
+
+#### Test generation background
+
+Start with the requirements we have on the LLM:
+
+```
+# Test Generation with Playwright MCP
+
+Generate comprehensive Playwright tests for one scenario by following a systematic exploration and testing workflow.
+
+## Process Overview
+
+You will be given a testing scenario. Your task is to:
+
+1. **Explore First** - Use Playwright MCP tools to navigate and understand the website
+2. **Generate Tests** - Create a well-structured TypeScript test using `@playwright/test` for that one scenario
+3. **Validate** - Execute test and iterate until it passes consistently
+4. **Refine** - Ensure test follows best practices and is maintainable
+
+## Critical Requirements
+
+- **Always explore the website first** - Never generate tests based solely on scenario descriptions
+- **Use systematic exploration** - Navigate, take snapshots, and understand the application flow
+- **Focus on one scenario** - Generate tests for the specific scenario provided
+- **Save to tests directory** - All generated test files go in the `tests/` folder
+- **Iterate until passing** - Run tests and fix issues until they pass consistently
+
+## Success Criteria
+
+- Tests use accessibility-first locators (getByRole, getByLabel, etc.)
+- Tests follow proper structure with describe blocks and test steps
+- Tests include meaningful assertions that reflect user expectations
+- Tests are resilient and maintainable
+- All tests pass consistently when executed
+```
+
+#### Setup information
+
+Then include some information about our setup
+
+```
+# Setup information
+- Our website is available at https://endform-playwright-tutorial.vercel.app
+- You are already logged in as a temporary user
+```
+
+#### The test scenario
+
+Finally, we should provide a detailed description of the test scenario we want to generate tests for.
+
+```
+# Test scenario
+- Navigate to the dashboard.
+- Navigate to the activity section.
+- Verify that one of the elements in the activity section is "you signed up". 
+- Verify that one of the elements in the activity section is "you created a new team". 
+```
+
+Feed all these bits together to the prompt, and see what the AI generates!
+
+Here's an example of what it could look like in cursor:
+
+<Image src={CursorActivityTodo} alt="A to-do list generated by an AI agent inside of the cursor IDE" width={600} />
+
+Here's a generated test that I got back from the AI. Can you spot any major flaws that we need to fix?
+
+<Tabs>
+<TabItem label="activity-section.spec.ts (Generated)">
+```ts
+import { expect, test } from "@playwright/test";
+
+test.describe("Activity Section", () => {
+	test("should navigate to dashboard activity section and verify user activities", async ({
+		page,
+	}) => {
+		await test.step("navigate to the dashboard", async () => {
+			await page.goto("/dashboard");
+			await expect(page).toHaveURL("/dashboard");
+			await expect(
+				page.getByRole("heading", { name: "Team Settings" }),
+			).toBeVisible();
+		});
+
+		await test.step("navigate to the activity section", async () => {
+			await page.getByRole("link", { name: "Activity" }).click();
+			await expect(page).toHaveURL("/dashboard/activity");
+			await expect(
+				page.getByRole("heading", { name: "Activity Log" }),
+			).toBeVisible();
+		});
+
+		await test.step("verify activity section contains expected elements", async () => {
+			await expect(page.getByText("Recent Activity")).toBeVisible();
+
+			const activityList = page.getByRole("list");
+			await expect(activityList).toBeVisible();
+		});
+
+		await test.step("verify 'you signed up' activity is present", async () => {
+			const signupActivity = page.getByRole("listitem").filter({
+				hasText: "You signed up",
+			});
+			await expect(signupActivity).toBeVisible();
+
+			await expect(signupActivity.getByText("You signed up")).toBeVisible();
+			await expect(signupActivity.getByText("just now")).toBeVisible();
+		});
+
+		await test.step("verify 'you created a new team' activity is present", async () => {
+			const teamCreationActivity = page.getByRole("listitem").filter({
+				hasText: "You created a new team",
+			});
+			await expect(teamCreationActivity).toBeVisible();
+
+			await expect(
+				teamCreationActivity.getByText("You created a new team"),
+			).toBeVisible();
+			await expect(teamCreationActivity.getByText("just now")).toBeVisible();
+		});
+
+		await test.step("verify both activities are present in the activity log", async () => {
+			const activityItems = page.getByRole("listitem");
+			await expect(activityItems).toHaveCount(2);
+
+			// Verify both texts exist on the page
+			await expect(page.getByText("You signed up")).toBeVisible();
+			await expect(page.getByText("You created a new team")).toBeVisible();
+		});
+	});
+});
+```
+</TabItem>
+<TabItem label="activity-section.spec.ts (Fixed)">
+```ts
+import { expect, test } from "@playwright/test";
+
+test.describe("Activity Section", () => {
+	test("should navigate to dashboard activity section and verify user activities", async ({
+		page,
+	}) => {
+		await test.step("navigate to the dashboard", async () => {
+			await page.goto("/dashboard");
+			await expect(page).toHaveURL("/dashboard");
+			await expect(
+				page.getByRole("heading", { name: "Team Settings" }),
+			).toBeVisible();
+		});
+
+		await test.step("navigate to the activity section", async () => {
+			await page.getByRole("link", { name: "Activity" }).click();
+			await expect(page).toHaveURL("/dashboard/activity");
+			await expect(
+				page.getByRole("heading", { name: "Activity Log" }),
+			).toBeVisible();
+		});
+
+		await test.step("verify activity section contains expected elements", async () => {
+			await expect(page.getByText("Recent Activity")).toBeVisible();
+
+			const activityList = page.getByRole("list");
+			await expect(activityList).toBeVisible();
+		});
+
+		await test.step("verify 'you signed up' activity is present", async () => {
+			const signupActivity = page.getByRole("listitem").filter({
+				hasText: "You signed up",
+			});
+			await expect(signupActivity).toBeVisible();
+
+			await expect(signupActivity.getByText("You signed up")).toBeVisible();
+			// Just now might not always be the matching time string - let's not check for it
+		});
+
+		await test.step("verify 'you created a new team' activity is present", async () => {
+			const teamCreationActivity = page.getByRole("listitem").filter({
+				hasText: "You created a new team",
+			});
+			await expect(teamCreationActivity).toBeVisible();
+
+			await expect(
+				teamCreationActivity.getByText("You created a new team"),
+			).toBeVisible();
+			// Just now might not always be the matching time string - let's not check for it
+		});
+
+		// The extra step is a bit unnecessary, would be a shame if this test failed because more activities were added
+	});
+});
+```
+</TabItem>
+</Tabs>
+
+Otherwise, it was a pretty good test - we've got solid, modern locators and it's labelling steps in a an understandable way.
+
+## Generating more tests
+
+Here are a few more prompts you can try out to generate more tests (don't forget to add the rest of the setup & background information from the previous steps):
+
+#### Change the password
+```
+# Test scenario
+- Navigate to the dashboard.
+- Navigate to the general section.
+- Check what my current email is and make a copy of it.
+- Navigate to the security page.
+- Change the password to "newpassword123".
+- The current password is "testpassword123".
+- Sign out.
+- Sign in with the new password and the email we copied earlier.
+- Verify that we are logged in.
+```
+
+#### Purchase a subscription
+```
+# Test scenario
+- Navigate to the dashboard at /dashboard.
+- Check that the current plan is "Free".
+- Click the "Change Plan" button.
+- Choose the "Plus" plan.
+- Complete the purchase of the "Plus" plan.
+- Verify that the current plan is now "Plus".
+```
+
+
+## List of bugs we found and fixed in the course of generating these tests
+
+Just by creating this section and generating more tests for this application, we discovered several bugs in the application itself that were preventing the tests from working.
+In real world scenarios, this is why making tests is a great exercise.
+We won't force you to learn the intricacies of this application and Next.js to be able to write your tests.
+Instead, here's a list of bugs we fixed to give you an idea of the kinds of problems that you might encounter when creating tests like these for your own website.
+
+- User activities weren't always created - race condition
+- Users couldn't not be deleted when activities existed, foreign key constraint
+- The user menu wouldn't collapse on click
+
+Other classic problems with the tests that the AI generated:
+
+- Strict mode violations / more than one element on the page that matches a locator
+- Adding manual timeouts to tests instead of crafting good assertions
+- Hardcoding urls instead of using relative paths
+- Not using Playwright `test.step` to label steps in the test & excessive comments
