@@ -365,6 +365,31 @@ Here are a few more prompts you can try out to generate more tests (don't forget
 - Verify that the current plan is now "Plus".
 ```
 
+#### Modify user name
+```
+# Test scenario
+- Navigate to the dashboard at /dashboard.
+- Navigate to the general section.
+- Change the user name to "John Doe".
+- Navigate to the team settings section.
+- Verify that the users new name is displayed in the team members list.
+```
+
+#### Change the email
+```
+# Test scenario
+- Navigate to /.
+- (sign out of the current user, this is not part of the test for later, but we need to have a clean new user here to not interfere with other tests)
+- sign up as a new user with a randomly generated email and password "testpassword123".
+- Navigate to the general section.
+- Change the email to a new randomly generated email.
+- Sign out.
+- Sign in with the password "testpassword123" and the new email.
+- Verify that we are logged in and on the team settings page.
+- verify that the new email is displayed on the general page in the email field.
+```
+
+
 
 ## List of bugs we found and fixed in the course of generating these tests
 
@@ -376,6 +401,8 @@ Instead, here's a list of bugs we fixed to give you an idea of the kinds of prob
 - User activities weren't always created - race condition
 - Users couldn't not be deleted when activities existed, foreign key constraint
 - The user menu wouldn't collapse on click
+- Updating the user name wouldn't update the user menu name icon
+- Not possible to update the email without updating the name
 
 Other classic problems with the tests that the AI generated:
 
@@ -383,3 +410,13 @@ Other classic problems with the tests that the AI generated:
 - Adding manual timeouts to tests instead of crafting good assertions
 - Hardcoding urls instead of using relative paths
 - Not using Playwright `test.step` to label steps in the test & excessive comments
+
+## Areas for improvement for our test setup at the moment
+
+It's been fantastic to generate a few tests using this method.
+When creating this tutorial, I was able to go from one test to ten tests in the space of just an hour or two, but that also should give us a little space to reflect over what we've done.
+
+At the moment:
+
+- Have lots of duplicated selectors in tests where better practice would be to have [page object models](https://playwright.dev/docs/pom) so that we can reduce the amount of places we need to update selectors when changes are needed.
+- Our change email test manually runs through the signup process again, instead of using the available API endpoint to generate a new user.
