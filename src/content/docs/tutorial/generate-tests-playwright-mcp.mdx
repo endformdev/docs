@@ -389,6 +389,23 @@ Here are a few more prompts you can try out to generate more tests (don't forget
 - verify that the new email is displayed on the general page in the email field.
 ```
 
+#### Invite a new user
+```
+# Test scenario
+- Navigate to the dashboard at /dashboard.
+- Navigate to the team settings section.
+- Copy the name/email of the currently only team member.
+- Fill in the Invite Team Member email field with a new randomly generated email.
+- Click the "Invite" button.
+- The application will console.log the invitation id in the format [inviteState] {id}.
+r
+- Sign out
+- Sign up with the new email and password "testpassword123".
+- Verify that we are logged in and on the team settings page.
+- Verify that there are two team members in the team members list.
+- Verify that the new team member's name/email is displayed in the team members list.
+```
+
 
 
 ## List of bugs we found and fixed in the course of generating these tests
