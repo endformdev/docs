@@ -5,7 +5,7 @@ sidebar:
   order: 4
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 import { Image } from "astro:assets";
 import TestTimeChart from "../../../assets/test-time-chart.png";
 
@@ -65,7 +65,7 @@ Here, Playwright took 30 seconds, and Endform took 25 seconds.
 
 If we plot the results of different repeat counts, we get:
 
-<Image src={TestTimeChart} alt="A chart of the test time for different repeat counts" width={600} />
+<Image src={TestTimeChart} alt="A chart of the test time for different repeat counts" width={800} />
 
 Once we start to add more tests (or if the tests had taken longer to run), Playwright will keep slowing your suite down,
 while Endform will keep the speed constant.
@@ -81,3 +81,53 @@ Like:
 - How performant the app the tests are run against is
 
 We think that we have the fastest Playwright test runner on the market, but we're really curious to hear what your experience in running Endform versus Playwright in your test suite is like.
+
+## Running in CI
+
+Let's make a CI workflow that runs the tests with Endform.
+
+<Tabs>
+  <TabItem label=".github/workflows/e2e-tests.yml">
+```yaml
+name: Endform tests on main
+
+on:
+  repository_dispatch:
+    types:
+      - 'vercel.deployment.success'
+
+jobs:
+  e2e-tests:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Playwright tests with Endform
+        run: npx endform@latest test
+        env:
+          ENDFORM_API_KEY: ${{ secrets.ENDFORM_API_KEY }}
+```
+  </TabItem>
+</Tabs>
+
+Here we used the [`repository_dispatch` event](https://vercel.com/docs/git/vercel-for-github#repository-dispatch-events) to trigger the workflow when the Vercel deployment is successful.
+
+Some other thigns you could try are:
+
+- Just trigger on commits to the main branch
+- Triggering on pull requests
+- Sending a message to a Slack channel when the tests are successful or fail
