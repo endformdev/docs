@@ -1,11 +1,13 @@
 ---
-title: Speeding up with endform
+title: Speeding up with Endform
 description: Use endform to speed up your test suite.
 sidebar:
   order: 4
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import { Image } from "astro:assets";
+import TestTimeChart from "../../../assets/test-time-chart.png";
 
 In this guide, we will use endform to speed up your test suite.
 
@@ -14,6 +16,68 @@ To start from this step, checkout the [`stage-2-generated-tests` branch](https:/
 For more information about getting started with the tutorial repository, go [here](/docs/tutorial/from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
-<Aside type="caution">
-This tutorial is a work in progress! More coming soon.
-</Aside>
+At this point in time, we have a pretty decent Playwriht end to end testing suite that can test most of the dummy features in this application.
+We can test complex multi user flows like inviting, and we have the ability to create new users on demand when the user data conflicts with other tests.
+
+Since this a very simple application, our tests are thankfully very fast to run. Let's explore their performance.
+
+## Running the tests
+
+We are familiar with running the tests with Playwright:
+
+```bash
+pnpm playwright test
+```
+
+Let's try running the tests with Endform also to get a benchmark:
+
+```bash
+pnpm endform test
+```
+
+On my machine (M2 Macbook Pro), the tests ran in 20 seconds with Playwright, and 25 seconds with Endform.
+
+With these very fast, very small, and few tests - uploading and running the tests on Endform's remote runners aren't giving us much of a speedup.
+
+## Cranking up the heat
+
+Let's see what happens when we run more tests.
+
+```bash
+pnpm playwright test --repeat-each 2
+```
+
+```bash
+pnpm endform test --repeat-each 2
+```
+
+Here, Playwright took 30 seconds, and Endform took 25 seconds.
+
+```bash
+pnpm playwright test --repeat-each 5
+```
+
+```bash
+pnpm endform test --repeat-each 5
+```
+
+Here, Playwright took 30 seconds, and Endform took 25 seconds.
+
+If we plot the results of different repeat counts, we get:
+
+<Image src={TestTimeChart} alt="A chart of the test time for different repeat counts" width={600} />
+
+Once we start to add more tests (or if the tests had taken longer to run), Playwright will keep slowing your suite down,
+while Endform will keep the speed constant.
+
+### Other influential factors
+
+This is one case of the speed of this particular suite, but lots of things have an impact on the speed of a suite.
+Like:
+
+- How reliable or flaky the tests are
+- How long the tests take to run
+- How slow the slowest test is
+- How performant the app the tests are run against is
+
+We think that we have the fastest Playwright test runner on the market, but we're really curious to hear what your experience in running Endform versus Playwright in your test suite is like.

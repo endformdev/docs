@@ -419,7 +419,9 @@ Instead, here's a list of bugs we fixed to give you an idea of the kinds of prob
 - Users couldn't not be deleted when activities existed, foreign key constraint
 - The user menu wouldn't collapse on click
 - Updating the user name wouldn't update the user menu name icon
+- Updating the user name wouldn't update the user menu name team members list
 - Not possible to update the email without updating the name
+- Hydration errors on the choose plan page
 
 Other classic problems with the tests that the AI generated:
 
@@ -436,4 +438,3 @@ When creating this tutorial, I was able to go from one test to ten tests in the 
 At the moment:
 
 - Have lots of duplicated selectors in tests where better practice would be to have [page object models](https://playwright.dev/docs/pom) so that we can reduce the amount of places we need to update selectors when changes are needed.
-- Our change email test manually runs through the signup process again, instead of using the available API endpoint to generate a new user.
