@@ -5,7 +5,12 @@ sidebar:
   order: 5
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from "astro:assets";
+import HtmlReportTrace from "../../../assets/html-report-trace.png";
+import ExampleTrace from "../../../assets/example-trace.png";
+import EndformResults from "../../../assets/endform-results.png";
+import EndformFilters from "../../../assets/endform-filters.png";
 
 In this guide, we will use the endform dashboard to understand the test results.
 
@@ -14,6 +19,122 @@ To start from this step, checkout the [`stage-3-endform-integration` branch](htt
 For more information about getting started with the tutorial repository, go [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
-<Aside type="caution">
-This tutorial is a work in progress! More coming soon.
-</Aside>
+Real world tests don't always pass the first time you write them or forever more.
+There is near no point in writing or running end-to-end tests if we don't know how to debug them quickly and easily.
+
+We covered in part one of the tutorial how to use the debug flag with Playwright `pnpm playwright test --debug`.
+This is a great option for understanding what's going on in a test while you're developing it.
+
+In many cases we want to be able to look at test runs after they've completed.
+Let's take a look at the most powerful options we have available to us to debug Playwright end to end tests after they've completed.
+
+
+## Playwright traces
+
+Start by setting the `trace` option to `on` in your `playwright.config.ts` file.
+
+```ts
+export default defineConfig({
+  // Create a HTML report of the test run
+  reporter: [["html", { open: "never" }]],
+	use: {
+    // Always create a trace of the test run even if the test passes.
+		trace: "on",
+	},
+});
+```
+
+Then kick off a run of your suite. `pnpm playwright test` and boot the html report server `pnpm playwright show-report`
+
+<Image src={HtmlReportTrace} alt="Playwright HTML reporter with trace" width={900} />
+
+We now click on one of the tests since we had trace set to on we should have a full trace file for each of the successful tests in our suite.
+
+<Image src={ExampleTrace} alt="Example trace file" width={900} />
+
+Here we can navigate the different steps that the test took.
+We can look at screenshots of what was going on while the test was running.
+Then we can also inspect parts of the browser while the test was running, including things like the network tab, console logs from the browser.
+
+## Add a flaky test
+
+One of the most common problems you'll have with your suite are tests that only sometimes fail, otherwise known as flaky tests.
+Let's see what it's like to work with the flaky test in our suite.
+
+<Tabs>
+  <TabItem label="tests/flaky-test.spec.ts">
+```ts
+import { expect, test } from "@playwright/test";
+
+test.describe("Flaky Test", () => {
+	test("should pass most of the time, but sometimes fail", async ({ page }) => {
+		await page.goto("/dashboard");
+		await expect(
+			page.getByRole("heading", { name: "Team Settings" }),
+		).toBeVisible();
+
+		// Let's make this test flaky by randomly failing 30% of the time
+		const randomNumber = Math.random();
+		expect(randomNumber).toBeLessThan(0.7);
+	});
+});
+```
+  </TabItem>
+</Tabs>
+
+Let's set the trace setting back to retain on failure.
+
+```ts
+export default defineConfig({
+	use: {
+    // Keep traces for failed tests
+		trace: "retain-on-failure",
+	},
+});
+```
+
+Now let's try running the tests again. We will have to run it many times to simulate the flakiness.
+
+```bash
+pnpm playwright test --repeat-each=10 flaky-test.spec.ts
+```
+
+Take a look at the HTML report. You have at least one failing test, otherwise you're very lucky!
+
+## Results in the Endform dashboard
+
+Normally the problem with flaky tests is that you won't get the failures nice and put together in a single report,
+but they'll be spread out across lots of reports in lots of different runs.
+
+This is where the Endform dashboard can really shine, because it can show you lots of results over weeks and months of historical data.
+
+Let's run the flaky test with Endform.
+
+```bash
+pnpm endform test --repeat-each=10 flaky-test.spec.ts
+```
+
+There you'll get a link to the Endform dashboard where you can also look at the results.
+
+<Image src={EndformResults} alt="Endform results" width={900} />
+
+Enform dashboard is particularly useful for understanding suite's performance over time. You can query for things like:
+
+- Which test fails most frequently?
+- Which test is the slowest?
+- Which test is the most flaky?
+
+You can do this using a combination of the graph view and the results filters.
+Here for example we have a view of the most frequently failing tests over the last few weeks.
+
+<Image src={EndformFilters} alt="Endform filters" width={900} />
+
+## Conclusion
+
+Thanks for following along with our Playwright tutorial!
+
+Our favourite takeaways from this tutorial are:
+
+- Spending some time on a good playwright set up early on saves you a lot of pain further down the road.
+- Generating tests using the Playwright MCP server is a great way to get going - and it becomes even more powerful if you have the right tools to generate the test data you need.
+- Don't forget to take care of your suite as you scale it to more tests. Endform is a great platform to help you do so.
