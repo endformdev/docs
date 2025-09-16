@@ -1,11 +1,9 @@
 ---
-import FileText from '@lucide/astro/icons/file-text';
 import Route from '@lucide/astro/icons/route';
 import Lightbulb from '@lucide/astro/icons/lightbulb';
 import GraduationCap from '@lucide/astro/icons/graduation-cap';
 import BookText from '@lucide/astro/icons/book-text';
 import Folder from '@lucide/astro/icons/folder';
-import House from '@lucide/astro/icons/house';
 import ChevronRight from '@lucide/astro/icons/chevron-right';
 
 const { sublist, nested } = Astro.props;
@@ -17,28 +15,6 @@ function pickGroupIcon(label: string) {
   if (l.includes('tutorial')) return GraduationCap;
   if (l.includes('reference')) return BookText;
   return Folder;
-}
-
-function pickLinkIcon(href: string, attrs?: Record<string, unknown>) {
-  const key = (attrs && typeof attrs['data-icon'] === 'string' ? attrs['data-icon'] : undefined)?.toLowerCase();
-  if (key) {
-    const byKey: Record<string, any> = {
-      'route': Route,
-      'lightbulb': Lightbulb,
-      'graduation-cap': GraduationCap,
-      'book-text': BookText,
-      'folder': Folder,
-      'file-text': FileText,
-      'home': House,
-    };
-    if (byKey[key]) return byKey[key];
-  }
-  if (href.includes('/guides/')) return Route;
-  if (href.includes('/explanation/')) return Lightbulb;
-  if (href.includes('/tutorial/')) return GraduationCap;
-  if (href.includes('/reference/')) return BookText;
-  if (/\/docs\/?$/.test(href)) return House;
-  return FileText;
 }
 
 function anyChildCurrent(entries: any[]) {
@@ -61,7 +37,6 @@ function anyChildCurrent(entries: any[]) {
             class:list={[{ large: !nested }, entry.attrs.class]}
             {...entry.attrs}
           >
-            {(() => { const Cmp = pickLinkIcon(entry.href, entry.attrs); return <Cmp class="sidebar-icon" size="1rem" />; })()}
             <span>{entry.label}</span>
             {entry.badge && (
               <span class:list={["sl-badge", entry.badge.class]}>{entry.badge.text}</span>
@@ -73,7 +48,7 @@ function anyChildCurrent(entries: any[]) {
           >
             <summary>
               <div class="group-label">
-                {(() => { const Cmp = pickGroupIcon(entry.label); return <Cmp class="sidebar-icon" size="1rem" />; })()}
+                { !nested && (() => { const Cmp = pickGroupIcon(entry.label); return <Cmp class="sidebar-icon" size="1rem" />; })() }
                 <span class="large">{entry.label}</span>
                 {entry.badge && (
                   <span class:list={["sl-badge", entry.badge.class]}>{entry.badge.text}</span>
