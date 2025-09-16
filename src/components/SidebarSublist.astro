@@ -1,0 +1,165 @@
+---
+import Route from '@lucide/astro/icons/route';
+import Lightbulb from '@lucide/astro/icons/lightbulb';
+import GraduationCap from '@lucide/astro/icons/graduation-cap';
+import BookText from '@lucide/astro/icons/book-text';
+import Folder from '@lucide/astro/icons/folder';
+import ChevronRight from '@lucide/astro/icons/chevron-right';
+
+const { sublist, nested } = Astro.props;
+
+function pickGroupIcon(label: string) {
+  const l = label.toLowerCase();
+  if (l.includes('guide')) return Route;
+  if (l.includes('explanation')) return Lightbulb;
+  if (l.includes('tutorial')) return GraduationCap;
+  if (l.includes('reference')) return BookText;
+  return Folder;
+}
+
+function anyChildCurrent(entries: any[]) {
+  for (const e of entries) {
+    if (e.type === 'link' && e.isCurrent) return true;
+    if (e.type === 'group' && Array.isArray(e.entries) && anyChildCurrent(e.entries)) return true;
+  }
+  return false;
+}
+---
+
+<ul class:list={{ 'top-level': !nested }}>
+  {
+    sublist.map((entry: any) => (
+      <li>
+        {entry.type === 'link' ? (
+          <a
+            href={entry.href}
+            aria-current={entry.isCurrent && 'page'}
+            class:list={[{ large: !nested }, entry.attrs.class]}
+            {...entry.attrs}
+          >
+            <span>{entry.label}</span>
+            {entry.badge && (
+              <span class:list={["sl-badge", entry.badge.class]}>{entry.badge.text}</span>
+            )}
+          </a>
+        ) : (
+          <details
+            open={anyChildCurrent(entry.entries) || !entry.collapsed}
+          >
+            <summary>
+              <div class="group-label">
+                { !nested && (() => { const Cmp = pickGroupIcon(entry.label); return <Cmp class="sidebar-icon" size="1rem" />; })() }
+                <span class="large">{entry.label}</span>
+                {entry.badge && (
+                  <span class:list={["sl-badge", entry.badge.class]}>{entry.badge.text}</span>
+                )}
+              </div>
+              <ChevronRight class="caret" size="1.25rem" />
+            </summary>
+            <Astro.self sublist={entry.entries} nested />
+          </details>
+        )}
+      </li>
+    ))
+  }
+  </ul>
+
+<style>
+  @layer starlight.core {
+    ul {
+      --sl-sidebar-item-padding-inline: 0.5rem;
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      overflow-wrap: anywhere;
+    }
+
+    ul ul li {
+      margin-inline-start: var(--sl-sidebar-item-padding-inline);
+      border-inline-start: 1px solid var(--sl-color-hairline-light);
+      padding-inline-start: var(--sl-sidebar-item-padding-inline);
+    }
+
+    .large {
+      font-size: var(--sl-text-lg);
+      font-weight: 600;
+      color: var(--sl-color-white);
+    }
+
+    .top-level > li + li {
+      margin-top: 0.75rem;
+    }
+
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.2em var(--sl-sidebar-item-padding-inline);
+      line-height: 1.4;
+      cursor: pointer;
+      user-select: none;
+    }
+    summary::marker,
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .caret {
+      transition: transform 0.2s ease-in-out;
+      flex-shrink: 0;
+    }
+    :global([dir='rtl']) .caret {
+      transform: rotateZ(180deg);
+    }
+    [open] > summary .caret {
+      transform: rotateZ(90deg);
+    }
+
+    a {
+      display: block;
+      border-radius: 0.25rem;
+      text-decoration: none;
+      color: var(--sl-color-gray-2);
+      padding: 0.3em var(--sl-sidebar-item-padding-inline);
+      line-height: 1.4;
+    }
+
+    a:hover,
+    a:focus {
+      color: var(--sl-color-white);
+    }
+
+    [aria-current='page'],
+    [aria-current='page']:hover,
+    [aria-current='page']:focus {
+      font-weight: 600;
+      color: var(--sl-color-text-invert);
+      background-color: var(--sl-color-text-accent);
+    }
+
+    a > *:not(:last-child),
+    .group-label > *:not(:last-child) {
+      margin-inline-end: 0.4em;
+    }
+
+    .sidebar-icon {
+      vertical-align: -0.12em;
+      stroke-width: 2;
+    }
+
+    @media (min-width: 50rem) {
+      .top-level > li + li {
+        margin-top: 0.5rem;
+      }
+      .large {
+        font-size: var(--sl-text-base);
+      }
+      a {
+        font-size: var(--sl-text-sm);
+      }
+    }
+  }
+</style>
+

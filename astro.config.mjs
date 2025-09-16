@@ -19,6 +19,9 @@ export default defineConfig({
 		starlight({
 			title: "Endform docs",
 			plugins: [starlightThemeRapide()],
+            components: {
+                Sidebar: "./src/components/Sidebar.astro",
+            },
 			logo: {
 				dark: "./src/assets/endform-logo-wordmark-colored-on-dark-padding.svg",
 				light:
@@ -39,12 +42,12 @@ export default defineConfig({
 					autogenerate: { directory: "guides" },
 				},
 				{
-					label: "Tutorial",
-					autogenerate: { directory: "tutorial" },
-				},
-				{
 					label: "Explanation",
 					autogenerate: { directory: "explanation" },
+				},
+				{
+					label: "Tutorial",
+					autogenerate: { directory: "tutorial" },
 				},
 				{
 					label: "Reference",
