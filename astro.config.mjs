@@ -31,6 +31,11 @@ export default defineConfig({
 			},
 			social: [
 				{
+					icon:"external",
+					label: "Endform Dashboard",
+					href: "https://endform.dev/app",
+				},
+				{
 					icon: "github",
 					label: "GitHub",
 					href: "https://github.com/endformdev",
