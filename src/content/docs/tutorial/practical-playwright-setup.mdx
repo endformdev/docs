@@ -34,8 +34,7 @@ Following the [Playwright documentation](https://playwright.dev/docs/intro#using
 pnpm create playwright
 ```
 
-Follow the wizard. You should now have a `playwright.config.ts` file, a `tests` directory, and also a `tests-examples` directory.
-You can remove the `tests-examples` directory, we won't be using it.
+Follow the wizard. You should now have a `playwright.config.ts` file and a `tests` directory.
 
 ### Modifying `playwright.config.ts` for our needs
 
@@ -76,6 +75,10 @@ Let's check that this works by modifying the `example.spec.ts` test file in the 
 - Modify the expectation to check for our page title `/Playwright Tutorial/`
 - Watch your test run `pnpm playwright test --debug`
 
+<Aside type="caution">
+When you run Playwright in debug mode for the first time, the browser will open and appear frozen on `about:blank`. This is expected! You need to click the "step over" button in the Playwright Inspector window to start stepping through your test.
+</Aside>
+
 You can watch your test step by step by using the "step over" button.
 <Image src={StepOverDebug} alt="Step over button in Playwrights inspector" width={600} />
 
@@ -105,9 +108,18 @@ Today we will learn to use both kinds of set up approaches.
 
 First let's make the test files for setup and teardown:
 
+<Tabs>
+<TabItem label="Linux/macOS">
 ```bash
-touch tests/setup.spec.ts && touch tests/teardown.spec.ts
+touch tests/setup.spec.ts tests/teardown.spec.ts
 ```
+</TabItem>
+<TabItem label="Windows (PowerShell)">
+```powershell
+New-Item -ItemType File -Path tests/setup.spec.ts, tests/teardown.spec.ts
+```
+</TabItem>
+</Tabs>
 
 For us to use project dependencies to declare our setup and teardown steps, we need to make more modifications to our `playwright.config.ts` file.
 
@@ -159,7 +171,7 @@ export default defineConfig({
 </TabItem>
 </Tabs>
 
-We'll talk more about generating tests in the next step, so here's the completed setup / teardown and modified example tests to copy for now.
+We'll talk more about generating tests in the next step, so here's the completed setup / teardonwn and modified example tests to copy for now.
 
 
 <Tabs>
@@ -255,6 +267,10 @@ Running the tests at the moment will break, since we haven't asked Playwright to
 
 To do this, we need to modify our `playwright.config.ts` file to use the `storageState` option:
 
+<Aside type="tip">
+The code below only shows the `storageState` additions. Keep your existing project configurations (like `testMatch`, `testIgnore`, `dependencies`, and device settings) and just add the `storageState` to the `use` object.
+</Aside>
+
 ```ts
 export default defineConfig({
 	projects: [
@@ -265,6 +281,7 @@ export default defineConfig({
 		{
 			name: "chromium",
 			use: {
+				// Add this to your existing use configuration
 				storageState: ".auth/shared-ui-user.json",
 			},
 		},
@@ -287,8 +304,12 @@ Let's explore the alternative to creating users through the browser, which is to
 Let's make ourselves an internal API endpoint for our tests to use.
 
 ```bash
-git checkout stage-1-setup -- app/api/internal/user/route.ts
+git checkout origin/stage-1-setup -- app/api/internal/user/route.ts
 ```
+
+<Aside type="note">
+This step is only necessary if you're running tests against a local Next.js dev application. If you're testing against the remote Vercel deployment, this API endpoint is already available and you can skip this checkout command.
+</Aside>
 
 This file contains a `POST` and `DELETE` endpoint for creating and deleting users.
 
@@ -329,9 +350,18 @@ export default defineConfig({
 
 Then we need to create the `global-setup.ts` and `global-teardown.ts` files.
 
+<Tabs>
+<TabItem label="Linux/macOS">
 ```bash
 touch global-setup.ts global-teardown.ts
 ```
+</TabItem>
+<TabItem label="Windows (PowerShell)">
+```powershell
+New-Item -ItemType File -Path global-setup.ts, global-teardown.ts
+```
+</TabItem>
+</Tabs>
 
 Can you figure out what these scripts should contain?
 
@@ -474,12 +504,17 @@ export default async function globalTeardown(config: FullConfig) {
 
 Don't forget to modify the `playwright.config.ts` file to use the new `storageState` file. Then try running your tests again to make sure everything is working.
 
+<Aside type="tip">
+Update the `storageState` path in your existing project configurations. Keep all your other settings (like `testMatch`, `testIgnore`, `dependencies`, and device configurations).
+</Aside>
+
 ```ts
 export default defineConfig({
 	projects: [
 		{
 			name: "chromium",
 			use: {
+				// Change the storageState path to use the API-created user
 				storageState: ".auth/api-user.json",
 			},
 		},
