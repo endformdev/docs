@@ -39,7 +39,6 @@ There are a few exceptions to this.
 Options that we currently don't support, but will do in the future (let us know and we will prioritize them):
 
 - `forbidOnly`
-- the `on-all-retries`, `on-first-retry`, `retain-on-first-failure` trace recording options. If you are using one of these, we will override the config to use `retain-on-failure`. `off`, `on` and `retain-on-failure` are our reccomended options for trace recording.
 
 Options that aren't supported since they don't make sense in a remote context:
 
