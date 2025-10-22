@@ -33,34 +33,7 @@ Proxying traffic via your local network is currently in alpha, we would be grate
 
 <Steps>
 
-1. ### Install the addon package
-
-   In order for traffic to be proxied, we need to install the extra `endform-proxy-network` package in the same place as you installed the main `endform` CLI.
-
-   <Tabs syncKey="pkg">
-      <TabItem label="npm">
-      ```sh
-      npm install --save-dev endform-proxy-network
-      ```
-      </TabItem>
-      <TabItem label="pnpm">
-      ```sh
-      pnpm install --dev endform-proxy-network
-      ```
-      </TabItem>
-      <TabItem label="Yarn">
-      ```sh
-      yarn add --dev endform-proxy-network
-      ```
-      </TabItem>
-      <TabItem label="Bun">
-      ```sh
-      bun add --dev endform-proxy-network
-      ```
-      </TabItem>
-   </Tabs>
-
-2. ### Configure which traffic to proxy.
+1. ### Configure which traffic to proxy.
    
    #### As a playwright `webServer`
    If you want to run your local server as a [playwright `webServer`](https://playwright.dev/docs/api/class-testconfig#test-config-web-server)
@@ -80,13 +53,8 @@ Proxying traffic via your local network is currently in alpha, we would be grate
 
    You can read more about the `proxyNetworkHosts` configuration in the [endform config reference](/docs/reference/endform-config#proxy-network-hosts).
 
-3. ### Run your tests!
+2. ### Run your tests!
 
    That's it! You can now run your tests as normal, and the traffic will be proxied via the cli to your target server.
-
-
-
-
-
 
 </Steps>

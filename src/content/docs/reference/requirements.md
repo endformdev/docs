@@ -20,13 +20,13 @@ Since your tests will be running on remote machines, the servers you are testing
 There are two ways to acheive this:
 
 - You are running preview infrastructure or a testing environment that is exposed to the internet anyway.
-- You can use the `endform-proxy-network` addon to shuttle traffic between the remote runners and the machine your CLI runs on. Check out the [guide on proxying traffic via your local network](/docs/guides/proxy-via-local) for more information about this approach.
+- Endform can automatically shuttle traffic between the remote runners and the machine your CLI runs on. Check out the [guide on proxying traffic via your local network](/docs/guides/proxy-via-local) for more information about this approach.
 
 ## Playwright requirements
 
 - We support playwright projects written in typescript and javascript.
 - The length of an individual test run is limited to 4 minutes (same as the `testConfig.timeout` option). The playwright default timeout is 30 seconds. This does not include retries.
-- We currently only support the latest minor version of playwright (`1.53.0` at the time of writing).
+- We currently only support the latest minor version of playwright (`1.56.0` at the time of writing).
 - We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with. Let us know if you are in need of more browsers and we can prioritise this.
 
 ### Playwright configuration options
