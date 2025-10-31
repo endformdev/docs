@@ -5,12 +5,19 @@ sidebar:
   order: 1
 ---
 
-Endform is a _fully parallel_, _remote_ test runner.
-Each of your playwright tests will be run on a separate machine in the cloud.
+Endform is a _parallel_, _remote_ test runner.
+Your playwright tests will be run on many separate machine in the cloud.
 
-### Fully parallel
+### Parallel
 
-All of your tests will run at the same time with endform, which means that your tests need to be _completely independent_ of each other.
+We respect the [`fullyParallel` Playwright configuration option](https://playwright.dev/docs/api/class-testconfig#test-config-fully-parallel):
+
+This means that:
+
+- If `fullyParallel: false` (Playwright default), each _file_ will run in parallel.
+- If `fullyParallel: true`, each _test case_ will run in parallel.
+
+Generally, this means that your tests need to be _independent_ of each other, in order to not interfere with other tests running at the same time.
 
 If you keep your tests decoupled from your application already by, for example, using apis to generate data, you are probably ready to use endform.
 
@@ -26,7 +33,8 @@ There are two ways to acheive this:
 
 - We support playwright projects written in typescript and javascript.
 - The length of an individual test run is limited to 4 minutes (same as the `testConfig.timeout` option). The playwright default timeout is 30 seconds. This does not include retries.
-- We currently only support the latest minor version of playwright (`1.56.0` at the time of writing).
+- If you are running `fullyParallel: false`, then the maximum timeout of four minutes applies to each _file_.
+- We currently only support the latest two minor versions of playwright.
 - We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with. Let us know if you are in need of more browsers and we can prioritise this.
 
 ### Playwright configuration options
@@ -36,13 +44,10 @@ To understand how most of these options work, please refer to the [Playwright do
 
 There are a few exceptions to this.
 
-Options that we currently don't support, but will do in the future (let us know and we will prioritize them):
+Options that we currently don't support, but will do in future (let us know and we will prioritize them):
 
-- `forbidOnly`
-
-Options that aren't supported since they don't make sense in a remote context:
-
-- `fullyParallel` is always `true`, but you can limit concurrency using settings in the endform dashboard.
+- `.only()`
+- `.fail()`
 
 ## Node requirements
 
