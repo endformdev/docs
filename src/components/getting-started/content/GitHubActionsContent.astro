@@ -1,0 +1,196 @@
+---
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+  suite: 'existing' | 'demo';
+  target: 'local' | 'remote' | 'vercel';
+}
+
+const { suite, target } = Astro.props;
+
+// Determine step numbers based on combination
+let connectGitHubStep = 1;
+let connectVercelStep = 2;
+let deployStep = 3;
+let workflowStep = suite === 'existing' && target === 'vercel' ? 3 : target === 'vercel' ? 2 : 2;
+let commitStep = 3;
+let pushStep = 4;
+
+if (target === 'vercel') {
+  if (suite === 'existing') {
+    workflowStep = 3;
+    commitStep = 4;
+    pushStep = 5;
+  } else {
+    // demo + vercel
+    workflowStep = 2; // skipped, deploy happens instead
+    commitStep = 3;
+    pushStep = 4;
+  }
+}
+---
+
+## {connectGitHubStep}. Connect GitHub
+
+Install the Endform GitHub App to enable OIDC authentication in your workflows:
+
+<a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Connect GitHub in Dashboard</a>
+
+{target === 'vercel' && (
+  <>
+    ## {connectVercelStep}. Connect Vercel
+
+    Connect your Vercel account to automatically test preview deployments:
+
+    <a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Connect Vercel in Dashboard</a>
+  </>
+)}
+
+{suite === 'demo' && target === 'vercel' && (
+  <>
+    ## {deployStep}. Deploy the demo project
+
+    Deploy our demo repository to your Vercel account. This will automatically configure the project and start running tests on main:
+
+    <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fendformdev%2Fplaywright-tutorial" target="_blank" rel="noopener noreferrer">Deploy with Vercel</a>
+
+    <small>
+      Once deployed, tests will automatically run. Results will appear in the dashboard shortly.
+    </small>
+  </>
+)}
+
+{!(suite === 'demo' && target === 'vercel') && (
+  <>
+    ## {workflowStep}. Create workflow file
+
+    Create `.github/workflows/endform-e2e.yml` in your repository:
+
+    {target === 'remote' && (
+      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write # required for authentication with Endform
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm (or whichever package manager you use)
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+
+      - name: Run end to end tests with endform
+        working-directory: . # where your playwright suite is located
+        env:
+          BASE_URL: https://url-to-your-server.com
+        run: |
+          npx endform@latest test`} />
+    )}
+
+    {target === 'local' && (
+      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write # required for authentication with Endform
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm (or whichever package manager you use)
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+      
+      # Any other setup needed for your local server to run...
+
+      - name: Run end to end tests with endform
+        working-directory: . # where your playwright suite is located
+        run: |
+          npx endform@latest test`} />
+    )}
+
+    {target === 'vercel' && (
+      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write # required for authentication with Endform
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm (or whichever package manager you use)
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+
+      - name: Wait for Vercel deployment
+        uses: endformdev/actions/await-vercel-deployment@main
+        with:
+          project-name: your-vercel-project-name
+          set-url-env-var: BASE_URL # Sets the Vercel preview URL as this environment variable
+
+      - name: Run end to end tests with endform
+        working-directory: . # where your playwright suite is located
+        run: |
+          npx endform@latest test`} />
+    )}
+  </>
+)}
+
+{!(suite === 'demo' && target === 'vercel') && (
+  <>
+    ## {commitStep}. Commit your changes
+
+    Stage and commit your workflow file:
+
+    ```bash
+    git add -A && git commit -m "Add endform github actions workflow"
+    ```
+
+    ## {pushStep}. Push to trigger tests
+
+    Push your changes to trigger the workflow on your next pull request:
+
+    ```bash
+    git push
+    ```
+  </>
+)}
+
+## View your results
+
+Once your tests complete, results will appear in the [Endform dashboard](https://endform.dev/app).

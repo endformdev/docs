@@ -1,0 +1,23 @@
+---
+title: Getting Started - Local CLI with Demo Suite (Remote Server)
+description: Running the Endform demo Playwright tests with Local CLI against a remote server
+---
+
+import Selector from '../../../../../../components/getting-started/Selector.astro';
+import LocalCliContent from '../../../../../../components/getting-started/content/LocalCliContent.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+Make sure to check out the [requirements](/docs/reference/requirements) before you start.
+
+<Selector
+  currentSuite="demo"
+  currentTarget="remote"
+  currentRunner="local-cli"
+/>
+
+<LocalCliContent suite="demo" target="remote" />
+
+<Aside>
+Since endform is currently in beta, we recommend a very high update cadence of the CLI. Please try to keep within the _last 2 weeks_ of releases.
+</Aside>
+

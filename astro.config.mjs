@@ -1,6 +1,5 @@
 // @ts-check
 import cloudflare from "@astrojs/cloudflare";
-import solid from "@astrojs/solid-js";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightThemeRapide from "starlight-theme-rapide";
@@ -17,7 +16,6 @@ export default defineConfig({
 	},
 
 	integrations: [
-		solid(),
 		starlight({
 			title: "Endform docs",
 			plugins: [starlightThemeRapide()],

@@ -1,0 +1,23 @@
+---
+title: Getting Started - GitHub Actions with Demo Suite (Remote Server)
+description: Running the Endform demo Playwright tests with GitHub Actions against a remote server
+---
+
+import Selector from '../../../../../../components/getting-started/Selector.astro';
+import GitHubActionsContent from '../../../../../../components/getting-started/content/GitHubActionsContent.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+Make sure to check out the [requirements](/docs/reference/requirements) before you start.
+
+<Selector
+  currentSuite="demo"
+  currentTarget="remote"
+  currentRunner="github-actions"
+/>
+
+<GitHubActionsContent suite="demo" target="remote" />
+
+<Aside>
+Since endform is currently in beta, we recommend a very high update cadence of the CLI. Please try to keep within the _last 2 weeks_ of releases.
+</Aside>
+

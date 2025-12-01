@@ -1,0 +1,124 @@
+---
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+  suite: 'existing' | 'demo';
+  target: 'local' | 'remote' | 'vercel';
+}
+
+const { suite, target } = Astro.props;
+
+const showBaseUrl = target === 'remote' || target === 'vercel';
+const baseUrlLine = showBaseUrl ? '\n    BASE_URL: https://your-server.com' : '';
+const baseUrlComment = showBaseUrl ? '\n        # Also set BASE_URL to your server URL' : '';
+
+let configurePlaywrightStep = 2;
+let configureCiStep = 3;
+let runPipelineStep = 4;
+
+if (target === 'local') {
+  configurePlaywrightStep = 2;
+  configureCiStep = 3;
+  runPipelineStep = 4;
+} else {
+  configurePlaywrightStep = 0; // skip
+  configureCiStep = 2;
+  runPipelineStep = 3;
+}
+---
+
+## 1. Generate an API key
+
+Create an API key to authenticate your CI pipeline with Endform:
+
+<a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Generate API Key in Dashboard</a>
+
+<small>
+  Set this as the `ENDFORM_API_KEY` environment variable in your CI system.
+</small>
+
+{target === 'local' && (
+  <>
+    ## {configurePlaywrightStep}. Configure Playwright webServer
+
+    Configure your `playwright.config.ts` to start your dev server in CI:
+
+    <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+  },
+  use: {
+    baseURL: 'http://localhost:3000',
+  },
+});`} />
+  </>
+)}
+
+## {configureCiStep}. Configure your CI pipeline
+
+Add these steps to your CI configuration. Examples for popular platforms:
+
+<Code lang="yaml" title=".gitlab-ci.yml" code={`e2e-tests:
+  image: node:20
+  script:
+    - npm ci
+    - npx endform@latest test
+  variables:
+    ENDFORM_API_KEY: $ENDFORM_API_KEY${baseUrlLine}`} />
+
+<Code lang="yaml" title=".circleci/config.yml" code={`version: 2.1
+jobs:
+  e2e:
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - run: npm ci
+      - run: npx endform@latest test
+    environment:
+      ENDFORM_API_KEY: $ENDFORM_API_KEY${baseUrlLine}`} />
+
+<Code lang="yaml" title="azure-pipelines.yml" code={`trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+  - script: npm ci
+    displayName: 'Install dependencies'
+  - script: npx endform@latest test
+    displayName: 'Run E2E tests'
+    env:
+      ENDFORM_API_KEY: $(ENDFORM_API_KEY)${showBaseUrl ? '\n      BASE_URL: $(BASE_URL)' : ''}`} />
+
+<Code lang="yaml" title="bitbucket-pipelines.yml" code={`pipelines:
+  default:
+    - step:
+        name: E2E Tests
+        image: node:20
+        script:
+          - npm ci
+          - npx endform@latest test
+        # Set ENDFORM_API_KEY in repository variables${baseUrlComment}`} />
+
+{showBaseUrl && (
+  <small>
+    Make sure to set `BASE_URL` to your server's URL in your CI environment variables.
+  </small>
+)}
+
+## {runPipelineStep}. Run your pipeline
+
+Commit and push your CI configuration. Tests will run on your next pipeline execution.
+
+## View your results
+
+Once your tests complete, results will appear in the [Endform dashboard](https://endform.dev/app).

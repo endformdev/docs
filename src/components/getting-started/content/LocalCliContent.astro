@@ -1,0 +1,132 @@
+---
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+  suite: 'existing' | 'demo';
+  target: 'local' | 'remote' | 'vercel';
+}
+
+const { suite, target } = Astro.props;
+---
+
+## 1. Set up your project
+
+{suite === 'existing' ? (
+  <>
+    Navigate to your Playwright project root:
+
+    ```bash
+    cd your-project
+    ```
+  </>
+) : (
+  <>
+    Clone our tutorial repository to get started quickly:
+
+    ```bash
+    git clone git@github.com:endformdev/playwright-tutorial.git && cd playwright-tutorial
+    pnpm install
+    ```
+  </>
+)}
+
+## 2. Login to Endform
+
+Authenticate with the Endform CLI:
+
+```bash
+npx endform@latest login
+```
+
+## 3. Configure Playwright
+
+{suite === 'existing' && target === 'local' && (
+  <>
+    Configure your `playwright.config.ts` webServer to boot your local server:
+
+    <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+  },
+  use: {
+    baseURL: 'http://localhost:3000',
+  },
+});`} />
+  </>
+)}
+
+{suite === 'existing' && target === 'remote' && (
+  <>
+    Configure your `playwright.config.ts` to point to your remote server:
+
+    <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  use: {
+    baseURL: process.env.BASE_URL || 'https://staging.yourapp.com',
+  },
+});`} />
+  </>
+)}
+
+{suite === 'existing' && target === 'vercel' && (
+  <>
+    Configure your `playwright.config.ts` to use the Vercel preview URL:
+
+    <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  use: {
+    baseURL: process.env.VERCEL_URL || 'https://your-project.vercel.app',
+  },
+});`} />
+  </>
+)}
+
+{suite === 'demo' && target === 'local' && (
+  <>
+    The tutorial repository has `webServer` configured to start the dev server on port 3000:
+
+    <Code lang="typescript" title="playwright.config.ts" code={`// Already configured in the tutorial repository
+export default defineConfig({
+  webServer: {
+    command: 'pnpm dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+  },
+  use: {
+    baseURL: 'http://localhost:3000',
+  },
+});`} />
+  </>
+)}
+
+{suite === 'demo' && target === 'remote' && (
+  <>
+    You can test against our deployed demo app. Set the `baseURL` in your config:
+
+    <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  use: {
+    baseURL: 'https://endform-playwright-tutorial.vercel.app',
+  },
+});`} />
+  </>
+)}
+
+## 4. Run your tests
+
+Execute your test suite with Endform:
+
+```bash
+npx endform@latest test
+```
+
+## View your results
+
+Once your tests complete, results will appear in the [Endform dashboard](https://endform.dev/app).
