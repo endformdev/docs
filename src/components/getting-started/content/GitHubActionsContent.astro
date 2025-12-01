@@ -1,70 +1,44 @@
 ---
-import { Code } from '@astrojs/starlight/components';
+import { Code } from "@astrojs/starlight/components";
 
 interface Props {
-  suite: 'existing' | 'demo';
-  target: 'local' | 'remote' | 'vercel';
+	suite: "existing" | "demo";
+	target: "local" | "remote" | "vercel";
 }
 
 const { suite, target } = Astro.props;
 
-// Determine step numbers based on combination
-let connectGitHubStep = 1;
-let connectVercelStep = 2;
-let deployStep = 3;
-let workflowStep = suite === 'existing' && target === 'vercel' ? 3 : target === 'vercel' ? 2 : 2;
-let commitStep = 3;
-let pushStep = 4;
-
-if (target === 'vercel') {
-  if (suite === 'existing') {
-    workflowStep = 3;
-    commitStep = 4;
-    pushStep = 5;
-  } else {
-    // demo + vercel
-    workflowStep = 2; // skipped, deploy happens instead
-    commitStep = 3;
-    pushStep = 4;
-  }
-}
+// For demo + vercel, we skip the workflow file and go straight to deploy
+const isDemoVercel = suite === "demo" && target === "vercel";
 ---
 
-## {connectGitHubStep}. Connect GitHub
+<h2 id="connect-github">1. Connect GitHub</h2>
 
-Install the Endform GitHub App to enable OIDC authentication in your workflows:
+<p>Install the Endform GitHub App to enable OIDC authentication in your workflows:</p>
 
-<a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Connect GitHub in Dashboard</a>
+<p><a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Connect GitHub in Dashboard →</a></p>
 
 {target === 'vercel' && (
   <>
-    ## {connectVercelStep}. Connect Vercel
-
-    Connect your Vercel account to automatically test preview deployments:
-
-    <a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Connect Vercel in Dashboard</a>
+    <h2 id="connect-vercel">2. Connect Vercel</h2>
+    <p>Connect your Vercel account to automatically test preview deployments:</p>
+    <p><a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Connect Vercel in Dashboard →</a></p>
   </>
 )}
 
-{suite === 'demo' && target === 'vercel' && (
+{isDemoVercel && (
   <>
-    ## {deployStep}. Deploy the demo project
-
-    Deploy our demo repository to your Vercel account. This will automatically configure the project and start running tests on main:
-
-    <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fendformdev%2Fplaywright-tutorial" target="_blank" rel="noopener noreferrer">Deploy with Vercel</a>
-
-    <small>
-      Once deployed, tests will automatically run. Results will appear in the dashboard shortly.
-    </small>
+    <h2 id="deploy-demo">3. Deploy the demo project</h2>
+    <p>Deploy our demo repository to your Vercel account. This will automatically configure the project and start running tests on main:</p>
+    <p><a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fendformdev%2Fplaywright-tutorial" target="_blank" rel="noopener noreferrer">Deploy with Vercel →</a></p>
+    <p><small>Once deployed, tests will automatically run. Results will appear in the dashboard shortly.</small></p>
   </>
 )}
 
-{!(suite === 'demo' && target === 'vercel') && (
+{!isDemoVercel && (
   <>
-    ## {workflowStep}. Create workflow file
-
-    Create `.github/workflows/endform-e2e.yml` in your repository:
+    <h2 id="create-workflow">{target === 'vercel' ? '3' : '2'}. Create workflow file</h2>
+    <p>Create <code>.github/workflows/endform-e2e.yml</code> in your repository:</p>
 
     {target === 'remote' && (
       <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
@@ -168,29 +142,17 @@ jobs:
         run: |
           npx endform@latest test`} />
     )}
+
+    <h2 id="commit-changes">{target === 'vercel' ? '4' : '3'}. Commit your changes</h2>
+    <p>Stage and commit your workflow file:</p>
+    <Code lang="bash" code='git add -A && git commit -m "Add endform github actions workflow"' />
+
+    <h2 id="push-to-trigger">{target === 'vercel' ? '5' : '4'}. Push to trigger tests</h2>
+    <p>Push your changes to trigger the workflow on your next pull request:</p>
+    <Code lang="bash" code="git push" />
   </>
 )}
 
-{!(suite === 'demo' && target === 'vercel') && (
-  <>
-    ## {commitStep}. Commit your changes
+<h2 id="view-your-results">View your results</h2>
 
-    Stage and commit your workflow file:
-
-    ```bash
-    git add -A && git commit -m "Add endform github actions workflow"
-    ```
-
-    ## {pushStep}. Push to trigger tests
-
-    Push your changes to trigger the workflow on your next pull request:
-
-    ```bash
-    git push
-    ```
-  </>
-)}
-
-## View your results
-
-Once your tests complete, results will appear in the [Endform dashboard](https://endform.dev/app).
+<p>Once your tests complete, results will appear in the <a href="https://endform.dev/app">Endform dashboard</a>.</p>

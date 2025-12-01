@@ -9,41 +9,32 @@ interface Props {
 const { suite, target } = Astro.props;
 ---
 
-## 1. Set up your project
+<h2 id="set-up-your-project">1. Set up your project</h2>
 
 {suite === 'existing' ? (
   <>
-    Navigate to your Playwright project root:
-
-    ```bash
-    cd your-project
-    ```
+    <p>Navigate to your Playwright project root:</p>
+    <Code lang="bash" code="cd your-project" />
   </>
 ) : (
   <>
-    Clone our tutorial repository to get started quickly:
-
-    ```bash
-    git clone git@github.com:endformdev/playwright-tutorial.git && cd playwright-tutorial
-    pnpm install
-    ```
+    <p>Clone our tutorial repository to get started quickly:</p>
+    <Code lang="bash" code={`git clone git@github.com:endformdev/playwright-tutorial.git && cd playwright-tutorial
+pnpm install`} />
   </>
 )}
 
-## 2. Login to Endform
+<h2 id="login-to-endform">2. Login to Endform</h2>
 
-Authenticate with the Endform CLI:
+<p>Authenticate with the Endform CLI:</p>
 
-```bash
-npx endform@latest login
-```
+<Code lang="bash" code="npx endform@latest login" />
 
-## 3. Configure Playwright
+<h2 id="configure-playwright">3. Configure Playwright</h2>
 
 {suite === 'existing' && target === 'local' && (
   <>
-    Configure your `playwright.config.ts` webServer to boot your local server:
-
+    <p>Configure your <code>playwright.config.ts</code> webServer to boot your local server:</p>
     <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -61,8 +52,7 @@ export default defineConfig({
 
 {suite === 'existing' && target === 'remote' && (
   <>
-    Configure your `playwright.config.ts` to point to your remote server:
-
+    <p>Configure your <code>playwright.config.ts</code> to point to your remote server:</p>
     <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -75,8 +65,7 @@ export default defineConfig({
 
 {suite === 'existing' && target === 'vercel' && (
   <>
-    Configure your `playwright.config.ts` to use the Vercel preview URL:
-
+    <p>Configure your <code>playwright.config.ts</code> to use the Vercel preview URL:</p>
     <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -89,8 +78,7 @@ export default defineConfig({
 
 {suite === 'demo' && target === 'local' && (
   <>
-    The tutorial repository has `webServer` configured to start the dev server on port 3000:
-
+    <p>The tutorial repository has <code>webServer</code> configured to start the dev server on port 3000:</p>
     <Code lang="typescript" title="playwright.config.ts" code={`// Already configured in the tutorial repository
 export default defineConfig({
   webServer: {
@@ -107,8 +95,7 @@ export default defineConfig({
 
 {suite === 'demo' && target === 'remote' && (
   <>
-    You can test against our deployed demo app. Set the `baseURL` in your config:
-
+    <p>You can test against our deployed demo app. Set the <code>baseURL</code> in your config:</p>
     <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -119,14 +106,12 @@ export default defineConfig({
   </>
 )}
 
-## 4. Run your tests
+<h2 id="run-your-tests">4. Run your tests</h2>
 
-Execute your test suite with Endform:
+<p>Execute your test suite with Endform:</p>
 
-```bash
-npx endform@latest test
-```
+<Code lang="bash" code="npx endform@latest test" />
 
-## View your results
+<h2 id="view-your-results">View your results</h2>
 
-Once your tests complete, results will appear in the [Endform dashboard](https://endform.dev/app).
+<p>Once your tests complete, results will appear in the <a href="https://endform.dev/app">Endform dashboard</a>.</p>

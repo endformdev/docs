@@ -10,39 +10,20 @@ const { suite, target } = Astro.props;
 
 const showBaseUrl = target === 'remote' || target === 'vercel';
 const baseUrlLine = showBaseUrl ? '\n    BASE_URL: https://your-server.com' : '';
-const baseUrlComment = showBaseUrl ? '\n        # Also set BASE_URL to your server URL' : '';
-
-let configurePlaywrightStep = 2;
-let configureCiStep = 3;
-let runPipelineStep = 4;
-
-if (target === 'local') {
-  configurePlaywrightStep = 2;
-  configureCiStep = 3;
-  runPipelineStep = 4;
-} else {
-  configurePlaywrightStep = 0; // skip
-  configureCiStep = 2;
-  runPipelineStep = 3;
-}
 ---
 
-## 1. Generate an API key
+<h2 id="generate-api-key">1. Generate an API key</h2>
 
-Create an API key to authenticate your CI pipeline with Endform:
+<p>Create an API key to authenticate your CI pipeline with Endform:</p>
 
-<a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Generate API Key in Dashboard</a>
+<p><a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">Generate API Key in Dashboard →</a></p>
 
-<small>
-  Set this as the `ENDFORM_API_KEY` environment variable in your CI system.
-</small>
+<p><small>Set this as the <code>ENDFORM_API_KEY</code> environment variable in your CI system.</small></p>
 
 {target === 'local' && (
   <>
-    ## {configurePlaywrightStep}. Configure Playwright webServer
-
-    Configure your `playwright.config.ts` to start your dev server in CI:
-
+    <h2 id="configure-playwright">2. Configure Playwright webServer</h2>
+    <p>Configure your <code>playwright.config.ts</code> to start your dev server in CI:</p>
     <Code lang="typescript" title="playwright.config.ts" code={`import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -58,9 +39,9 @@ export default defineConfig({
   </>
 )}
 
-## {configureCiStep}. Configure your CI pipeline
+<h2 id="configure-ci">{target === 'local' ? '3' : '2'}. Configure your CI pipeline</h2>
 
-Add these steps to your CI configuration. Examples for popular platforms:
+<p>Add these steps to your CI configuration. Examples for popular platforms:</p>
 
 <Code lang="yaml" title=".gitlab-ci.yml" code={`e2e-tests:
   image: node:20
@@ -107,18 +88,16 @@ steps:
         script:
           - npm ci
           - npx endform@latest test
-        # Set ENDFORM_API_KEY in repository variables${baseUrlComment}`} />
+        # Set ENDFORM_API_KEY in repository variables${showBaseUrl ? '\n        # Also set BASE_URL to your server URL' : ''}`} />
 
 {showBaseUrl && (
-  <small>
-    Make sure to set `BASE_URL` to your server's URL in your CI environment variables.
-  </small>
+  <p><small>Make sure to set <code>BASE_URL</code> to your server's URL in your CI environment variables.</small></p>
 )}
 
-## {runPipelineStep}. Run your pipeline
+<h2 id="run-pipeline">{target === 'local' ? '4' : '3'}. Run your pipeline</h2>
 
-Commit and push your CI configuration. Tests will run on your next pipeline execution.
+<p>Commit and push your CI configuration. Tests will run on your next pipeline execution.</p>
 
-## View your results
+<h2 id="view-your-results">View your results</h2>
 
-Once your tests complete, results will appear in the [Endform dashboard](https://endform.dev/app).
+<p>Once your tests complete, results will appear in the <a href="https://endform.dev/app">Endform dashboard</a>.</p>
