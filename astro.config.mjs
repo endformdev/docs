@@ -19,9 +19,9 @@ export default defineConfig({
 		starlight({
 			title: "Endform docs",
 			plugins: [starlightThemeRapide()],
-            components: {
-                Sidebar: "./src/components/Sidebar.astro",
-            },
+			components: {
+				Sidebar: "./src/components/Sidebar.astro",
+			},
 			logo: {
 				dark: "./src/assets/endform-logo-wordmark-colored-on-dark-padding.svg",
 				light:
@@ -31,7 +31,7 @@ export default defineConfig({
 			},
 			social: [
 				{
-					icon:"external",
+					icon: "external",
 					label: "Endform Dashboard",
 					href: "https://endform.dev/app",
 				},
@@ -60,13 +60,14 @@ export default defineConfig({
 				},
 			],
 
-			head: [{
-				tag: 'script',
-				attrs: {
-					id: 'posthog-js',
-					type: 'text/javascript',
-				},
-				content: `
+			head: [
+				{
+					tag: "script",
+					attrs: {
+						id: "posthog-js",
+						type: "text/javascript",
+					},
+					content: `
 					!(function (t, e) {
 						var o, n, p, r
 						e.__SV ||
@@ -114,8 +115,9 @@ export default defineConfig({
 						defaults: "2025-05-24",
 						disable_surveys: true,
 					})
-				`
-			}]
+				`,
+				},
+			],
 		}),
 	],
 

@@ -1,0 +1,218 @@
+---
+interface Props {
+	currentSuite: "existing" | "demo";
+	currentTarget: "local" | "remote" | "vercel";
+	currentRunner: "local-cli" | "github-actions" | "other-ci";
+}
+
+const { currentSuite, currentTarget, currentRunner } = Astro.props;
+
+// Build the base path for navigation
+const basePath = "/docs/guides/getting-started";
+
+function buildPath(suite: string, target: string, runner: string) {
+	return `${basePath}/${runner}/${suite}/${target}`;
+}
+---
+
+<div class="selector-panel">
+  <div class="selector">
+    <span class="selector-label">Suite</span>
+    <div class="selector-options" role="radiogroup" aria-label="Suite">
+      <a
+        href={buildPath('existing', currentTarget, currentRunner)}
+        class={`selector-button ${currentSuite === 'existing' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentSuite === 'existing'}
+      >
+        Existing Suite
+      </a>
+      <a
+        href={buildPath('demo', currentTarget, currentRunner)}
+        class={`selector-button ${currentSuite === 'demo' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentSuite === 'demo'}
+      >
+        Demo Suite
+      </a>
+    </div>
+  </div>
+
+  <div class="selector">
+    <span class="selector-label">Target</span>
+    <div class="selector-options" role="radiogroup" aria-label="Target">
+      <a
+        href={buildPath(currentSuite, 'remote', currentRunner)}
+        class={`selector-button ${currentTarget === 'remote' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentTarget === 'remote'}
+      >
+        Remote Server
+      </a>
+      <a
+        href={buildPath(currentSuite, 'local', currentRunner)}
+        class={`selector-button ${currentTarget === 'local' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentTarget === 'local'}
+      >
+        Local Server
+      </a>
+      <span
+        class={`selector-button selector-button--disabled ${currentTarget === 'vercel' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-disabled="true"
+        aria-checked={currentTarget === 'vercel'}
+      >
+        Vercel Preview
+        <span class="selector-badge">Soon</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="selector">
+    <span class="selector-label">Run From</span>
+    <div class="selector-options" role="radiogroup" aria-label="Run From">
+      <a
+        href={buildPath(currentSuite, currentTarget, 'local-cli')}
+        class={`selector-button ${currentRunner === 'local-cli' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentRunner === 'local-cli'}
+      >
+        Local CLI
+      </a>
+      <a
+        href={buildPath(currentSuite, currentTarget, 'github-actions')}
+        class={`selector-button ${currentRunner === 'github-actions' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentRunner === 'github-actions'}
+      >
+        GitHub Actions
+      </a>
+      <a
+        href={buildPath(currentSuite, currentTarget, 'other-ci')}
+        class={`selector-button ${currentRunner === 'other-ci' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentRunner === 'other-ci'}
+      >
+        Other CI/CD
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .selector-panel {
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 50rem) {
+    .selector {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .selector-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--sl-color-gray-3);
+    min-width: 5.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .selector-options {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: var(--sl-color-gray-6);
+    border-radius: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .selector-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: transparent;
+    color: var(--sl-color-gray-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .selector-button:hover:not(.selector-button--disabled):not(.selector-button--active) {
+    background: var(--sl-color-gray-5);
+    color: var(--sl-color-white);
+  }
+
+  .selector-button--active {
+    background: var(--sl-color-bg);
+    color: var(--sl-color-white);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .selector-button--active:hover {
+    background: var(--sl-color-bg);
+    color: var(--sl-color-white);
+  }
+
+  .selector-button--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .selector-badge {
+    padding: 0.125rem 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 9999px;
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  /* Light mode adjustments */
+  :global([data-theme='light']) .selector-options {
+    background: var(--sl-color-gray-6);
+  }
+
+  :global([data-theme='light']) .selector-button {
+    color: var(--sl-color-gray-2);
+  }
+
+  :global([data-theme='light']) .selector-button:hover:not(.selector-button--disabled):not(.selector-button--active) {
+    background: var(--sl-color-gray-5);
+    color: var(--sl-color-gray-1);
+  }
+
+  :global([data-theme='light']) .selector-button--active {
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
