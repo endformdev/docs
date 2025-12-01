@@ -42,20 +42,20 @@ function buildPath(suite: string, target: string, runner: string) {
     <span class="selector-label">Target</span>
     <div class="selector-options" role="radiogroup" aria-label="Target">
       <a
-        href={buildPath(currentSuite, 'local', currentRunner)}
-        class={`selector-button ${currentTarget === 'local' ? 'selector-button--active' : ''}`}
-        role="radio"
-        aria-checked={currentTarget === 'local'}
-      >
-        Local Server
-      </a>
-      <a
         href={buildPath(currentSuite, 'remote', currentRunner)}
         class={`selector-button ${currentTarget === 'remote' ? 'selector-button--active' : ''}`}
         role="radio"
         aria-checked={currentTarget === 'remote'}
       >
         Remote Server
+      </a>
+      <a
+        href={buildPath(currentSuite, 'local', currentRunner)}
+        class={`selector-button ${currentTarget === 'local' ? 'selector-button--active' : ''}`}
+        role="radio"
+        aria-checked={currentTarget === 'local'}
+      >
+        Local Server
       </a>
       <span
         class={`selector-button selector-button--disabled ${currentTarget === 'vercel' ? 'selector-button--active' : ''}`}

@@ -5,18 +5,13 @@ description: Running your tests with Endform for the first time
 
 import Selector from '../../../components/getting-started/Selector.astro';
 import LocalCliContent from '../../../components/getting-started/content/LocalCliContent.astro';
-import { Aside } from '@astrojs/starlight/components';
 
 Make sure to check out the [requirements](/docs/reference/requirements) before you start.
 
 <Selector
   currentSuite="existing"
-  currentTarget="local"
+  currentTarget="remote"
   currentRunner="local-cli"
 />
 
-<LocalCliContent suite="existing" target="local" />
-
-<Aside>
-Since endform is currently in beta, we recommend a very high update cadence of the CLI. Please try to keep within the _last 2 weeks_ of releases.
-</Aside>
+<LocalCliContent suite="existing" target="remote" />
