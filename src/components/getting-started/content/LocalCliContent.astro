@@ -1,9 +1,9 @@
 ---
-import { Code } from '@astrojs/starlight/components';
+import { Code } from "@astrojs/starlight/components";
 
 interface Props {
-  suite: 'existing' | 'demo';
-  target: 'local' | 'remote' | 'vercel';
+	suite: "existing" | "demo";
+	target: "local" | "remote" | "vercel";
 }
 
 const { suite, target } = Astro.props;

@@ -7,138 +7,162 @@ import { OtherCiFlowContent } from "./flow-content/OtherCiFlowContent";
 import { StepBlock } from "./StepBlock";
 import { When } from "./When";
 import {
-  DefaultGetStartedState,
-  type GetStartedState,
-  type Runner,
-  type SuiteOrigin,
+	DefaultGetStartedState,
+	type GetStartedState,
+	type Runner,
+	type SuiteOrigin,
 } from "./types";
 
 export function GetStartedFlow() {
-  const [state, setState] = createSignal<GetStartedState>(DefaultGetStartedState);
+	const [state, setState] = createSignal<GetStartedState>(
+		DefaultGetStartedState,
+	);
 
-  const updateState = (field: keyof GetStartedState, value: string) => {
-    setState((prev) => ({ ...prev, [field]: value }));
-  };
+	const updateState = (field: keyof GetStartedState, value: string) => {
+		setState((prev) => ({ ...prev, [field]: value }));
+	};
 
-  const isInvalidCombination = () => {
-    const s = state();
-    return (
-      s.starting_suite === "demo" &&
-      s.starting_runner !== "local-cli" &&
-      s.starting_runner !== "github-actions"
-    );
-  };
+	const isInvalidCombination = () => {
+		const s = state();
+		return (
+			s.starting_suite === "demo" &&
+			s.starting_runner !== "local-cli" &&
+			s.starting_runner !== "github-actions"
+		);
+	};
 
-  return (
-    <GetStartedContext.Provider value={state}>
-      <div class="gs-root">
-        <style>{styles}</style>
+	return (
+		<GetStartedContext.Provider value={state}>
+			<div class="gs-root">
+				<style>{styles}</style>
 
-        {/* Selector Panel */}
-        <div class="gs-selector-panel">
-          <SegmentSelector
-            label="Suite"
-            field="starting_suite"
-            value={state().starting_suite}
-            onChange={updateState}
-            options={[
-              { value: "existing", label: "Existing Suite" },
-              { value: "demo", label: "Demo Suite" },
-            ]}
-          />
-          <SegmentSelector
-            label="Target"
-            field="starting_target"
-            value={state().starting_target}
-            onChange={updateState}
-            options={[
-              { value: "local", label: "Local Server" },
-              { value: "remote", label: "Remote Server" },
-              { value: "vercel", label: "Vercel Preview", disabled: true, badge: "Soon" },
-            ]}
-          />
-          <SegmentSelector
-            label="Run From"
-            field="starting_runner"
-            value={state().starting_runner}
-            onChange={updateState}
-            options={[
-              { value: "local-cli", label: "Local CLI" },
-              { value: "github-actions", label: "GitHub Actions" },
-              { value: "other-ci", label: "Other CI/CD" },
-            ]}
-          />
-        </div>
+				{/* Selector Panel */}
+				<div class="gs-selector-panel">
+					<SegmentSelector
+						label="Suite"
+						field="starting_suite"
+						value={state().starting_suite}
+						onChange={updateState}
+						options={[
+							{ value: "existing", label: "Existing Suite" },
+							{ value: "demo", label: "Demo Suite" },
+						]}
+					/>
+					<SegmentSelector
+						label="Target"
+						field="starting_target"
+						value={state().starting_target}
+						onChange={updateState}
+						options={[
+							{ value: "local", label: "Local Server" },
+							{ value: "remote", label: "Remote Server" },
+							{
+								value: "vercel",
+								label: "Vercel Preview",
+								disabled: true,
+								badge: "Soon",
+							},
+						]}
+					/>
+					<SegmentSelector
+						label="Run From"
+						field="starting_runner"
+						value={state().starting_runner}
+						onChange={updateState}
+						options={[
+							{ value: "local-cli", label: "Local CLI" },
+							{ value: "github-actions", label: "GitHub Actions" },
+							{ value: "other-ci", label: "Other CI/CD" },
+						]}
+					/>
+				</div>
 
-        <Show when={isInvalidCombination()}>
-          <InvalidCombinationWarning
-            onSelectRunner={(runner) => updateState("starting_runner", runner)}
-            onSelectSuite={(suite) => updateState("starting_suite", suite)}
-          />
-        </Show>
+				<Show when={isInvalidCombination()}>
+					<InvalidCombinationWarning
+						onSelectRunner={(runner) => updateState("starting_runner", runner)}
+						onSelectSuite={(suite) => updateState("starting_suite", suite)}
+					/>
+				</Show>
 
-        <Show when={!isInvalidCombination()}>
-          <div class="gs-steps">
-            <When matches={{ starting_runner: "local-cli" }}>
-              <LocalCliFlowContent />
-            </When>
+				<Show when={!isInvalidCombination()}>
+					<div class="gs-steps">
+						<When matches={{ starting_runner: "local-cli" }}>
+							<LocalCliFlowContent />
+						</When>
 
-            <When matches={{ starting_runner: "github-actions" }}>
-              <GitHubActionsFlowContent />
-            </When>
+						<When matches={{ starting_runner: "github-actions" }}>
+							<GitHubActionsFlowContent />
+						</When>
 
-            <When matches={{ starting_runner: "other-ci" }}>
-              <OtherCiFlowContent />
-            </When>
+						<When matches={{ starting_runner: "other-ci" }}>
+							<OtherCiFlowContent />
+						</When>
 
-            <FinalStep />
-          </div>
-        </Show>
-      </div>
-    </GetStartedContext.Provider>
-  );
+						<FinalStep />
+					</div>
+				</Show>
+			</div>
+		</GetStartedContext.Provider>
+	);
 }
 
 function InvalidCombinationWarning(props: {
-  onSelectRunner: (runner: Runner) => void;
-  onSelectSuite: (suite: SuiteOrigin) => void;
+	onSelectRunner: (runner: Runner) => void;
+	onSelectSuite: (suite: SuiteOrigin) => void;
 }) {
-  return (
-    <div class="gs-warning">
-      <div class="gs-warning-icon">⚠️</div>
-      <div class="gs-warning-content">
-        <strong>Demo Suite requires Local CLI or GitHub Actions</strong>
-        <p>
-          The demo suite is designed to work with Local CLI or GitHub Actions only.
-        </p>
-        <div class="gs-warning-buttons">
-          <button type="button" onClick={() => props.onSelectRunner("local-cli")} class="gs-btn gs-btn--primary">
-            Use Local CLI
-          </button>
-          <button type="button" onClick={() => props.onSelectRunner("github-actions")} class="gs-btn gs-btn--primary">
-            Use GitHub Actions
-          </button>
-          <button type="button" onClick={() => props.onSelectSuite("existing")} class="gs-btn gs-btn--ghost">
-            Use Existing Suite
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<div class="gs-warning">
+			<div class="gs-warning-icon">⚠️</div>
+			<div class="gs-warning-content">
+				<strong>Demo Suite requires Local CLI or GitHub Actions</strong>
+				<p>
+					The demo suite is designed to work with Local CLI or GitHub Actions
+					only.
+				</p>
+				<div class="gs-warning-buttons">
+					<button
+						type="button"
+						onClick={() => props.onSelectRunner("local-cli")}
+						class="gs-btn gs-btn--primary"
+					>
+						Use Local CLI
+					</button>
+					<button
+						type="button"
+						onClick={() => props.onSelectRunner("github-actions")}
+						class="gs-btn gs-btn--primary"
+					>
+						Use GitHub Actions
+					</button>
+					<button
+						type="button"
+						onClick={() => props.onSelectSuite("existing")}
+						class="gs-btn gs-btn--ghost"
+					>
+						Use Existing Suite
+					</button>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 function FinalStep() {
-  return (
-    <StepBlock step="final" title="View your results">
-      <p>
-        Once your tests complete, results will appear in the{" "}
-        <a href="https://endform.dev/app" target="_blank" rel="noopener noreferrer">
-          Endform dashboard
-        </a>
-        .
-      </p>
-    </StepBlock>
-  );
+	return (
+		<StepBlock step="final" title="View your results">
+			<p>
+				Once your tests complete, results will appear in the{" "}
+				<a
+					href="https://endform.dev/app"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Endform dashboard
+				</a>
+				.
+			</p>
+		</StepBlock>
+	);
 }
 
 const styles = `

@@ -1,15 +1,17 @@
 ---
-import { Code } from '@astrojs/starlight/components';
+import { Code } from "@astrojs/starlight/components";
 
 interface Props {
-  suite: 'existing' | 'demo';
-  target: 'local' | 'remote' | 'vercel';
+	suite: "existing" | "demo";
+	target: "local" | "remote" | "vercel";
 }
 
 const { suite, target } = Astro.props;
 
-const showBaseUrl = target === 'remote' || target === 'vercel';
-const baseUrlLine = showBaseUrl ? '\n    BASE_URL: https://your-server.com' : '';
+const showBaseUrl = target === "remote" || target === "vercel";
+const baseUrlLine = showBaseUrl
+	? "\n    BASE_URL: https://your-server.com"
+	: "";
 ---
 
 <h2 id="generate-api-key">1. Generate an API key</h2>
