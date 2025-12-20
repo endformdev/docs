@@ -59,6 +59,32 @@ Each string in the array is a match rule. Either:
 - An IP literal like `127.0.0.1`
 - `<loopback>` to match interfaces `localhost`, `*.localhost`, `127.0.0.1`, `[::1]`
 
+### `remoteReporters`
+
+Array of reporter names which should run exclusively during remote execution of tests.
+Must correspond to the name of a reporter configured in your Playwright config.
+
+For example in the case where `endform.jsonc` is:
+```json
+{
+  "remoteReporters": ["./custom-reporter.ts"]
+}
+```
+
+And `playwright.config.ts` set to:
+```ts
+import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  reporter: [
+    ["./custom-reporter.ts", { myCustomReporterOption: true }]
+  ],
+});
+
+```
+
+Then `./custom-reporter.ts` will run once on each remotely running test machine (one per test), and _not_ on the collected result.
+
 
 ### `organizationId`
 
