@@ -89,3 +89,19 @@ Then `./custom-reporter.ts` will run once on each remotely running test machine 
 ### `organizationId`
 
 Specify which organization id this project should run within. Is the highest precedence configuration for organization id when running suites. Makes suite runs fail if the authenticated user does not have access to that organization.
+
+### `traceRetention`
+
+Control whether Endform retains Playwright traces for viewing in the dashboard. Accepts `"on"` (default) or `"off"`.
+
+```json
+{
+  "traceRetention": "off"
+}
+```
+
+When set to `"on"` (the default), traces from your test runs are uploaded to Endform and can be viewed later in the dashboard.
+
+When set to `"off"`, traces are not uploaded to Endform. This can be useful for compliance requirements or if you have privacy concerns about trace data.
+
+**Note:** This setting only controls what Endform stores for dashboard viewing. Regardless of this setting, traces are still generated and accessible locally depending on your Playwright `trace` config option.
