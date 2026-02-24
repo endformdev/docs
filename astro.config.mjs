@@ -60,7 +60,7 @@ export default defineConfig({
 				},
 			],
 
-			head: [
+			head: process.env.NODE_ENV === 'development' ? [] : [
 				{
 					tag: "script",
 					attrs: {
