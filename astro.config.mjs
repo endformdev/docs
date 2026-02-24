@@ -63,6 +63,21 @@ export default defineConfig({
 			head: [
 				{
 					tag: "script",
+					attrs: {
+						src: "https://web.cmp.usercentrics.eu/modules/autoblocker.js"
+					},
+				},
+				{
+					tag: "script",
+					attrs: {
+						id: "usercentrics-cmp",
+						async: true,
+						src: "https://web.cmp.usercentrics.eu/ui/loader.js",
+						"data-settings-id": "Q-tQAA7pNF0dcE"
+					},
+				},
+				{
+					tag: "script",
 					// Google Tag Manager
 					content: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
