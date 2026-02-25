@@ -105,3 +105,28 @@ When set to `"on"` (the default), traces from your test runs are uploaded to End
 When set to `"off"`, traces are not uploaded to Endform. This can be useful for compliance requirements or if you have privacy concerns about trace data.
 
 **Note:** This setting only controls what Endform stores for dashboard viewing. Regardless of this setting, traces are still generated and accessible locally depending on your Playwright `trace` config option.
+
+### `extraHttpHeaders`
+
+Set extra HTTP headers that will be applied to the Playwright browser contexts when tests run on remote runners. The value is a JSON object mapping header names to string values.
+
+```json
+{
+  "extraHttpHeaders": {
+    "x-custom-auth": "my-secret-token",
+    "x-bypass-protection": "token-value"
+  }
+}
+```
+
+These headers are merged into Playwright's `extraHTTPHeaders` option on both the top-level `use` and each project's `use`. Headers defined in your `playwright.config.ts` take precedence — if the same header name exists in both your Playwright config and `endform.jsonc`, the value from your Playwright config wins.
+
+#### Environment variable override
+
+You can override `extraHttpHeaders` using the `ENDFORM_EXTRA_HTTP_HEADERS` environment variable. Set it to a JSON string of key-value pairs:
+
+```bash
+ENDFORM_EXTRA_HTTP_HEADERS='{"x-custom-auth":"env-token"}' npx endform test
+```
+
+When this environment variable is set, it **fully replaces** the `extraHttpHeaders` defined in `endform.jsonc` (the two are not merged together).
