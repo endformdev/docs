@@ -64,6 +64,26 @@ export default defineConfig({
 				process.env.NODE_ENV === "development"
 					? []
 					: [
+							// Set theme before third-party scripts to avoid a dark flash on light theme.
+							{
+								tag: "script",
+								content: `(() => {
+						try {
+							const storedTheme = localStorage.getItem("starlight-theme");
+							const preferredTheme =
+								storedTheme === "light" || storedTheme === "dark"
+									? storedTheme
+									: window.matchMedia("(prefers-color-scheme: light)").matches
+										? "light"
+										: "dark";
+							document.documentElement.dataset.theme = preferredTheme;
+						} catch {
+							document.documentElement.dataset.theme = window.matchMedia("(prefers-color-scheme: light)").matches
+								? "light"
+								: "dark";
+						}
+					})();`,
+							},
 							{
 								tag: "script",
 								attrs: {
