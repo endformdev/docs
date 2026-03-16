@@ -44,7 +44,8 @@ By default the following environment variables are automatically transferred:
 
 ### `proxyNetworkHosts`
 
-Choose which host names will have their traffic redirected to the CLI from the remote runners.
+Choose which host names will have their HTTP traffic redirected to the CLI from the remote runners.
+This is the easiest option for local web apps and APIs, and uses HTTP interception in Node and in the browser.
 All the traffic sent from the remote runners to your CLI is sent encrypted over direct peer-to-peer connections. Read more about [traffic to local servers here](/docs/guides/proxy-via-local).
 
 ```json
@@ -58,6 +59,18 @@ Each string in the array is a match rule. Either:
 - A hostname pattern `my-domain.com`, `*.interal.org`
 - An IP literal like `127.0.0.1`
 - `<loopback>` to match interfaces `localhost`, `*.localhost`, `127.0.0.1`, `[::1]`
+
+### `proxyNetworkPorts`
+
+Choose which local loopback ports will accept raw TCP connections from the remote runners.
+Use this for databases or other clients that need to connect directly to `127.0.0.1:<port>`. This feature is experimental.
+All the traffic sent from the remote runners to your CLI is sent encrypted over direct peer-to-peer connections. Read more about [traffic to local servers here](/docs/guides/proxy-via-local).
+
+```json
+{
+  "proxyNetworkPorts": [5432, 6379]
+}
+```
 
 ### `remoteReporters`
 

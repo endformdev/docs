@@ -27,7 +27,7 @@ We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/ov
 ## Setting up endform to proxy traffic
 
 <Aside>
-Proxying traffic via your local network is currently in beta, we would be grateful for any feedback you have on this feature.
+`proxyNetworkHosts` is the easiest option for most setups. `proxyNetworkPorts` is available for raw TCP connections and is experimental.
 </Aside>
 
 
@@ -42,6 +42,8 @@ Proxying traffic via your local network is currently in beta, we would be gratef
    #### With your own custom server
    If you're running a server outside of playwright - that's fine. You can tell endform which traffic to proxy by using a `endform.jsonc` file.
 
+   Use `proxyNetworkHosts` for most local web servers and APIs. This is the easiest option and uses HTTP interception in Node and in the browser.
+
    <Code language="json" title="endform.jsonc" code={`
    {
       "proxyNetworkHosts": [
@@ -51,7 +53,15 @@ Proxying traffic via your local network is currently in beta, we would be gratef
    }
    `} />
 
-   You can read more about the `proxyNetworkHosts` configuration in the [endform config reference](/docs/reference/endform-config#proxy-network-hosts).
+   If you need raw TCP connections to a local loopback port, use `proxyNetworkPorts` instead. This is experimental.
+
+   <Code language="json" title="endform.jsonc" code={`
+   {
+      "proxyNetworkPorts": [5432, 6379]
+   }
+   `} />
+
+   You can configure both at the same time if needed. You can read more about `proxyNetworkHosts` and `proxyNetworkPorts` in the [endform config reference](/docs/reference/endform-config#proxy-network-hosts).
 
 2. ### Run your tests!
 
