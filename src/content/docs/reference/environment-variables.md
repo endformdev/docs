@@ -15,6 +15,20 @@ You can use this to detect Endform runtime context in your own code:
 const isEndform = process.env.ENDFORM === "true";
 ```
 
+## Git metadata overrides
+
+`ENDFORM_GIT_BRANCH` and `ENDFORM_GIT_COMMIT_SHA` are a simple way to override the branch and commit that Endform reports for a run.
+
+### `ENDFORM_GIT_BRANCH`
+
+Explicitly sets the git branch name Endform should associate with a suite run.
+
+### `ENDFORM_GIT_COMMIT_SHA`
+
+Explicitly sets the git commit SHA Endform should associate with a suite run.
+
+If set, Endform uses these values instead of automatic git detection.
+
 ## User-defined environment variables
 
 Endform transfers selected environment variables to remote runners. For details, see [`environmentVariables` in `endform.jsonc`](/docs/reference/endform-config#environmentvariables).
