@@ -29,8 +29,8 @@ const isDemoVercel = suite === "demo" && target === "vercel";
 {isDemoVercel && (
   <>
     <h2 id="deploy-demo">3. Deploy the demo project</h2>
-    <p>Deploy our demo repository to your Vercel account. This will automatically configure the project and start running tests on main:</p>
-    <p><a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fendformdev%2Fplaywright-tutorial" target="_blank" rel="noopener noreferrer">Deploy with Vercel →</a></p>
+    <p>Deploy our demo repository to your Vercel account. This will automatically configure the project, but you will need to copy over the github workflow files to start running your tests:</p>
+    <p><a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fendformdev%2Fplaywright-tutorial&project-name=endform-playwright-example&repository-name=endform-playwright-example&demo-title=Next.JS%2FPlaywright%2FEndform&demo-description=A%20next.js%20web%20app%20tested%20with%20Playwright%20and%20Endform&demo-url=https%3A%2F%2Fendform-playwright-tutorial.vercel.app&integration-ids=oac_5LFIKN8LRMK2uwnltOSeyCFE" target="_blank" rel="noopener noreferrer">Deploy with Vercel →</a></p>
     <p><small>Once deployed, tests will automatically run. Results will appear in the dashboard shortly.</small></p>
   </>
 )}
@@ -65,6 +65,9 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v4
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Run end to end tests with endform
         working-directory: . # where your playwright suite is located
         env:
@@ -97,6 +100,9 @@ jobs:
 
       - name: Install Node
         uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: pnpm install
       
       # Any other setup needed for your local server to run...
 
@@ -125,11 +131,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up pnpm (or whichever package manager you use)
-        uses: pnpm/action-setup@v4
-
       - name: Install Node
         uses: actions/setup-node@v4
+
+      - name: Set up pnpm (or whichever package manager you use)
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: true
 
       - name: Wait for Vercel deployment
         uses: endformdev/actions/run-with-vercel-deployment@main
