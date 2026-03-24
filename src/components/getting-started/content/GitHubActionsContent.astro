@@ -110,7 +110,7 @@ jobs:
       <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
 
 on:
-  pull_request:
+  pull_request: # or push: if you want to run on commits to main
     branches:
       - main
 
@@ -132,10 +132,11 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Wait for Vercel deployment
-        uses: endformdev/actions/await-vercel-deployment@main
+        uses: endformdev/actions/run-with-vercel-deployment@main
         with:
           project-name: your-vercel-project-name
           set-url-env-var: BASE_URL # Sets the Vercel preview URL as this environment variable
+          set-vercel-bypass-env-var: VERCEL_BYPASS_TOKEN # Exports a deployment protection bypass token as this env var
 
       - name: Run end to end tests with endform
         working-directory: . # where your playwright suite is located
