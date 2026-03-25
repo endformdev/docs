@@ -43,7 +43,10 @@ You can either:
 
 - Run the tests against our pre-deployed application at [https://endform-playwright-tutorial.vercel.app](https://endform-playwright-tutorial.vercel.app)
 - Run the application locally, for this option you will need to:
-  - Set up `.env` and run migrations on a local SQLite database: `pnpm db:setup`
+  - Install dependencies: `pnpm install`
+  - Run the application right away: `pnpm dev`
+  - Optionally switch to local SQLite instead of the shared demo Durable Object: `pnpm db:setup`
+  - Optionally seed your local database: `pnpm db:seed`
   - Run the application: `pnpm dev`, or for better performance `pnpm build && pnpm start`
   - Check that it loads correctly at [http://localhost:3000](http://localhost:3000)
 
@@ -77,7 +80,5 @@ Here's what we'll cover in each step:
   description="Understand test results using Playwright traces and the Endform dashboard."
   href="/docs/tutorial/understanding-test-results"
 />
-
-
 
 
