@@ -1,17 +1,46 @@
 ---
+type Suite = "existing" | "demo";
+type Target = "local" | "remote" | "vercel";
+type Runner = "local-cli" | "github-actions" | "other-ci";
+
 interface Props {
-	currentSuite: "existing" | "demo";
-	currentTarget: "local" | "remote" | "vercel";
-	currentRunner: "local-cli" | "github-actions" | "other-ci";
+	currentSuite: Suite;
+	currentTarget: Target;
+	currentRunner: Runner;
 }
 
 const { currentSuite, currentTarget, currentRunner } = Astro.props;
 
-// Build the base path for navigation
 const basePath = "/docs/guides/getting-started";
+const supportedPaths = new Set([
+	buildPath("existing", "local", "local-cli"),
+	buildPath("existing", "remote", "local-cli"),
+	buildPath("existing", "vercel", "local-cli"),
+	buildPath("demo", "local", "local-cli"),
+	buildPath("demo", "remote", "local-cli"),
+	buildPath("existing", "local", "github-actions"),
+	buildPath("existing", "remote", "github-actions"),
+	buildPath("existing", "vercel", "github-actions"),
+	buildPath("demo", "local", "github-actions"),
+	buildPath("demo", "remote", "github-actions"),
+	buildPath("demo", "vercel", "github-actions"),
+	buildPath("existing", "local", "other-ci"),
+	buildPath("existing", "remote", "other-ci"),
+	buildPath("existing", "vercel", "other-ci"),
+	buildPath("demo", "local", "other-ci"),
+	buildPath("demo", "remote", "other-ci"),
+]);
 
-function buildPath(suite: string, target: string, runner: string) {
+function buildPath(suite: Suite, target: Target, runner: Runner) {
 	return `${basePath}/${runner}/${suite}/${target}`;
+}
+
+function isSupported(suite: Suite, target: Target, runner: Runner) {
+	return supportedPaths.has(buildPath(suite, target, runner));
+}
+
+function getButtonClass(isActive: boolean, isDisabled = false) {
+	return `selector-button ${isDisabled ? "selector-button--disabled" : ""} ${isActive ? "selector-button--active" : ""}`;
 }
 ---
 
@@ -21,20 +50,31 @@ function buildPath(suite: string, target: string, runner: string) {
     <div class="selector-options" role="radiogroup" aria-label="Suite">
       <a
         href={buildPath('existing', currentTarget, currentRunner)}
-        class={`selector-button ${currentSuite === 'existing' ? 'selector-button--active' : ''}`}
+        class={getButtonClass(currentSuite === 'existing')}
         role="radio"
         aria-checked={currentSuite === 'existing'}
       >
         Existing Suite
       </a>
-      <a
-        href={buildPath('demo', currentTarget, currentRunner)}
-        class={`selector-button ${currentSuite === 'demo' ? 'selector-button--active' : ''}`}
-        role="radio"
-        aria-checked={currentSuite === 'demo'}
-      >
-        Demo Suite
-      </a>
+      {isSupported('demo', currentTarget, currentRunner) ? (
+        <a
+          href={buildPath('demo', currentTarget, currentRunner)}
+          class={getButtonClass(currentSuite === 'demo')}
+          role="radio"
+          aria-checked={currentSuite === 'demo'}
+        >
+          Demo Suite
+        </a>
+      ) : (
+        <span
+          class={getButtonClass(false, true)}
+          role="radio"
+          aria-disabled="true"
+          aria-checked="false"
+        >
+          Demo Suite
+        </span>
+      )}
     </div>
   </div>
 
@@ -43,7 +83,7 @@ function buildPath(suite: string, target: string, runner: string) {
     <div class="selector-options" role="radiogroup" aria-label="Target">
       <a
         href={buildPath(currentSuite, 'remote', currentRunner)}
-        class={`selector-button ${currentTarget === 'remote' ? 'selector-button--active' : ''}`}
+        class={getButtonClass(currentTarget === 'remote')}
         role="radio"
         aria-checked={currentTarget === 'remote'}
       >
@@ -51,51 +91,83 @@ function buildPath(suite: string, target: string, runner: string) {
       </a>
       <a
         href={buildPath(currentSuite, 'local', currentRunner)}
-        class={`selector-button ${currentTarget === 'local' ? 'selector-button--active' : ''}`}
+        class={getButtonClass(currentTarget === 'local')}
         role="radio"
         aria-checked={currentTarget === 'local'}
       >
         Local Server
       </a>
-      <span
-        class={`selector-button selector-button--disabled ${currentTarget === 'vercel' ? 'selector-button--active' : ''}`}
-        role="radio"
-        aria-disabled="true"
-        aria-checked={currentTarget === 'vercel'}
-      >
-        Vercel Preview
-        <span class="selector-badge">Soon</span>
-      </span>
+      {isSupported(currentSuite, 'vercel', currentRunner) ? (
+        <a
+          href={buildPath(currentSuite, 'vercel', currentRunner)}
+          class={getButtonClass(currentTarget === 'vercel')}
+          role="radio"
+          aria-checked={currentTarget === 'vercel'}
+        >
+          Vercel Preview
+        </a>
+      ) : (
+        <span
+          class={getButtonClass(false, true)}
+          role="radio"
+          aria-disabled="true"
+          aria-checked="false"
+        >
+          Vercel Preview
+        </span>
+      )}
     </div>
   </div>
 
   <div class="selector">
     <span class="selector-label">Run From</span>
     <div class="selector-options" role="radiogroup" aria-label="Run From">
-      <a
-        href={buildPath(currentSuite, currentTarget, 'local-cli')}
-        class={`selector-button ${currentRunner === 'local-cli' ? 'selector-button--active' : ''}`}
-        role="radio"
-        aria-checked={currentRunner === 'local-cli'}
-      >
-        Local CLI
-      </a>
+      {isSupported(currentSuite, currentTarget, 'local-cli') ? (
+        <a
+          href={buildPath(currentSuite, currentTarget, 'local-cli')}
+          class={getButtonClass(currentRunner === 'local-cli')}
+          role="radio"
+          aria-checked={currentRunner === 'local-cli'}
+        >
+          Local CLI
+        </a>
+      ) : (
+        <span
+          class={getButtonClass(false, true)}
+          role="radio"
+          aria-disabled="true"
+          aria-checked="false"
+        >
+          Local CLI
+        </span>
+      )}
       <a
         href={buildPath(currentSuite, currentTarget, 'github-actions')}
-        class={`selector-button ${currentRunner === 'github-actions' ? 'selector-button--active' : ''}`}
+        class={getButtonClass(currentRunner === 'github-actions')}
         role="radio"
         aria-checked={currentRunner === 'github-actions'}
       >
         GitHub Actions
       </a>
-      <a
-        href={buildPath(currentSuite, currentTarget, 'other-ci')}
-        class={`selector-button ${currentRunner === 'other-ci' ? 'selector-button--active' : ''}`}
-        role="radio"
-        aria-checked={currentRunner === 'other-ci'}
-      >
-        Other CI/CD
-      </a>
+      {isSupported(currentSuite, currentTarget, 'other-ci') ? (
+        <a
+          href={buildPath(currentSuite, currentTarget, 'other-ci')}
+          class={getButtonClass(currentRunner === 'other-ci')}
+          role="radio"
+          aria-checked={currentRunner === 'other-ci'}
+        >
+          Other CI/CD
+        </a>
+      ) : (
+        <span
+          class={getButtonClass(false, true)}
+          role="radio"
+          aria-disabled="true"
+          aria-checked="false"
+        >
+          Other CI/CD
+        </span>
+      )}
     </div>
   </div>
 </div>
@@ -182,19 +254,6 @@ function buildPath(suite: string, target: string, runner: string) {
     opacity: 0.5;
     cursor: not-allowed;
   }
-
-  .selector-badge {
-    padding: 0.125rem 0.5rem;
-    font-size: 0.625rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-radius: 9999px;
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-  }
-
   /* Light mode adjustments */
   :global([data-theme='light']) .selector-options {
     background: var(--sl-color-gray-6);
@@ -215,4 +274,3 @@ function buildPath(suite: string, target: string, runner: string) {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 </style>
-
