@@ -42,6 +42,32 @@ By default the following environment variables are automatically transferred:
 - Environment variables that start with `E2E_`
 - All environment variables that are set in your `playwright.config.ts`
 
+### `concurrentTestLimits`
+
+Set concurrency limits for a suite run. Each item has a `scope`, optional `label`, and `limit`.
+
+Currently `"within-suite-run"` is the only supported `scope`.
+
+For `label`:
+
+- use `tag:@my-tag` to limit by [test tag](https://playwright.dev/docs/test-annotations#tag-tests)
+- use `project:@project-name` to limit runs of tests within a project
+- if not set / `null`, the limit applies to all tests in the run
+
+Then set `limit` for the maximim number of allowed concurrent tests to run within that group.
+
+
+```json
+{
+  "concurrentTestLimits": [
+    { "scope": "within-suite-run", "limit": 20 },
+    { "scope": "within-suite-run", "label": "tag:@smoke", "limit": 2 }
+  ]
+}
+```
+
+Running tests must satisfy all applicable limits. In this example, the suite run is capped at 20 total concurrently running tests, with at most 2 tagged `@smoke` running at once.
+
 ### `proxyNetworkHosts`
 
 Choose which host names will have their HTTP traffic redirected to the CLI from the remote runners.
