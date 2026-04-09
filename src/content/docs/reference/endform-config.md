@@ -51,7 +51,7 @@ Currently `"within-suite-run"` is the only supported `scope`.
 For `label`:
 
 - use `tag:@my-tag` to limit by [test tag](https://playwright.dev/docs/test-annotations#tag-tests)
-- use `project:@project-name` to limit runs of tests within a project
+- use `project:project-name` to limit runs of tests within a project
 - if not set / `null`, the limit applies to all tests in the run
 
 Then set `limit` for the maximim number of allowed concurrent tests to run within that group.
