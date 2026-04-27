@@ -46,7 +46,9 @@ By default the following environment variables are automatically transferred:
 
 Set concurrency limits for a suite run. Each item has a `scope`, optional `label`, and `limit`.
 
-Currently `"within-suite-run"` is the only supported `scope`.
+Two scopes are supported:
+- `"within-suite-run"` for limiting concurrent tests in that test suite run
+- `"across-all-runs"` for limiting concurrent tests across all matching test suites that your organisation is running - a shared, global limit
 
 For `label`:
 
@@ -62,11 +64,15 @@ Then set `limit` for the maximim number of allowed concurrent tests to run withi
   "concurrentTestLimits": [
     { "scope": "within-suite-run", "limit": 20 },
     { "scope": "within-suite-run", "label": "tag:@smoke", "limit": 2 }
+    { "scope": "across-all-runs", "label": "project:slow-backend", "limit": 10 }
   ]
 }
 ```
 
-Running tests must satisfy all applicable limits. In this example, the suite run is capped at 20 total concurrently running tests, with at most 2 tagged `@smoke` running at once.
+Running tests must satisfy all applicable limits. In this example:
+
+- Within the suite run, 20 tests can run concurrently, with at most 2 tagged `@smoke` tests running
+- No more than 10 tests in the `slow-backend` project can run at the same time, across all currently running test suites in your organisation
 
 ### `proxyNetworkHosts`
 
