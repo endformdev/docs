@@ -104,6 +104,20 @@ All the traffic sent from the remote runners to your CLI is sent encrypted over 
 }
 ```
 
+### `region`
+
+By default, your tests are run in the closest available region to where the endform CLI was run.
+
+To override this choice, for example if your test environment is in a different region to your CI jobs, add the region parameter to your `endform.jsonc`.
+
+Available values are `"eu"` and `"us"`.
+
+```json
+{
+  "region": "eu"
+}
+```
+
 ### `remoteReporters`
 
 Array of reporter names which should run exclusively during remote execution of tests.
