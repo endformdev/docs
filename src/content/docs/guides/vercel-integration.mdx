@@ -1,0 +1,98 @@
+---
+title: Vercel integration
+description: Run Endform tests against Vercel preview deployments from GitHub Actions
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+The Endform Vercel integration helps you to run your Playwright end-to-end
+test suites against your Vercel deployments.
+
+It allows you to:
+
+- wait for the correct Vercel preview deployment to be ready
+- run with deployment protection bypass automatically enabled
+- register your test run result as a Vercel check
+
+The Endform Vercel integration connects your Vercel preview deployments to Endform test runs.
+It is useful when you want pull requests to wait for a Vercel deployment, run Playwright tests against that preview URL, and show the result as a Vercel deployment check.
+
+<Steps>
+
+1. ### Connect GitHub and Vercel
+
+   Before adding the workflow, connect both integrations from your organization settings:
+
+   - [Install the Endform Vercel Integration](https://vercel.com/marketplace/endform) so Endform can find Vercel deployments and create Vercel checks.
+   - [Connect GitHub](https://endform.dev/app/docs-link?link=settings-integrations) so GitHub Actions can authenticate with Endform using OIDC.
+
+   Your GitHub Actions workflow also needs `id-token: write` in `permissions`.
+
+2. ### Add the workflow step
+
+   Add `endformdev/actions/run-with-vercel-deployment` before `npx endform@latest test`:
+
+   ```yaml title=".github/workflows/endform-e2e.yml"
+   name: Run end to end tests with endform
+
+   on:
+     pull_request: # or push: if you want to run on commits to main
+       branches:
+       - main
+
+   permissions:
+     contents: read
+     id-token: write # required for authentication with Endform
+
+   jobs:
+     e2e:
+       runs-on: ubuntu-latest
+       steps:
+         # Checkout, install Node and install dependencies first...
+
+         - name: Wait for Vercel deployment
+           uses: endformdev/actions/run-with-vercel-deployment@main
+           with:
+             project-name: your-vercel-project-name
+             set-url-env-var: BASE_URL # Export the preview url for your playwright.config.ts to pick up
+
+         - name: Run end to end tests with Endform
+           run: npx endform@latest test
+   ```
+
+    You can find more documentation of the configuration options for the `run-with-vercel-deployment` action [here](https://github.com/endformdev/actions).
+
+3. ### Configure Playwright
+
+   Point Playwright at the URL exported by the workflow step:
+
+   ```ts
+   import { defineConfig } from "@playwright/test";
+
+   export default defineConfig({
+    use: {
+      baseURL: process.env.BASE_URL || "https://your-project.vercel.app",
+    },
+   });
+   ```
+
+</Steps>
+
+## How it works
+
+When the workflow runs, Endform matches the GitHub workflow run to the Vercel deployment for the same commit.
+
+The action then:
+
+- waits until the Vercel deployment is ready;
+- exports the deployment URL as `BASE_URL`, or whichever variable you set with `set-url-env-var`;
+- configures Endform with a Vercel deployment protection bypass token (through [extra headers](https://endform.dev/docs/reference/endform-config#extrahttpheaders)).
+
+When `npx endform@latest test` starts, Endform creates or takes over the Vercel deployment check for that workflow job.
+The check is marked as running while tests execute, then completed with the test result and a link back to the Endform dashboard.
+
+## Notes
+
+- The workflow must include `endformdev/actions/run-with-vercel-deployment` for Endform to connect the Vercel deployment to the test run.
+- The deployment must come from a Git commit that Endform can match to the GitHub workflow.
+- Vercel deployment checks created by Endform are currently non-blocking.
