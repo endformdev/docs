@@ -7,6 +7,7 @@ sidebar:
 
 import Selector from '../../../../../../components/getting-started/Selector.astro';
 import OtherCiContent from '../../../../../../components/getting-started/content/OtherCiContent.astro';
+import { Aside } from '@astrojs/starlight/components';
 
 Make sure to check out the [requirements](/docs/reference/requirements) before you start.
 
@@ -16,5 +17,9 @@ Make sure to check out the [requirements](/docs/reference/requirements) before y
   currentRunner="other-ci"
 />
 
-<OtherCiContent suite="existing" target="vercel" />
+<Aside type="caution">
+  When using Vercel preview deployments with a CI/CD provider other than GitHub Actions,
+  Endform does not automatically insert the correct Vercel preview URL or deployment protection bypass token.
+</Aside>
 
+<OtherCiContent suite="existing" target="vercel" />
