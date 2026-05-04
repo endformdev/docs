@@ -29,6 +29,15 @@ function anyChildCurrent(entries: any[]) {
 	}
 	return false;
 }
+
+function getIndexEntry(entry: any) {
+	if (!Array.isArray(entry.entries)) return undefined;
+	return entry.entries.find(
+		(e: any) =>
+			e.type === "link" &&
+			e.label.toLowerCase().replace(/\s+/g, "-") === entry.label,
+	);
+}
 ---
 
 <ul class:list={{ 'top-level': !nested }}>
@@ -47,23 +56,43 @@ function anyChildCurrent(entries: any[]) {
               <span class:list={["sl-badge", entry.badge.class]}>{entry.badge.text}</span>
             )}
           </a>
-        ) : (
+        ) : (() => {
+          const indexEntry = getIndexEntry(entry);
+          const childEntries = indexEntry
+            ? entry.entries.filter((e: any) => e !== indexEntry)
+            : entry.entries;
+          const collapsed = indexEntry ? true : entry.collapsed;
+
+          return (
           <details
-            open={anyChildCurrent(entry.entries) || !entry.collapsed}
+            open={anyChildCurrent(entry.entries) || !collapsed}
           >
             <summary>
               <div class="group-label">
                 { !nested && (() => { const Cmp = pickGroupIcon(entry.label); return <Cmp class="sidebar-icon" size="1rem" />; })() }
-                <span class="large">{entry.label}</span>
+                {indexEntry ? (
+                  <a
+                    href={indexEntry.href}
+                    aria-current={indexEntry.isCurrent && 'page'}
+                    class:list={['group-link', { large: !nested }, indexEntry.attrs.class]}
+                    onclick="event.stopPropagation()"
+                    {...indexEntry.attrs}
+                  >
+                    <span>{indexEntry.label}</span>
+                  </a>
+                ) : (
+                  <span class="large">{entry.label}</span>
+                )}
                 {entry.badge && (
                   <span class:list={["sl-badge", entry.badge.class]}>{entry.badge.text}</span>
                 )}
               </div>
               <ChevronRight class="caret" size="1.25rem" />
             </summary>
-            <Astro.self sublist={entry.entries} nested />
+            <Astro.self sublist={childEntries} nested />
           </details>
-        )}
+          );
+        })()}
       </li>
     ))
   }
@@ -136,6 +165,12 @@ function anyChildCurrent(entries: any[]) {
       color: var(--sl-color-white);
     }
 
+    .group-link {
+      display: inline;
+      padding: 0;
+      color: inherit;
+    }
+
     [aria-current='page'],
     [aria-current='page']:hover,
     [aria-current='page']:focus {
@@ -167,4 +202,3 @@ function anyChildCurrent(entries: any[]) {
     }
   }
 </style>
-
