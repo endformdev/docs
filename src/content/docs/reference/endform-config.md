@@ -27,21 +27,6 @@ Currently, `endform.jsonc` supports the following options:
 If your playwright config already specifies `storageState`, this parameter should not be needed - endform will read and send those automatically.
 However if your tests have implicit dependencies on more files, use this parameter.
 
-### `environmentVariables`
-
-`environmentVariables`: an array of string regular expressions that are used to match environment variables that should be transferred to the remote runners.
-
-```json
-{
-  "environmentVariables": ["VERCEL_.*"]
-}
-```
-
-By default the following environment variables are automatically transferred:
-
-- Environment variables that start with `E2E_`
-- All environment variables that are set in your `playwright.config.ts`
-
 ### `concurrentTestLimits`
 
 Set concurrency limits for a suite run. Each item has a `scope`, optional `label`, and `limit`.
@@ -73,6 +58,50 @@ Running tests must satisfy all applicable limits. In this example:
 
 - Within the suite run, 20 tests can run concurrently, with at most 2 tagged `@smoke` tests running
 - No more than 10 tests in the `slow-backend` project can run at the same time, across all currently running test suites in your organisation
+
+### `environmentVariables`
+
+`environmentVariables`: an array of string regular expressions that are used to match environment variables that should be transferred to the remote runners.
+
+```json
+{
+  "environmentVariables": ["VERCEL_.*"]
+}
+```
+
+By default the following environment variables are automatically transferred:
+
+- Environment variables that start with `E2E_`
+- All environment variables that are set in your `playwright.config.ts`
+
+### `extraHttpHeaders`
+
+Set extra HTTP headers that will be applied to the Playwright browser contexts when tests run on remote runners. The value is a JSON object mapping header names to string values.
+
+```json
+{
+  "extraHttpHeaders": {
+    "x-custom-auth": "my-secret-token",
+    "x-bypass-protection": "token-value"
+  }
+}
+```
+
+These headers are merged into Playwright's `extraHTTPHeaders` option on both the top-level `use` and each project's `use`. Headers defined in your `playwright.config.ts` take precedence — if the same header name exists in both your Playwright config and `endform.jsonc`, the value from your Playwright config wins.
+
+#### Environment variable override
+
+You can override `extraHttpHeaders` using the `ENDFORM_EXTRA_HTTP_HEADERS` environment variable. Set it to a JSON string of key-value pairs:
+
+```bash
+ENDFORM_EXTRA_HTTP_HEADERS='{"x-custom-auth":"env-token"}' npx endform test
+```
+
+When this environment variable is set, it **fully replaces** the `extraHttpHeaders` defined in `endform.jsonc` (the two are not merged together).
+
+### `organizationId`
+
+Specify which organization id this project should run within. Is the highest precedence configuration for organization id when running suites. Makes suite runs fail if the authenticated user does not have access to that organization.
 
 ### `proxyNetworkHosts`
 
@@ -144,11 +173,6 @@ export default defineConfig({
 
 Then `./custom-reporter.ts` will run once on each remotely running test machine (one per test), and _not_ on the collected result.
 
-
-### `organizationId`
-
-Specify which organization id this project should run within. Is the highest precedence configuration for organization id when running suites. Makes suite runs fail if the authenticated user does not have access to that organization.
-
 ### `traceRetention`
 
 Control whether Endform retains Playwright traces for viewing in the dashboard. Accepts `"on"` (default) or `"off"`.
@@ -164,28 +188,3 @@ When set to `"on"` (the default), traces from your test runs are uploaded to End
 When set to `"off"`, traces are not uploaded to Endform. This can be useful for compliance requirements or if you have privacy concerns about trace data.
 
 **Note:** This setting only controls what Endform stores for dashboard viewing. Regardless of this setting, traces are still generated and accessible locally depending on your Playwright `trace` config option.
-
-### `extraHttpHeaders`
-
-Set extra HTTP headers that will be applied to the Playwright browser contexts when tests run on remote runners. The value is a JSON object mapping header names to string values.
-
-```json
-{
-  "extraHttpHeaders": {
-    "x-custom-auth": "my-secret-token",
-    "x-bypass-protection": "token-value"
-  }
-}
-```
-
-These headers are merged into Playwright's `extraHTTPHeaders` option on both the top-level `use` and each project's `use`. Headers defined in your `playwright.config.ts` take precedence — if the same header name exists in both your Playwright config and `endform.jsonc`, the value from your Playwright config wins.
-
-#### Environment variable override
-
-You can override `extraHttpHeaders` using the `ENDFORM_EXTRA_HTTP_HEADERS` environment variable. Set it to a JSON string of key-value pairs:
-
-```bash
-ENDFORM_EXTRA_HTTP_HEADERS='{"x-custom-auth":"env-token"}' npx endform test
-```
-
-When this environment variable is set, it **fully replaces** the `extraHttpHeaders` defined in `endform.jsonc` (the two are not merged together).
