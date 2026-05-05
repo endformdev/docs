@@ -1,0 +1,47 @@
+---
+title: Vercel integration
+description: Run Endform tests against Vercel preview deployments
+sidebar:
+  order: 2
+  collapsed: true
+---
+
+import { Aside, LinkCard } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+import VercelTestDeploy from "../../../../assets/vercel-test-deploy.png";
+
+<Aside type="caution">
+  The Endform Vercel integration is not released yet, but it will be available soon.
+</Aside>
+
+<Image
+  src={VercelTestDeploy}
+  alt="The code change, preview, test, deploy flow on Vercel"
+  height={500}
+/>
+
+The Endform Vercel integration helps you to run your Playwright end-to-end
+test suites against your Vercel deployments.
+
+It allows you to:
+
+- wait for the correct Vercel preview deployment to be ready
+- run with deployment protection bypass automatically enabled
+- register your test run result as a Vercel check
+
+The Endform Vercel integration works best with our Github app and Github actions.
+If you use a different CI provider and would like to run your tests against Vercel, follow [this guide](https://endform.dev/docs/guides/getting-started/other-ci/existing/vercel).
+
+## Pages
+
+<LinkCard
+  title="Installing the Vercel integration"
+  description="Connect GitHub and Vercel, add the workflow step, and configure Playwright."
+  href="/docs/guides/vercel-integration/installing-the-vercel-integration"
+/>
+
+<LinkCard
+  title="Frequently asked questions"
+  description="Answers to common questions about the Vercel integration."
+  href="/docs/guides/vercel-integration/frequently-asked-questions"
+/>

@@ -1,31 +1,19 @@
 ---
-title: Vercel integration
-description: Run Endform tests against Vercel preview deployments from GitHub Actions
+title: Installing the Vercel integration
+description: Connect GitHub and Vercel, add the workflow step, and configure Playwright
 sidebar:
-  order: 2
+  order: 1
 ---
 
-import { Aside, Steps } from '@astrojs/starlight/components';
+import { Aside, Steps } from "@astrojs/starlight/components";
 
 <Aside type="caution">
   The Endform Vercel integration is not released yet, but it will be available soon.
 </Aside>
 
-The Endform Vercel integration helps you to run your Playwright end-to-end
-test suites against your Vercel deployments.
-
-It allows you to:
-
-- wait for the correct Vercel preview deployment to be ready
-- run with deployment protection bypass automatically enabled
-- register your test run result as a Vercel check
-
-The Endform Vercel integration works best with our Github app and Github actions.
-If you use a different CI provider and would like to run your tests against Vercel, follow [this guide](https://endform.dev/docs/guides/getting-started/other-ci/existing/vercel).
-
 <Aside>
-We support both native and connected Vercel accounts. 
-This means that you can either create a new Endform account through Vercel or connect an existing Endform account when you install the integration. 
+We support both native and connected Vercel accounts.
+This means that you can either create a new Endform account through Vercel or connect an existing Endform account when you install the integration.
 </Aside>
 
 <Steps>
@@ -71,7 +59,7 @@ This means that you can either create a new Endform account through Vercel or co
            run: npx endform@latest test
    ```
 
-    You can find more documentation of the configuration options for the `run-with-vercel-deployment` action [here](https://github.com/endformdev/actions).
+   You can find more documentation of the configuration options for the `run-with-vercel-deployment` action [here](https://github.com/endformdev/actions).
 
 3. ### Configure Playwright
 
@@ -81,9 +69,9 @@ This means that you can either create a new Endform account through Vercel or co
    import { defineConfig } from "@playwright/test";
 
    export default defineConfig({
-    use: {
-      baseURL: process.env.BASE_URL || "https://your-project.vercel.app",
-    },
+     use: {
+       baseURL: process.env.BASE_URL || "https://your-project.vercel.app",
+     },
    });
    ```
 
