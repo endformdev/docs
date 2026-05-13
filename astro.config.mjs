@@ -101,6 +101,15 @@ export default defineConfig({
 							},
 							{
 								tag: "script",
+								attrs: {
+									defer: true,
+									src: "https://static.cloudflareinsights.com/beacon.min.js",
+									"data-cf-beacon":
+										'{"token":"962bb11e04cf44df87f086d758a37710"}',
+								},
+							},
+							{
+								tag: "script",
 								// Google Tag Manager
 								content: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
