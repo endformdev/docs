@@ -41,7 +41,7 @@ For `label`:
 - use `project:project-name` to limit runs of tests within a project
 - if not set / `null`, the limit applies to all tests in the run
 
-Then set `limit` for the maximim number of allowed concurrent tests to run within that group.
+Then set `limit` for the maximum number of allowed concurrent tests to run within that group.
 
 
 ```json
@@ -117,7 +117,7 @@ All the traffic sent from the remote runners to your CLI is sent encrypted over 
 
 Each string in the array is a match rule. Either:
 
-- A hostname pattern `my-domain.com`, `*.interal.org`
+- A hostname pattern `my-domain.com`, `*.internal.org`
 - An IP literal like `127.0.0.1`
 - `<loopback>` to match interfaces `localhost`, `*.localhost`, `127.0.0.1`, `[::1]`
 

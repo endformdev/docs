@@ -71,7 +71,7 @@ In the `onBegin` hook, Endform provides an `endformReportURL` in the `config.met
 onBegin(config: FullConfig, suite: Suite) {
   // Access the Endform dashboard URL for this test run
   console.log("Endform Report URL:", config.metadata.endformReportURL);
-  // Example output: https://formend.dev/dashboard/fkJegSuE?suite_run=2xObB8z5sDNiCMRXnBw4ZCPqM0U
+  // Example output: https://endform.dev/dashboard/fkJegSuE?suite_run=2xObB8z5sDNiCMRXnBw4ZCPqM0U
 }
 ```
 

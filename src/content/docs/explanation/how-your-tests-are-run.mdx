@@ -8,7 +8,7 @@ sidebar:
 import { Aside } from '@astrojs/starlight/components';
 
 Endform provides a distributed test runner optimized specifically for Playwright, designed to run your end-to-end tests faster and more efficiently.
-Here's a breif explanation of how our test runner works.
+Here's a brief explanation of how our test runner works.
 
 ## How it works
 
@@ -27,7 +27,7 @@ To see what code and environment variables endform detects before running your t
 
 - Endform starts a fully isolated machine for each test. Your tests run in dedicated Firecracker MicroVMs.
 - Each machine receives only the specific test files and dependencies it requires.
-- Each machine only ever runs one attempt of a test, the test runner can immidately schedule _more than one_ retry of a test when the first run fails.
+- Each machine only ever runs one attempt of a test, the test runner can immediately schedule _more than one_ retry of a test when the first run fails.
 
 ### Step 3: Result coordination
 

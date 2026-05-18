@@ -23,8 +23,8 @@ If you keep your tests decoupled from your application already by, for example, 
 
 ### Remote
 
-Since your tests will be running on remote machines, the servers you are testing against need to be accesible to the remote runners.
-There are two ways to acheive this:
+Since your tests will be running on remote machines, the servers you are testing against need to be accessible to the remote runners.
+There are two ways to achieve this:
 
 - You are running preview infrastructure or a testing environment that is exposed to the internet anyway.
 - Endform can automatically shuttle traffic between the remote runners and the machine your CLI runs on. Check out the [guide on proxying traffic via your local network](/docs/guides/proxy-via-local) for more information about this approach.
