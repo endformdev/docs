@@ -79,26 +79,30 @@ if (scriptArg !== "create" && scriptArg !== "delete") {
 </TabItem>
 <TabItem label="mcp-user.ts (Completed)">
 ```ts
-import { createUser, deleteUser } from "./setup-utils";
+#!/usr/bin/env node
 
-const scriptArg = process.argv[2];
+import { createUserInFile, deleteUserFromFile } from "./setup-utils";
 
-if (scriptArg !== "create" && scriptArg !== "delete") {
-	console.error(
-		`Error: Invalid argument "${scriptArg}". Expected "create" or "delete".`,
-	);
-	process.exit(1);
-}
+(async () => {
+	const scriptArg = process.argv[2];
 
-// Can you come up with a way of getting the baseURL from the playwright.config.ts file
-// instead of hardcoding it here?
-const baseURL = "https://endform-playwright-tutorial.vercel.app";
+	if (scriptArg !== "create" && scriptArg !== "delete") {
+		console.error(
+			`Error: Invalid argument "${scriptArg}". Expected "create" or "delete".`,
+		);
+		process.exit(1);
+	}
 
-if (scriptArg === "create") {
-	await createUser(baseURL, "mcp");
-} else if (scriptArg === "delete") {
-	await deleteUser(baseURL, "mcp");
-}
+	const baseURL = "https://endform-playwright-tutorial.vercel.app";
+	// const baseURL = "http://localhost:3000";
+
+	if (scriptArg === "create") {
+		console.log("Creating MCP user", baseURL);
+		await createUserInFile(baseURL, "mcp");
+	} else if (scriptArg === "delete") {
+		await deleteUserFromFile(baseURL, "mcp");
+	}
+})();
 
 ```
 </TabItem>
