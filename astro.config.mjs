@@ -64,22 +64,7 @@ export default defineConfig({
 				process.env.NODE_ENV === "development"
 					? []
 					: [
-							{
-								tag: "script",
-								attrs: {
-									src: "https://web.cmp.usercentrics.eu/modules/autoblocker.js",
-								},
-							},
-							{
-								tag: "script",
-								attrs: {
-									id: "usercentrics-cmp",
-									async: true,
-									src: "https://web.cmp.usercentrics.eu/ui/loader.js",
-									"data-settings-id": "Q-tQAA7pNF0dcE",
-								},
-							},
-							// Set theme before other third-party scripts to avoid a dark flash on light theme.
+							// Set theme before third-party scripts to avoid a dark flash on light theme.
 							{
 								tag: "script",
 								content: `(() => {
@@ -98,6 +83,21 @@ export default defineConfig({
 								: "dark";
 						}
 					})();`,
+							},
+							{
+								tag: "script",
+								attrs: {
+									src: "https://web.cmp.usercentrics.eu/modules/autoblocker.js",
+								},
+							},
+							{
+								tag: "script",
+								attrs: {
+									id: "usercentrics-cmp",
+									async: true,
+									src: "https://web.cmp.usercentrics.eu/ui/loader.js",
+									"data-settings-id": "Q-tQAA7pNF0dcE",
+								},
 							},
 							{
 								tag: "script",
