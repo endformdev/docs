@@ -32,7 +32,7 @@ This means that you can either create a new Endform account through Vercel or co
    Add `endformdev/actions/run-with-vercel-deployment` before `npx endform@latest test`:
 
    ```yaml title=".github/workflows/endform-e2e.yml"
-   name: Run end to end tests with endform
+   name: Run end-to-end tests with Endform
 
    on:
      pull_request: # or push: if you want to run on commits to main
@@ -53,9 +53,9 @@ This means that you can either create a new Endform account through Vercel or co
            uses: endformdev/actions/run-with-vercel-deployment@main
            with:
              project-name: your-vercel-project-name
-             set-url-env-var: BASE_URL # Export the preview url for your playwright.config.ts to pick up
+              set-url-env-var: BASE_URL # Export the preview URL for your playwright.config.ts to pick up
 
-         - name: Run end to end tests with Endform
+          - name: Run end-to-end tests with Endform
            run: npx endform@latest test
    ```
 

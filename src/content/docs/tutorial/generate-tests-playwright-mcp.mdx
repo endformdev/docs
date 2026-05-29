@@ -12,7 +12,7 @@ import CursorActivityTodo from "../../../assets/cursor-activity-todo.png";
 In this guide, we will use the Playwright MCP to generate tests for your application.
 
 <Aside>
-To start from this step, checkout the [`stage-1-setup` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-1-setup) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
+To start from this step, check out the [`stage-1-setup` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-1-setup) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
 For more information about getting started with the tutorial repository, go [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
@@ -41,7 +41,7 @@ For example for Cursor, your `mcp.json` file could look like this:
 
 ## Authenticating with the Playwright MCP Server
 
-At the time of writing, the Playwright MCP server doesn't have support for the projects or storage states that we set up in our Playwright config in the previous step. 
+At the time of writing, the Playwright MCP server doesn't have support for the projects or storage states that we set up in our Playwright config in the previous step.
 
 You can achieve something similar by using the following flags to the MCP server:
 
@@ -431,14 +431,14 @@ Other classic problems with the tests that the AI generated:
 
 - Strict mode violations / more than one element on the page that matches a locator
 - Adding manual timeouts to tests instead of crafting good assertions
-- Hardcoding urls instead of using relative paths
-- Not using Playwright `test.step` to label steps in the test & excessive comments
+- Hardcoding URLs instead of using relative paths
+- Not using Playwright `test.step` to label steps in the test and using excessive comments
 
 ## Areas for improvement for our test setup at the moment
 
 It's been fantastic to generate a few tests using this method.
-When creating this tutorial, I was able to go from one test to ten tests in the space of just an hour or two, but that also should give us a little space to reflect over what we've done.
+When creating this tutorial, I was able to go from one test to ten tests in the space of just an hour or two, but that should also give us a little space to reflect on what we've done.
 
 At the moment:
 
-- Have lots of duplicated selectors in tests where better practice would be to have [page object models](https://playwright.dev/docs/pom) so that we can reduce the amount of places we need to update selectors when changes are needed.
+- We have lots of duplicated selectors in tests where better practice would be to have [page object models](https://playwright.dev/docs/pom), so that we can reduce the number of places we need to update selectors when changes are needed.

@@ -29,7 +29,7 @@ const isDemoVercel = suite === "demo" && target === "vercel";
 {isDemoVercel && (
   <>
     <h2 id="deploy-demo">3. Deploy the demo project</h2>
-    <p>Deploy our demo repository to your Vercel account. This will automatically configure the project, but you will need to copy over the github workflow files to start running your tests:</p>
+    <p>Deploy our demo repository to your Vercel account. This will automatically configure the project, but you will need to copy over the GitHub workflow files to start running your tests:</p>
     <p><a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fendformdev%2Fplaywright-tutorial&project-name=endform-playwright-example&repository-name=endform-playwright-example&demo-title=Next.JS%2FPlaywright%2FEndform&demo-description=A%20next.js%20web%20app%20tested%20with%20Playwright%20and%20Endform&demo-url=https%3A%2F%2Fendform-playwright-tutorial.vercel.app" target="_blank" rel="noopener noreferrer">Deploy with Vercel →</a></p>
     <p><small>Once deployed, tests will automatically run. Results will appear in the dashboard shortly.</small></p>
   </>
@@ -41,7 +41,7 @@ const isDemoVercel = suite === "demo" && target === "vercel";
     <p>Create <code>.github/workflows/endform-e2e.yml</code> in your repository:</p>
 
     {target === 'remote' && (
-      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
+      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end-to-end tests with Endform
 
 on:
   pull_request:
@@ -68,8 +68,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run end to end tests with endform
-        working-directory: . # where your playwright suite is located
+      - name: Run end-to-end tests with Endform
+        working-directory: . # where your Playwright suite is located
         env:
           BASE_URL: https://url-to-your-server.com
         run: |
@@ -77,7 +77,7 @@ jobs:
     )}
 
     {target === 'local' && (
-      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
+      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end-to-end tests with Endform
 
 on:
   pull_request:
@@ -106,14 +106,14 @@ jobs:
       
       # Any other setup needed for your local server to run...
 
-      - name: Run end to end tests with endform
-        working-directory: . # where your playwright suite is located
+      - name: Run end-to-end tests with Endform
+        working-directory: . # where your Playwright suite is located
         run: |
           npx endform@latest test`} />
     )}
 
     {target === 'vercel' && (
-      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end to end tests with endform
+      <Code lang="yaml" title=".github/workflows/endform-e2e.yml" code={`name: Run end-to-end tests with Endform
 
 on:
   pull_request: # or push: if you want to run on commits to main
@@ -146,15 +146,15 @@ jobs:
           set-url-env-var: BASE_URL # Sets the Vercel preview URL as this environment variable
           set-vercel-bypass-env-var: VERCEL_BYPASS_TOKEN # Exports a deployment protection bypass token as this env var
 
-      - name: Run end to end tests with endform
-        working-directory: . # where your playwright suite is located
+      - name: Run end-to-end tests with Endform
+        working-directory: . # where your Playwright suite is located
         run: |
           npx endform@latest test`} />
     )}
 
     <h2 id="commit-changes">{target === 'vercel' ? '4' : '3'}. Commit your changes</h2>
     <p>Stage and commit your workflow file:</p>
-    <Code lang="bash" code='git add -A && git commit -m "Add endform github actions workflow"' />
+    <Code lang="bash" code='git add -A && git commit -m "Add Endform GitHub Actions workflow"' />
 
     <h2 id="push-to-trigger">{target === 'vercel' ? '5' : '4'}. Push to trigger tests</h2>
     <p>Push your changes to trigger the workflow on your next pull request:</p>

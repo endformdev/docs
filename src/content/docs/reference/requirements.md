@@ -6,7 +6,7 @@ sidebar:
 ---
 
 Endform is a _parallel_, _remote_ test runner.
-Your playwright tests will be run on many separate machine in the cloud.
+Your Playwright tests will be run on many separate machines in the cloud.
 
 ### Parallel
 
@@ -17,9 +17,9 @@ This means that:
 - If `fullyParallel: false` (Playwright default), each _file_ will run in parallel.
 - If `fullyParallel: true`, each _test case_ will run in parallel.
 
-Generally, this means that your tests need to be _independent_ of each other, in order to not interfere with other tests running at the same time.
+Generally, this means that your tests need to be _independent_ of each other in order to not interfere with other tests running at the same time.
 
-If you keep your tests decoupled from your application already by, for example, using apis to generate data, you are probably ready to use endform.
+If you already keep your tests decoupled from your application by, for example, using APIs to generate data, you are probably ready to use Endform.
 
 ### Remote
 
@@ -31,15 +31,15 @@ There are two ways to achieve this:
 
 ## Playwright requirements
 
-- We support playwright projects written in typescript and javascript.
-- The length of an individual test run is limited to 4 minutes (same as the `testConfig.timeout` option). The playwright default timeout is 30 seconds. This does not include retries.
+- We support Playwright projects written in TypeScript and JavaScript.
+- The length of an individual test run is limited to 4 minutes (same as the `testConfig.timeout` option). The Playwright default timeout is 30 seconds. This does not include retries.
 - If you are running `fullyParallel: false`, then the maximum timeout of four minutes applies to each _file_.
-- We currently only support the latest two minor versions of playwright.
-- We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with. Let us know if you are in need of more browsers and we can prioritise this.
+- We currently only support the latest two minor versions of Playwright.
+- We currently only support Chrome. We run the same version of Chrome as the Playwright version you are running ships with. Let us know if you are in need of more browsers and we can prioritize this.
 
 ### Playwright configuration options
 
-Endform tries to directly use or replicate all playwright configuration options.
+Endform tries to directly use or replicate all Playwright configuration options.
 To understand how most of these options work, please refer to the [Playwright documentation](https://playwright.dev/docs/test-configuration).
 
 There are a few exceptions to this.
@@ -52,12 +52,12 @@ Options that we currently don't support, but will do in future (let us know and 
 ## Node requirements
 
 - A version of Node.js that is more recent than the latest LTS version (Node 22+).
-- In the remote test environment, your tests will run on node lts.
+- In the remote test environment, your tests will run on Node LTS.
 
 ## Browser requirements
 
-- We currently only support Chrome. We run the same version of Chrome as the playwright version you are running ships with.
+- We currently only support Chrome. We run the same version of Chrome as the Playwright version you are running ships with.
 
 ## Operating system requirements
 
-- We currently only support Linux and MacOS.
+- We currently only support Linux and macOS.

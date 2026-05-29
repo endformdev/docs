@@ -12,21 +12,21 @@ import ExampleTrace from "../../../assets/example-trace.png";
 import EndformResults from "../../../assets/endform-results.png";
 import EndformFilters from "../../../assets/endform-filters.png";
 
-In this guide, we will use the endform dashboard to understand the test results.
+In this guide, we will use the Endform dashboard to understand the test results.
 
 <Aside>
-To start from this step, checkout the [`stage-3-endform-integration` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-3-endform-integration) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
+To start from this step, check out the [`stage-3-endform-integration` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-3-endform-integration) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
 For more information about getting started with the tutorial repository, go [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
-Real world tests don't always pass the first time you write them or forever more.
-There is near no point in writing or running end-to-end tests if we don't know how to debug them quickly and easily.
+Real-world tests don't always pass the first time you write them, or forever after.
+There is almost no point in writing or running end-to-end tests if we don't know how to debug them quickly and easily.
 
 We covered in part one of the tutorial how to use the debug flag with Playwright `pnpm playwright test --debug`.
 This is a great option for understanding what's going on in a test while you're developing it.
 
 In many cases we want to be able to look at test runs after they've completed.
-Let's take a look at the most powerful options we have available to us to debug Playwright end to end tests after they've completed.
+Let's take a look at the most powerful options we have available to debug Playwright end-to-end tests after they've completed.
 
 
 ## Playwright traces
@@ -35,7 +35,7 @@ Start by setting the `trace` option to `on` in your `playwright.config.ts` file.
 
 ```ts
 export default defineConfig({
-  // Create a HTML report of the test run
+  // Create an HTML report of the test run
   reporter: [["html", { open: "never" }]],
 	use: {
     // Always create a trace of the test run even if the test passes.
@@ -44,22 +44,22 @@ export default defineConfig({
 });
 ```
 
-Then kick off a run of your suite. `pnpm playwright test` and boot the html report server `pnpm playwright show-report`
+Then kick off a run of your suite with `pnpm playwright test` and boot the HTML report server with `pnpm playwright show-report`.
 
 <Image src={HtmlReportTrace} alt="Playwright HTML reporter with trace" width={900} />
 
-We now click on one of the tests since we had trace set to on we should have a full trace file for each of the successful tests in our suite.
+Click on one of the tests. Since we had trace set to `on`, we should have a full trace file for each successful test in our suite.
 
 <Image src={ExampleTrace} alt="Example trace file" width={900} />
 
 Here we can navigate the different steps that the test took.
 We can look at screenshots of what was going on while the test was running.
-Then we can also inspect parts of the browser while the test was running, including things like the network tab, console logs from the browser.
+Then we can also inspect parts of the browser while the test was running, including the network tab and console logs from the browser.
 
 ## Add a flaky test
 
-One of the most common problems you'll have with your suite are tests that only sometimes fail, otherwise known as flaky tests.
-Let's see what it's like to work with the flaky test in our suite.
+One of the most common problems you'll have with your suite is tests that only sometimes fail, otherwise known as flaky tests.
+Let's see what it's like to work with a flaky test in our suite.
 
 <Tabs>
   <TabItem label="tests/flaky-test.spec.ts">
@@ -93,18 +93,18 @@ export default defineConfig({
 });
 ```
 
-Now let's try running the tests again. We will have to run it many times to simulate the flakiness.
+Now let's try running the tests again. We will have to run them many times to simulate the flakiness.
 
 ```bash
 pnpm playwright test --repeat-each=10 flaky-test.spec.ts
 ```
 
-Take a look at the HTML report. You have at least one failing test, otherwise you're very lucky!
+Take a look at the HTML report. You should have at least one failing test, unless you're very lucky!
 
 ## Results in the Endform dashboard
 
-Normally the problem with flaky tests is that you won't get the failures nice and put together in a single report,
-but they'll be spread out across lots of reports in lots of different runs.
+Normally, the problem with flaky tests is that you won't get the failures neatly collected in a single report.
+Instead, they'll be spread out across lots of reports in lots of different runs.
 
 This is where the Endform dashboard can really shine, because it can show you lots of results over weeks and months of historical data.
 
@@ -118,7 +118,7 @@ There you'll get a link to the Endform dashboard where you can also look at the 
 
 <Image src={EndformResults} alt="Endform results" width={900} />
 
-Enform dashboard is particularly useful for understanding suite's performance over time. You can query for things like:
+The Endform dashboard is particularly useful for understanding your suite's performance over time. You can query for things like:
 
 - Which test fails most frequently?
 - Which test is the slowest?
@@ -133,8 +133,8 @@ Here for example we have a view of the most frequently failing tests over the la
 
 Thanks for following along with our Playwright tutorial!
 
-Our favourite takeaways from this tutorial are:
+Our favorite takeaways from this tutorial are:
 
-- Spending some time on a good playwright set up early on saves you a lot of pain further down the road.
-- Generating tests using the Playwright MCP server is a great way to get going - and it becomes even more powerful if you have the right tools to generate the test data you need.
+- Spending some time on a good Playwright setup early on saves you a lot of pain further down the road.
+- Generating tests using the Playwright MCP server is a great way to get going, and it becomes even more powerful if you have the right tools to generate the test data you need.
 - Don't forget to take care of your suite as you scale it to more tests. Endform is a great platform to help you do so.
