@@ -19,6 +19,14 @@ export default defineConfig({
 		starlight({
 			title: "Endform docs",
 			plugins: [starlightThemeRapide()],
+			customCss: [
+				"@fontsource/inter/400.css",
+				"@fontsource/inter/400-italic.css",
+				"@fontsource/inter/500.css",
+				"@fontsource/inter/600.css",
+				"@fontsource/inter/700.css",
+				"/src/styles/custom.css",
+			],
 			components: {
 				Sidebar: "./src/components/Sidebar.astro",
 			},
