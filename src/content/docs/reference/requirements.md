@@ -33,7 +33,7 @@ There are two ways to achieve this:
 
 - We support Playwright projects written in TypeScript and JavaScript.
 - The length of an individual test run is limited to 4 minutes (same as the `testConfig.timeout` option). The Playwright default timeout is 30 seconds. This does not include retries.
-- If you are running `fullyParallel: false`, then the maximum timeout of four minutes applies to each _file_.
+- If you are running `fullyParallel: false`, then the maximum timeout of 15 minutes applies to each _file_.
 - We currently only support the latest two minor versions of Playwright.
 - We currently only support Chrome. We run the same version of Chrome as the Playwright version you are running ships with. Let us know if you are in need of more browsers and we can prioritize this.
 

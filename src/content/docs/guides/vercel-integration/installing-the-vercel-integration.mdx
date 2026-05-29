@@ -85,7 +85,7 @@ The action then:
 
 - waits until the Vercel deployment is ready
 - exports the deployment URL as `BASE_URL`, or whichever variable you set with `set-url-env-var`
-- configures Endform with a Vercel deployment protection bypass token (through [extra headers](https://endform.dev/docs/reference/endform-config#extrahttpheaders))
+- configures Endform with a Vercel deployment protection bypass token (through [extra headers](/docs/reference/endform-config#extrahttpheaders))
 
 When `npx endform@latest test` starts, Endform creates a Vercel deployment check for that workflow job.
 The check is marked as running while tests execute, then completed with the test result and a link back to the Endform dashboard.
