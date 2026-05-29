@@ -1,6 +1,6 @@
 ---
 title: Proxy traffic via your local network
-description: How to proxy traffic from your remote runners to your local network. This helps to run tests against local servers
+description: How to proxy traffic from your remote runners to your local network. This helps you run tests against local servers
 sidebar:
   order: 3
 ---
@@ -12,10 +12,10 @@ import LocalTraffic from "../../../assets/local-server-traffic.png";
 
 Servers that you want to test against that are either running locally or within a private network are not automatically exposed to the internet.
 These servers are not reachable by default from the remotely running Playwright instances.
-Trying to reach them without this extra setup, would likely result in connection errors in your tests.
+Trying to reach them without this extra setup would likely result in connection errors in your tests.
 
 
-When this happens, we need a method of shuttling traffic between the remote runners and the servers running on your local network. 
+When this happens, we need a method of shuttling traffic between the remote runners and the servers running on your local network.
 
 <Image
   src={LocalTraffic}
@@ -26,10 +26,10 @@ When this happens, we need a method of shuttling traffic between the remote runn
 Endform has the ability to connect the remote Playwright runners to the servers on your local network via direct, hole-punched, encrypted, peer-to-peer connections.
 We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/overview).
 
-## Setting up endform to proxy traffic
+## Setting up Endform to proxy traffic
 
 <Aside>
-`proxyNetworkHosts` is the easiest option for most setups. `proxyNetworkPorts` is available for raw TCP connections and is experimental.
+`proxyNetworkHosts` is the easiest option for most setups. `proxyNetworkPorts` is available for raw TCP connections like databases.
 </Aside>
 
 
@@ -37,12 +37,12 @@ We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/ov
 
 1. ### Configure which traffic to proxy.
    
-   #### As a playwright `webServer`
-   If you want to run your local server as a [playwright `webServer`](https://playwright.dev/docs/api/class-testconfig#test-config-web-server)
+   #### As a Playwright `webServer`
+   If you want to run your local server as a [Playwright `webServer`](https://playwright.dev/docs/api/class-testconfig#test-config-web-server)
    then you're done! Leave your web server configuration as is, and we will automatically proxy the traffic to your local server.
 
    #### With your own custom server
-   If you're running a server outside of playwright - that's fine. You can tell endform which traffic to proxy by using a `endform.jsonc` file.
+   If you're running a server outside of Playwright, that's fine. You can tell Endform which traffic to proxy by using an `endform.jsonc` file.
 
    Use `proxyNetworkHosts` for most local web servers and APIs. This is the easiest option and uses HTTP interception in Node and in the browser.
 
@@ -55,7 +55,7 @@ We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/ov
    }
    `} />
 
-   If you need raw TCP connections to a local loopback port, use `proxyNetworkPorts` instead. This is experimental.
+   If you need raw TCP connections to a local loopback port, use `proxyNetworkPorts` instead. Useful for things like database connections.
 
    <Code language="json" title="endform.jsonc" code={`
    {
@@ -67,6 +67,6 @@ We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/ov
 
 2. ### Run your tests!
 
-   That's it! You can now run your tests as normal, and the traffic will be proxied via the cli to your target server.
+   That's it! You can now run your tests as normal, and the traffic will be proxied via the CLI to your target server.
 
 </Steps>

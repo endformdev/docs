@@ -1,19 +1,26 @@
 ---
 title: Run your Playwright tests faster
-description: Documentation for the Endform end-to-end test runner
+description: Documentation for the Endform Playwright test runner and analytics dashboard
 ---
 
 import { LinkCard } from "@astrojs/starlight/components";
 
-Hi there! Thank you for taking an interest in Endform.
+Endform is a managed, distributed Playwright test runner and analytics dashboard.
 
-Endform is:
+Write your browser-based end-to-end tests using the [open source Playwright framework](https://github.com/microsoft/playwright).
 
-- A very fast _remote_ test runner for your playwright end-to-end tests.
-- A dashboard for viewing and analyzing your test results.
+Then you can run your suite on Endform's fully isolated cloud runners.
+We run one test per virtual machine for maximum performance.
 
-We appreciate you taking the time to try it out,
-and we'd love to hear your feedback.
+Endform also helps you maintain your suite over time by providing analytics in our [dashboard](https://endform.dev/app).
+
+### Running Endform
+
+To run tests with Endform, you only need to swap out the `playwright` CLI for the `endform` CLI. We support the same functionality as Playwright.
+
+```sh
+npx endform@latest test
+```
 
 ## Guides
 
@@ -35,12 +42,30 @@ and we'd love to hear your feedback.
   href="/docs/guides/proxy-via-local"
 />
 
+<LinkCard
+  title="Tune your Playwright suite for Endform"
+  description="Configure files, environment variables, concurrency limits, regions, and network proxying"
+  href="/docs/guides/tune-playwright-suite-performance"
+/>
+
 ## Explanation
+
+<LinkCard
+  title="What is Endform?"
+  description="A product overview of Endform and how it fits into a Playwright workflow"
+  href="/docs/explanation/what-is-endform"
+/>
 
 <LinkCard
   title="How your tests are run"
   description="How Endform runs your tests"
   href="/docs/explanation/how-your-tests-are-run"
+/>
+
+<LinkCard
+  title="Dashboard analytics"
+  description="Use Endform analytics to find flaky tests, slow tests, failures, and traces"
+  href="/docs/explanation/dashboard-analytics"
 />
 
 <LinkCard
@@ -61,7 +86,7 @@ and we'd love to hear your feedback.
 
 <LinkCard
   title="Requirements"
-  description="Our current requirements on your playwright setup"
+  description="Our current requirements on your Playwright setup"
   href="/docs/reference/requirements"
 />
 
@@ -69,4 +94,10 @@ and we'd love to hear your feedback.
   title="Endform config - endform.jsonc"
   description="Configure Endform further with an endform.jsonc file"
   href="/docs/reference/endform-config"
+/>
+
+<LinkCard
+  title="Analytics CLI"
+  description="Query suite and test analytics from the command line"
+  href="/docs/reference/analytics-cli"
 />

@@ -1,0 +1,103 @@
+---
+title: Performance tuning your Playwright suite for Endform
+description: Tune Endform concurrency, network proxying, runner regions, and remote reporters for faster Playwright runs
+sidebar:
+  order: 4
+---
+
+Endform works best when your Playwright tests can run independently and in parallel.
+
+But just because your suite can't run with full parallelism today doesn't mean that you can't still benefit from using Endform as your runner.
+
+Here is some advice on achieving the maximum possible performance of your suite regardless of your underlying system constraints.
+
+## Limit concurrency around bottlenecks
+
+Endform can run hundreds of tests in parallel.
+This lets us run suites extremely quickly, but it also means your application, databases, APIs, payment sandboxes, and third-party services may receive more parallel traffic than they do in a local Playwright run.
+
+`concurrentTestLimits` lets you run as many parallel tests as you can based on the specific constraints of your underlying systems.
+
+The full reference of `concurrentTestLimits` [can be found here](/docs/reference/endform-config.html#concurrenttestlimits).
+
+### Examples:
+
+Limit the whole suite run when the application under test has a broad capacity limit (like a resource-constrained local server):
+
+```json
+{
+  "concurrentTestLimits": [
+    { "scope": "within-suite-run", "limit": 40 }
+  ]
+}
+```
+
+Use a tag-specific limit when only some tests hit a constrained dependency:
+
+```json
+{
+  "concurrentTestLimits": [
+    { "scope": "within-suite-run", "label": "tag:@checkout", "limit": 3 }
+  ]
+}
+```
+
+Use a project-specific limit when one Playwright project is slower or more expensive than the others:
+
+```json
+{
+  "concurrentTestLimits": [
+    { "scope": "within-suite-run", "label": "project:mobile-chrome", "limit": 8 }
+  ]
+}
+```
+
+Use `across-all-runs` when the bottleneck is shared by multiple suite runs in your organization, such as parallel CI jobs running against the same staging environment:
+
+```json
+{
+  "concurrentTestLimits": [
+    { "scope": "across-all-runs", "label": "tag:@writes-to-staging", "limit": 40 }
+  ]
+}
+```
+
+All matching limits apply at the same time. If a test matches a suite-wide limit and a tag-specific limit, it must fit within both.
+
+Prefer the smallest useful scope. For example, limiting `tag:@checkout` to 3 usually preserves more parallelism than limiting the whole suite to 3.
+
+## Choose the closest runner region
+
+Endform runs remote tests in the region closest to the request by default. Requests from North America and South America default to US runners. Other requests default to EU runners.
+
+Set `region` when the default is not close to the application under test:
+
+```json
+{
+  "region": "us"
+}
+```
+
+Available values are `"us"` and `"eu"`.
+
+Choose the region based on where browser traffic goes during the test. If your CI job runs in the US but your preview/staging environment and database are in Europe, `"eu"` may be faster.
+If your app is hosted in the US but you run the CLI from Europe, `"us"` may be faster.
+
+If you proxy local traffic, region tuning may have less effect because proxied requests still pass through the CLI machine. In that case, the best region is often the one that minimizes the runner-to-CLI path, but the fastest long-term setup is usually to run against a publicly reachable preview environment close to the runners.
+
+## Example configuration
+
+This example tunes a suite that runs against a US-hosted preview environment, protects checkout tests from overwhelming a payment sandbox, limits total staging writes across parallel CI jobs, and proxies a single internal API:
+
+```json
+{
+  "concurrentTestLimits": [
+    { "scope": "within-suite-run", "limit": 50 },
+    { "scope": "within-suite-run", "label": "tag:@checkout", "limit": 3 },
+    { "scope": "across-all-runs", "label": "tag:@writes-to-staging", "limit": 10 }
+  ],
+  "region": "us"
+}
+```
+
+Start with the limit or network setting that maps to the bottleneck you actually see. The goal is to keep parallelism high while removing the specific constraint that makes a run slow or unstable.

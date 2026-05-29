@@ -1,0 +1,73 @@
+---
+title: What is Endform?
+description: A product overview of Endform, what it does, and how it fits into a Playwright workflow
+sidebar:
+  order: 1
+---
+
+Endform is a managed, distributed Playwright test runner and test analytics dashboard.
+
+You keep your existing Playwright tests and configuration, then run them with Endform instead by switching out the `playwright` CLI with `endform`.
+
+Endform analyzes your suite and uploads each test to its own isolated cloud runner.
+Completed test results are both sent back to the CLI for local inspection, and to Endform to view later and track suite health in the dashboard.
+
+## The problem Endform solves
+
+End-to-end tests are valuable because they exercise real user flows, but they often become the slowest part of a CI pipeline.
+
+As a Playwright suite grows, a single CI worker has to start browsers, run tests, retry failures, collect artifacts, and generate reports. Even with Playwright workers, the run is still bounded by the compute and network capacity of the machine running the job.
+
+Endform moves the expensive part of the run to managed infrastructure.
+Instead of making one machine do all the browser work, Endform can run many tests at the same time across many machines.
+
+You pay only for the exact time your tests took to run on each individual machine they ran on.
+
+## What changes when you use Endform
+
+In most projects, the main change is the command you run:
+
+```bash
+npx endform@latest test
+```
+
+Your Playwright tests still use Playwright APIs. Your assertions, fixtures, projects, retries, reporters, storage state, and browser interactions continue to be Playwright concepts.
+
+Endform adds the distributed execution layer and the dashboard around those tests.
+
+## How a run works
+
+1. The Endform CLI evaluates your Playwright config and discovers the tests that should run.
+2. The CLI analyzes each JavaScript and TypeScript test file to find the dependencies needed by that test.
+3. Endform uploads the required test files, dependencies, environment variables, storage state, and configured extra files.
+4. Endform schedules test attempts on remote, isolated runners.
+5. Each runner executes one test attempt and produces a Playwright blob report.
+6. The CLI downloads the blob reports and runs Playwright's report merge flow so your local reporters still work.
+7. Endform stores suite results, test results, attempts, failures, durations, and traces for analysis in the dashboard.
+
+For more detail, see [How your tests are run](/docs/explanation/how-your-tests-are-run).
+
+## What Endform includes
+
+- **Distributed Playwright execution**: Run many Playwright tests in parallel on managed cloud runners.
+- **Dashboard analytics**: Track suite runs, test runs, pass rates, durations, failures, retries, flaky tests, and traces over time.
+- **Playwright compatibility**: Use Playwright projects, retries, global setup and teardown, web servers, reporters, storage state, and snapshots.
+- **Local and private network access**: Proxy traffic from remote runners back through the CLI to local or private services.
+- **CI support**: Run from GitHub Actions with the Endform GitHub App, or from other CI systems with an API key.
+- **Configuration with `endform.jsonc`**: Tune file transfer, environment variables, concurrency limits, regions, network proxying, reporters, and trace retention.
+
+## What Endform does not replace
+
+Endform does not replace Playwright as your test framework. You still write Playwright tests, use Playwright assertions, and configure Playwright behavior in `playwright.config.ts`.
+
+Endform also does not replace your application hosting. Your tests still need a target application to test. That can be a public staging environment, a Vercel preview deployment, a server started by Playwright's `webServer`, or a local/private service reached through Endform's network proxy.
+
+## When Endform is a good fit
+
+Endform is most useful when:
+
+- Your Playwright suite is slowing down local development or CI.
+- You want to run more end-to-end coverage without making CI much slower.
+- Your test suite already has mostly independent tests that can run in parallel.
+- You want historical visibility into slow tests, flaky tests, failures, retries, and traces.
+- You want to avoid building and operating your own Playwright sharding infrastructure.

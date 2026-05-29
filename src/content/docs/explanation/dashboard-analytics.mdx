@@ -1,0 +1,113 @@
+---
+title: Dashboard analytics
+description: How to use Endform dashboard analytics to understand suite health, flaky tests, slow tests, and failures
+sidebar:
+  order: 3
+---
+
+import { Image } from "astro:assets";
+import EndformResults from "../../../assets/endform-dashboard-test-runs.png";
+
+Endform stores your suite results over time so you can understand more than the outcome of the latest run.
+
+The dashboard helps you answer questions like:
+
+- Which tests fail most often?
+- Which tests are flaky and only pass after retries?
+- Which tests are slow enough to affect feedback time?
+- Did failures start on a specific branch or commit?
+- What happened inside a failed test attempt?
+
+<Image src={EndformResults} alt="The endform dashboard" width={1200} />
+
+## Suite runs and test runs
+
+Endform analytics has two main levels of data.
+
+**Suite runs** describe one Endform run of a Playwright suite. Use suite runs to understand overall pass rate, suite duration, branch behavior, and CI health.
+
+**Test runs** describe individual Playwright tests within suite runs. Use test runs to debug specific failures, retries, flaky tests, slow tests, and project-specific behavior.
+
+## Common metrics
+
+The dashboard can show metrics such as:
+
+- Run count
+- Suite duration
+- Suite pass rate
+- Test pass rate
+- Test duration
+- Number of attempts per test run
+
+These metrics are most useful when grouped or filtered by branch, outcome, test name, or Playwright project.
+
+## Filters
+
+Use filters to narrow the dashboard to the part of the suite you care about.
+
+Useful suite-level filters include:
+
+- `branch`
+- `commitSha`
+- `suite.repository`
+- `suite.directory`
+- `suiteRun.outcome`
+- `suiteRun.durationSeconds`
+
+Useful test-level filters include:
+
+- `test.name`
+- `test.location`
+- `test.describes`
+- `testRun.outcome`
+- `testRun.projectName`
+- `testRun.testAttemptsCount`
+- `testRun.durationSeconds`
+- `testAttempt.errorMessage`
+- `testAttempt.errorLocation`
+
+## Find flaky tests
+
+A common signal for flakiness is a test run that eventually passed but needed more than one attempt.
+
+Use a test runs view with filters like:
+
+```text
+testRun.outcome = pass, testRun.testAttemptsCount > 1
+```
+
+This shows tests that consumed retries. These tests may not fail the suite, but they still slow down feedback and reduce trust in the test suite.
+
+## Find slow tests
+
+Use duration filters to find tests that dominate suite time:
+
+```text
+testRun.durationSeconds > 30
+```
+
+Slow tests are especially important in Endform because a highly parallel suite is often bottlenecked by the slowest individual tests. Reducing the longest tests can improve total feedback time more than optimizing already-fast tests.
+
+## Debug failures
+
+Start from failing suite runs or failing test runs:
+
+```text
+suiteRun.outcome = fail
+```
+
+```text
+testRun.outcome = fail
+```
+
+From a failed test run, inspect the individual attempts. Attempts can include error messages, error locations, Playwright trace links, and OpenTelemetry trace links when available.
+
+## Use branch and commit metadata
+
+Endform associates runs with git metadata when possible. This lets you compare behavior across branches and commits.
+
+If automatic git detection is not correct in your CI environment, use `ENDFORM_GIT_BRANCH` and `ENDFORM_GIT_COMMIT_SHA` to override the reported metadata. See [Environment variables](/docs/reference/environment-variables#git-metadata-overrides).
+
+## Query the same data from the CLI
+
+If you want to script analytics queries or inspect results outside the dashboard, use the `endform query` command. See [Analytics CLI](/docs/reference/analytics-cli).
