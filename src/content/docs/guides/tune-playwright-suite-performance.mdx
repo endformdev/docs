@@ -85,50 +85,6 @@ If your app is hosted in the US but you run the CLI from Europe, `"us"` may be f
 
 If you proxy local traffic, region tuning may have less effect because proxied requests still pass through the CLI machine. In that case, the best region is often the one that minimizes the runner-to-CLI path, but the fastest long-term setup is usually to run against a publicly reachable preview environment close to the runners.
 
-## Proxy only the traffic that needs it
-
-Remote runners cannot normally reach `localhost`, private networks, or internal domains on your machine or CI worker. Endform can proxy that traffic back through the CLI, which is useful for local apps and private services.
-
-Proxying is a network path, not free compute. Traffic has to travel between the remote runner and the machine running the Endform CLI, then from that machine to the target service. If every test loads many assets or calls a chatty local API through the proxy, the CLI machine and its network connection can become the bottleneck.
-
-If your app is configured with Playwright's `webServer`, Endform starts it locally and proxies traffic to it automatically.
-
-For custom local services, use `proxyNetworkHosts`:
-
-```json
-{
-  "proxyNetworkHosts": [
-    "api.internal.example.com",
-    "assets.internal.example.com"
-  ]
-}
-```
-
-Use `<loopback>` when tests need browser or HTTP access to loopback hosts:
-
-```json
-{
-  "proxyNetworkHosts": ["<loopback>"]
-}
-```
-
-`<loopback>` matches `localhost`, `*.localhost`, `127.0.0.1`, and `[::1]`.
-
-Keep proxy rules narrow. Broad rules such as `*` are convenient, but they can accidentally send unrelated browser traffic through the proxy and make the run slower.
-
-For raw TCP connections to local services, use `proxyNetworkPorts`:
-
-```json
-{
-  "proxyNetworkPorts": [5432, 6379]
-}
-```
-
-`proxyNetworkPorts` is useful for databases, caches, and non-HTTP clients that connect directly to `127.0.0.1:<port>`. It is experimental.
-
-For more details, see [Proxy traffic via your local network](/docs/guides/proxy-via-local).
-
-
 ## Example configuration
 
 This example tunes a suite that runs against a US-hosted preview environment, protects checkout tests from overwhelming a payment sandbox, limits total staging writes across parallel CI jobs, proxies a single internal API, and runs one reporter remotely because it streams live attempt events:
@@ -140,10 +96,8 @@ This example tunes a suite that runs against a US-hosted preview environment, pr
     { "scope": "within-suite-run", "label": "tag:@checkout", "limit": 3 },
     { "scope": "across-all-runs", "label": "tag:@writes-to-staging", "limit": 10 }
   ],
-  "proxyNetworkHosts": ["api.internal.example.com"],
   "region": "us",
-  "remoteReporters": ["./remote-reporter.ts"]
 }
 ```
 
-Start with the limit or network setting that maps to the bottleneck you actually see. The goal is not to add configuration everywhere; it is to keep Endform's parallelism high while removing the specific constraint that makes a run slow or unstable.
+Start with the limit or network setting that maps to the bottleneck you actually see. The goal is to keep parallelism high while removing the specific constraint that makes a run slow or unstable.
