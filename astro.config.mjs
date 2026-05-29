@@ -51,12 +51,12 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: "Guides",
-					autogenerate: { directory: "guides" },
-				},
-				{
 					label: "Explanation",
 					autogenerate: { directory: "explanation" },
+				},
+				{
+					label: "Guides",
+					autogenerate: { directory: "guides" },
 				},
 				{
 					label: "Tutorial",
