@@ -29,7 +29,7 @@ We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/ov
 ## Setting up endform to proxy traffic
 
 <Aside>
-`proxyNetworkHosts` is the easiest option for most setups. `proxyNetworkPorts` is available for raw TCP connections and is experimental.
+`proxyNetworkHosts` is the easiest option for most setups. `proxyNetworkPorts` is available for raw TCP connections like databases.
 </Aside>
 
 
@@ -55,7 +55,7 @@ We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/ov
    }
    `} />
 
-   If you need raw TCP connections to a local loopback port, use `proxyNetworkPorts` instead. This is experimental.
+   If you need raw TCP connections to a local loopback port, use `proxyNetworkPorts` instead. Useful for things like database connections.
 
    <Code language="json" title="endform.jsonc" code={`
    {

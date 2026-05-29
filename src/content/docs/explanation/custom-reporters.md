@@ -2,7 +2,7 @@
 title: Custom Playwright reporters
 description: Using custom playwright reports with endform
 sidebar:
-  order: 3
+  order: 5
 ---
 
 ## Custom Playwright reporters in Endform
@@ -95,4 +95,3 @@ onTestEnd(test: TestCase, result: TestResult) {
 ```
 
 You can use this URL in your custom reporting to link directly to the detailed trace information for each test attempt.
-

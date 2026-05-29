@@ -124,7 +124,7 @@ Each string in the array is a match rule. Either:
 ### `proxyNetworkPorts`
 
 Choose which local loopback ports will accept raw TCP connections from the remote runners.
-Use this for databases or other clients that need to connect directly to `127.0.0.1:<port>`. This feature is experimental.
+Use this for databases or other clients that need to connect directly to `127.0.0.1:<port>`.
 All the traffic sent from the remote runners to your CLI is sent encrypted over direct peer-to-peer connections. Read more about [traffic to local servers here](/docs/guides/proxy-via-local).
 
 ```json
