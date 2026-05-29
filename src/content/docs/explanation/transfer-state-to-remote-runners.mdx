@@ -1,6 +1,6 @@
 ---
 title: Transfer state to remote runners
-description: How to handle environment variable and file state transfer to endform runners
+description: How to handle environment variable and file state transfer to Endform runners
 sidebar:
   order: 4
 ---
@@ -8,36 +8,36 @@ sidebar:
 import { Image } from "astro:assets";
 import EndformArchitecture from "../../../assets/endform-architecture.png";
 
-Let's briefly review endform's architecture.
+Let's briefly review Endform's architecture.
 
 <Image
   src={EndformArchitecture}
-  alt="A diagram of endform's local CLI speaking to a remote coordination server, which then schedules tests on remote runners."
+  alt="A diagram of Endform's local CLI speaking to a remote coordination server, which then schedules tests on remote runners."
   height={500}
 />
 
-When you use endform to run your tests, they are are packaged, uploaded, and scheduled on many remote machines in the cloud.
+When you use Endform to run your tests, they are packaged, uploaded, and scheduled on many remote machines in the cloud.
 
 This means that each test running on a remote machine might not have access to things that you have on your local machine, such as environment variables or files.
 
 Your tests may depend on things like:
 
-- An environment variable that declares the url of your preview environment
-- A file that contains authentication credentials or cookies (`storageState` in your playwright config)
+- An environment variable that declares the URL of your preview environment
+- A file that contains authentication credentials or cookies (`storageState` in your Playwright config)
 - An image in your file system that is used as a screenshot reference
 
 Endform will try to detect and transfer many commonly used pieces of state to the remote runners automatically.
 You may need to do some additional configuration to transfer more state, depending on your setup.
 
-If you want to understand exactly which state endform will transfer to the remote runners, you can use the `--dry-run` flag to show the files and environment variables that need to be transferred in order to run your tests: `endform test --dry-run`.
+If you want to understand exactly which state Endform will transfer to the remote runners, you can use the `--dry-run` flag to show the files and environment variables that need to be transferred in order to run your tests: `endform test --dry-run`.
 
 ## Automatically transferred state
 
 Endform can detect and transfer the following pieces of state automatically:
 
-- **JS/TS files and dependencies** - all js/ts files that are needed for your tests to run, including `package.json`'s, `tsconfig.json`'s, and `node_modules` dependencies
-- **Your playwright config** - [for more information on supported options, see the requirements](/docs/reference/requirements/#playwright-configuration-options)
-- **`storageState`** - any files that are listed in the `storageState` option of your playwright config
+- **JS/TS files and dependencies** - all JS/TS files that are needed for your tests to run, including `package.json` files, `tsconfig.json` files, and `node_modules` dependencies
+- **Your Playwright config** - [for more information on supported options, see the requirements](/docs/reference/requirements/#playwright-configuration-options)
+- **`storageState`** - any files that are listed in the `storageState` option of your Playwright config
 
 ## Partially transferred state
 
@@ -45,12 +45,12 @@ Endform can detect and transfer the following pieces of state automatically:
 
 Environment variables are often highly sensitive in nature.
 
-In order for endform to reduce it's exposure to sensitive data, only some environment variables are automatically transferred to the remote runners.
+In order for Endform to reduce its exposure to sensitive data, only some environment variables are automatically transferred to the remote runners.
 
 - `E2E_*` - any environment variables that start with `E2E_` are transferred
 - Environment variables that are used / referenced from your tests via `process.env` are picked up.
 
-The _values_ of the environment variables are taken while running your `playwright.config.ts` so - using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your playwright config is supported.
+The _values_ of the environment variables are taken while running your `playwright.config.ts`, so using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your Playwright config is supported.
 
 In order to get a better understanding of which environment variables are transferred, you can use the `--dry-run` flag to show the complete set of dependencies of your tests: `endform test --debug`.
 This will print out the environment variables that are transferred to the remote runners.
@@ -62,7 +62,7 @@ Endform has two additional ways of transferring state to the remote runners:
 - **Environment Variables** - `environmentVariables` in your `endform.jsonc` config
 - **Files** - `additionalFiles` in your `endform.jsonc` config
 
-For more information on these options, see the [endform config reference](/docs/reference/endform-config).
+For more information on these options, see the [Endform config reference](/docs/reference/endform-config).
 
 ## Transferring network traffic from the remote runners
 

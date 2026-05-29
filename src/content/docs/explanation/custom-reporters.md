@@ -1,6 +1,6 @@
 ---
 title: Custom Playwright reporters
-description: Using custom playwright reports with endform
+description: Using custom Playwright reporters with Endform
 sidebar:
   order: 5
 ---
@@ -53,9 +53,9 @@ For more details on creating custom reporters, see the [Playwright documentation
 
 ## When custom reporters run
 
-In Endform, custom reporters run **after all tests have completed**, not while they are running live on remote runners. This approach models Playwright's shareded test execution.
+In Endform, custom reporters run **after all tests have completed**, not while they are running live on remote runners. This approach models Playwright's sharded test execution.
 
-Endform runs each of your tests on a remote runner, which creates a blob report which is sent back to the original runner. Once all tests complete, the playwright `merge-reports` cli command is run, which is when your custom reporters will run.
+Endform runs each of your tests on a remote runner, which creates a blob report that is sent back to the original runner. Once all tests complete, the Playwright `merge-reports` CLI command runs, which is when your custom reporters will run.
 
 For more information on Playwright's sharding and how test reports are merged, see the [Playwright documentation on sharded runs](https://playwright.dev/docs/test-sharding).
 
@@ -89,7 +89,7 @@ onTestEnd(test: TestCase, result: TestResult) {
   )?.description;
   if (endformTraceUrl) {
     console.log(`Endform trace URL: ${endformTraceUrl}`);
-    // Example output: https://enform.dev/app/org/xyz...
+    // Example output: https://endform.dev/app/org/xyz...
   }
 }
 ```
