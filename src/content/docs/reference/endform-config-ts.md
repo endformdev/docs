@@ -10,31 +10,6 @@ To further configure Endform, place an `endform.config.ts` (or `endform.config.j
 - In the same folder as your Playwright suite -> applies to that suite
 - In the root of your repository -> applies to all suites in your repository
 
-Use the `defineEndformConfig` helper from the `endform` npm package to get type checking and editor completion:
-
-```ts
-// endform.config.ts
-import { defineEndformConfig } from "endform";
-
-export default defineEndformConfig({
-  environmentVariables: ["VERCEL_.*"],
-});
-```
-
-You can also default-export a function (sync or async) that returns the configuration:
-
-```ts
-import { defineEndformConfig } from "endform";
-
-export default defineEndformConfig(async () => {
-  return {
-    environmentVariables: ["VERCEL_.*"],
-  };
-});
-```
-
-Environment variables set while your config file is evaluated (for example by importing `dotenv/config`) behave like environment variables set in your Playwright config: they are visible to your Playwright config and eligible for transfer to remote runners.
-
 ## `endform.config.ts` config parameters
 
 Currently, `endform.config.ts` supports the following options:
