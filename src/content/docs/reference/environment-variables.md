@@ -2,12 +2,12 @@
 title: Environment variables
 description: Environment variables used by Endform and how to configure them
 sidebar:
-  order: 3
+  order: 4
 ---
 
 ## User-defined environment variables
 
-Endform transfers selected environment variables to remote runners. For details, see [`environmentVariables` in `endform.jsonc`](/docs/reference/endform-config#environmentvariables).
+Endform transfers selected environment variables to remote runners. For details, see [`environmentVariables` in the Endform config](/docs/reference/endform-config-ts#environmentvariables).
 
 At a high level:
 
@@ -28,7 +28,7 @@ const isEndform = process.env.ENDFORM === "true";
 ## Extra HTTP Headers
 
 You can set `ENDFORM_EXTRA_HTTP_HEADERS` to override the Playwright `extraHttpHeaders` option.
-See [`extraHttpHeaders` in `endform.jsonc`](/docs/reference/endform-config#extrahttpheaders).
+See [`extraHttpHeaders` in the Endform config](/docs/reference/endform-config-ts#extrahttpheaders).
 
 ## Git metadata overrides
 

@@ -42,28 +42,29 @@ We can do this by utilizing the [iroh network](https://www.iroh.computer/docs/ov
    then you're done! Leave your web server configuration as is, and we will automatically proxy the traffic to your local server.
 
    #### With your own custom server
-   If you're running a server outside of Playwright, that's fine. You can tell Endform which traffic to proxy by using an `endform.jsonc` file.
+   If you're running a server outside of Playwright, that's fine. You can tell Endform which traffic to proxy by using an `endform.config.ts` file.
 
    Use `proxyNetworkHosts` for most local web servers and APIs. This is the easiest option and uses HTTP interception in Node and in the browser.
 
-   <Code language="json" title="endform.jsonc" code={`
-   {
-      "proxyNetworkHosts": [
-        "<loopback>",
-        "*.my-special-domain.com"
-      ]
-   }
+   <Code language="ts" title="endform.config.ts" code={`
+   import { defineEndformConfig } from "endform";
+
+   export default defineEndformConfig({
+     proxyNetworkHosts: ["<loopback>", "*.my-special-domain.com"],
+   });
    `} />
 
    If you need raw TCP connections to a local loopback port, use `proxyNetworkPorts` instead. Useful for things like database connections.
 
-   <Code language="json" title="endform.jsonc" code={`
-   {
-      "proxyNetworkPorts": [5432, 6379]
-   }
+   <Code language="ts" title="endform.config.ts" code={`
+   import { defineEndformConfig } from "endform";
+
+   export default defineEndformConfig({
+     proxyNetworkPorts: [5432, 6379],
+   });
    `} />
 
-   You can configure both at the same time if needed. You can read more about `proxyNetworkHosts` and `proxyNetworkPorts` in the [endform config reference](/docs/reference/endform-config#proxynetworkhosts).
+   You can configure both at the same time if needed. You can read more about `proxyNetworkHosts` and `proxyNetworkPorts` in the [endform config reference](/docs/reference/endform-config-ts#proxynetworkhosts).
 
 2. ### Run your tests!
 

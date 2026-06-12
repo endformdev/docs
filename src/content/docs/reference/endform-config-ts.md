@@ -1,31 +1,56 @@
 ---
-title: Endform config - endform.jsonc
-description: Configure Endform further with an `endform.jsonc` file
+title: Endform config - endform.config.ts
+description: Configure Endform further with an `endform.config.ts` or `endform.config.js` file
 sidebar:
-  order: 3
+  order: 2
 ---
 
-:::caution
-[`endform.config.ts`](/docs/reference/endform-config-ts) is our new type of configuration file, and `endform.jsonc` will be deprecated at some point in the future. We recommend using [`endform.config.ts` or `endform.config.js`](/docs/reference/endform-config-ts) for new projects.
-:::
-
-To further configure Endform, place an `endform.jsonc` file in your repository. It can be:
+To further configure Endform, place an `endform.config.ts` (or `endform.config.js`) file in your repository. It can be:
 
 - In the same folder as your Playwright suite -> applies to that suite
 - In the root of your repository -> applies to all suites in your repository
 
-## `endform.jsonc` config parameters
+The supported file names are `endform.config.ts`, `endform.config.mts`, `endform.config.js`, `endform.config.mjs` and `endform.config.cjs`. If both a script-based config and an [`endform.jsonc`](/docs/reference/endform-config) exist, the script-based config wins.
 
-Currently, `endform.jsonc` supports the following options:
+Use the `defineEndformConfig` helper from the `endform` npm package to get type checking and editor completion:
+
+```ts
+// endform.config.ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  environmentVariables: ["VERCEL_.*"],
+});
+```
+
+You can also default-export a function (sync or async) that returns the configuration:
+
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig(async () => {
+  return {
+    environmentVariables: ["VERCEL_.*"],
+  };
+});
+```
+
+Environment variables set while your config file is evaluated (for example by importing `dotenv/config`) behave like environment variables set in your Playwright config: they are visible to your Playwright config and eligible for transfer to remote runners.
+
+## `endform.config.ts` config parameters
+
+Currently, `endform.config.ts` supports the following options:
 
 ### `additionalFiles`
 
 `additionalFiles`: an array of strings used as globs to send extra files to your test machines.
 
-```json
-{
-  "additionalFiles": ["user-state/*"]
-}
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  additionalFiles: ["user-state/*"],
+});
 ```
 
 If your Playwright config already specifies `storageState`, this parameter should not be needed - Endform will read and send those automatically.
@@ -43,19 +68,20 @@ For `label`:
 
 - use `tag:@my-tag` to limit by [test tag](https://playwright.dev/docs/test-annotations#tag-tests)
 - use `project:project-name` to limit runs of tests within a project
-- if not set / `null`, the limit applies to all tests in the run
+- if not set, the limit applies to all tests in the run
 
 Then set `limit` for the maximum number of allowed concurrent tests to run within that group.
 
+```ts
+import { defineEndformConfig } from "endform";
 
-```json
-{
-  "concurrentTestLimits": [
-    { "scope": "within-suite-run", "limit": 20 },
-    { "scope": "within-suite-run", "label": "tag:@smoke", "limit": 2 },
-    { "scope": "across-all-runs", "label": "project:slow-backend", "limit": 10 }
-  ]
-}
+export default defineEndformConfig({
+  concurrentTestLimits: [
+    { scope: "within-suite-run", limit: 20 },
+    { scope: "within-suite-run", label: "tag:@smoke", limit: 2 },
+    { scope: "across-all-runs", label: "project:slow-backend", limit: 10 },
+  ],
+});
 ```
 
 Running tests must satisfy all applicable limits. In this example:
@@ -67,10 +93,12 @@ Running tests must satisfy all applicable limits. In this example:
 
 `environmentVariables`: an array of string regular expressions that are used to match environment variables that should be transferred to the remote runners.
 
-```json
-{
-  "environmentVariables": ["VERCEL_.*"]
-}
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  environmentVariables: ["VERCEL_.*"],
+});
 ```
 
 By default the following environment variables are automatically transferred:
@@ -80,18 +108,20 @@ By default the following environment variables are automatically transferred:
 
 ### `extraHttpHeaders`
 
-Set extra HTTP headers that will be applied to the Playwright browser contexts when tests run on remote runners. The value is a JSON object mapping header names to string values.
+Set extra HTTP headers that will be applied to the Playwright browser contexts when tests run on remote runners. The value is an object mapping header names to string values.
 
-```json
-{
-  "extraHttpHeaders": {
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  extraHttpHeaders: {
     "x-custom-auth": "my-secret-token",
-    "x-bypass-protection": "token-value"
-  }
-}
+    "x-bypass-protection": "token-value",
+  },
+});
 ```
 
-These headers are merged into Playwright's `extraHTTPHeaders` option on both the top-level `use` and each project's `use`. Headers defined in your `playwright.config.ts` take precedence — if the same header name exists in both your Playwright config and `endform.jsonc`, the value from your Playwright config wins.
+These headers are merged into Playwright's `extraHTTPHeaders` option on both the top-level `use` and each project's `use`. Headers defined in your `playwright.config.ts` take precedence — if the same header name exists in both your Playwright config and `endform.config.ts`, the value from your Playwright config wins.
 
 #### Environment variable override
 
@@ -101,11 +131,19 @@ You can override `extraHttpHeaders` using the `ENDFORM_EXTRA_HTTP_HEADERS` envir
 ENDFORM_EXTRA_HTTP_HEADERS='{"x-custom-auth":"env-token"}' npx endform test
 ```
 
-When this environment variable is set, it **fully replaces** the `extraHttpHeaders` defined in `endform.jsonc` (the two are not merged together).
+When this environment variable is set, it **fully replaces** the `extraHttpHeaders` defined in `endform.config.ts` (the two are not merged together).
 
 ### `organizationId`
 
 Specify which organization ID this project should run within. This is the highest-precedence configuration for organization ID when running suites. Suite runs fail if the authenticated user does not have access to that organization.
+
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  organizationId: "my-organization-id",
+});
+```
 
 ### `proxyNetworkHosts`
 
@@ -113,10 +151,12 @@ Choose which host names will have their HTTP traffic redirected to the CLI from 
 This is the easiest option for local web apps and APIs, and uses HTTP interception in Node and in the browser.
 All the traffic sent from the remote runners to your CLI is sent encrypted over direct peer-to-peer connections. Read more about [traffic to local servers here](/docs/guides/proxy-via-local).
 
-```json
-{
-    "proxyNetworkHosts": ["*.test.internal-domain", "*.staging.internal-domain", "<loopback>"]
-}
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  proxyNetworkHosts: ["*.test.internal-domain", "*.staging.internal-domain", "<loopback>"],
+});
 ```
 
 Each string in the array is a match rule. Either:
@@ -131,24 +171,28 @@ Choose which local loopback ports will accept raw TCP connections from the remot
 Use this for databases or other clients that need to connect directly to `127.0.0.1:<port>`.
 All the traffic sent from the remote runners to your CLI is sent encrypted over direct peer-to-peer connections. Read more about [traffic to local servers here](/docs/guides/proxy-via-local).
 
-```json
-{
-  "proxyNetworkPorts": [5432, 6379]
-}
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  proxyNetworkPorts: [5432, 6379],
+});
 ```
 
 ### `region`
 
 By default, your tests are run in the closest available region to where the Endform CLI was run.
 
-To override this choice, for example if your test environment is in a different region from your CI jobs, add the region parameter to your `endform.jsonc`.
+To override this choice, for example if your test environment is in a different region from your CI jobs, add the region parameter to your `endform.config.ts`.
 
 Available values are `"eu"` and `"us"`.
 
-```json
-{
-  "region": "eu"
-}
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  region: "eu",
+});
 ```
 
 ### `remoteReporters`
@@ -156,11 +200,13 @@ Available values are `"eu"` and `"us"`.
 An array of reporter names that should run exclusively during remote execution of tests.
 Must correspond to the name of a reporter configured in your Playwright config.
 
-For example, if `endform.jsonc` is:
-```json
-{
-  "remoteReporters": ["./custom-reporter.ts"]
-}
+For example, if `endform.config.ts` is:
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  remoteReporters: ["./custom-reporter.ts"],
+});
 ```
 
 And `playwright.config.ts` is set to:
@@ -181,10 +227,12 @@ Then `./custom-reporter.ts` will run once on each remotely running test machine 
 
 Control whether Endform retains Playwright traces for viewing in the dashboard. Accepts `"on"` (default) or `"off"`.
 
-```json
-{
-  "traceRetention": "off"
-}
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  traceRetention: "off",
+});
 ```
 
 When set to `"on"` (the default), traces from your test runs are uploaded to Endform and can be viewed later in the dashboard.

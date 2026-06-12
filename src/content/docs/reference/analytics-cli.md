@@ -2,7 +2,7 @@
 title: Analytics CLI
 description: Query Endform suite and test analytics from the command line
 sidebar:
-  order: 4
+  order: 5
 ---
 
 The `endform query` command returns Endform analytics data as raw JSON. Use it when you want to inspect suite runs or test runs from a terminal, script, or CI job.
@@ -21,7 +21,7 @@ npx endform@latest login
 
 For CI, set `ENDFORM_API_KEY` in your CI environment.
 
-If your account has access to multiple organizations, set `organizationId` in `endform.jsonc` or pass `--organization-id`.
+If your account has access to multiple organizations, set [`organizationId` in your Endform config](/docs/reference/endform-config-ts#organizationid) or pass `--organization-id`.
 
 ## Query kinds
 
