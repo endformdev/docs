@@ -10,8 +10,6 @@ To further configure Endform, place an `endform.config.ts` (or `endform.config.j
 - In the same folder as your Playwright suite -> applies to that suite
 - In the root of your repository -> applies to all suites in your repository
 
-The supported file names are `endform.config.ts`, `endform.config.mts`, `endform.config.js`, `endform.config.mjs` and `endform.config.cjs`. If both a script-based config and an [`endform.jsonc`](/docs/reference/endform-config) exist, the script-based config wins.
-
 Use the `defineEndformConfig` helper from the `endform` npm package to get type checking and editor completion:
 
 ```ts
