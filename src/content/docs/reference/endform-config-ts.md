@@ -10,6 +10,12 @@ To further configure Endform, place an `endform.config.ts` (or `endform.config.j
 - In the same folder as your Playwright suite -> applies to that suite
 - In the root of your repository -> applies to all suites in your repository
 
+If you already have an `endform.jsonc` or `endform.json` file, migrate it with:
+
+```bash
+npx endform@latest migrate-config
+```
+
 ## `endform.config.ts` config parameters
 
 Currently, `endform.config.ts` supports the following options:
@@ -115,6 +121,35 @@ import { defineEndformConfig } from "endform";
 
 export default defineEndformConfig({
   organizationId: "my-organization-id",
+});
+```
+
+### `otlpEndpoint`
+
+Export Playwright OpenTelemetry traces from remote runners to an external OTLP/HTTP traces endpoint.
+
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  otlpEndpoint: "https://api.eu1.honeycomb.io/v1/traces",
+});
+```
+
+When `otlpEndpoint` is set, Endform configures [`playwright-opentelemetry`](https://github.com/endformdev/playwright-opentelemetry) on remote runners and enables trace header propagation for browser and application traffic.
+
+### `otlpHeaders`
+
+Set HTTP headers to send with external OTLP trace exports from remote runners. Use this for provider authentication or other vendor-specific headers.
+
+```ts
+import { defineEndformConfig } from "endform";
+
+export default defineEndformConfig({
+  otlpEndpoint: "https://api.eu1.honeycomb.io/v1/traces",
+  otlpHeaders: {
+    "x-honeycomb-team": process.env.HONEYCOMB_API_KEY!,
+  },
 });
 ```
 

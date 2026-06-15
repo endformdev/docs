@@ -7,6 +7,12 @@ sidebar:
 
 :::caution
 [`endform.config.ts`](/docs/reference/endform-config-ts) is our new type of configuration file, and `endform.jsonc` will be deprecated at some point in the future. We recommend using [`endform.config.ts` or `endform.config.js`](/docs/reference/endform-config-ts) for new projects.
+
+To migrate an existing `endform.jsonc` or `endform.json` file, run:
+
+```bash
+npx endform@latest migrate-config
+```
 :::
 
 To further configure Endform, place an `endform.jsonc` file in your repository. It can be:
