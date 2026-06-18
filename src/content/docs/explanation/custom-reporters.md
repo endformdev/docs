@@ -39,6 +39,13 @@ class MyCustomReporter implements Reporter {
     if (endformTraceUrl) {
       console.log(`Endform trace URL: ${endformTraceUrl}`);
     }
+
+    const endformOtelTraceUrl = result.annotations.find(
+      (annotation) => annotation.type === "endformTestAttemptOtelTraceURL",
+    )?.description;
+    if (endformOtelTraceUrl) {
+      console.log(`Endform OpenTelemetry trace URL: ${endformOtelTraceUrl}`);
+    }
   }
 
   onEnd(result: FullResult) {
@@ -95,3 +102,21 @@ onTestEnd(test: TestCase, result: TestResult) {
 ```
 
 You can use this URL in your custom reporting to link directly to the detailed trace information for each test attempt.
+
+### Endform OpenTelemetry trace URL
+
+When a Playwright OpenTelemetry trace was created for a test attempt, Endform also adds an annotation with the type `endformTestAttemptOtelTraceURL`. Endform detects this from the `playwrightOpentelemetryTraceId` annotation added by `playwright-opentelemetry/reporter`:
+
+```javascript
+onTestEnd(test: TestCase, result: TestResult) {
+  const endformOtelTraceUrl = result.annotations.find(
+    (annotation) => annotation.type === "endformTestAttemptOtelTraceURL",
+  )?.description;
+  if (endformOtelTraceUrl) {
+    console.log(`Endform OpenTelemetry trace URL: ${endformOtelTraceUrl}`);
+    // Example output: https://endform.dev/app/org/xyz...
+  }
+}
+```
+
+This annotation is only present when the remote runner produced a Playwright OpenTelemetry trace for that test attempt.
