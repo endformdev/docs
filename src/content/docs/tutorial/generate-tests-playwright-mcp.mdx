@@ -138,10 +138,25 @@ Don't forget to update our MCP server configuration for our new user.
 }
 ```
 
+## Adding a shared test fixture
+
+As the test suite grows, this is also a good time to add a small local test fixture wrapper:
+
+```ts
+import { test as base } from "@playwright/test";
+
+export const test = base.extend({});
+
+export { expect } from "@playwright/test";
+```
+
+These come in very handy to modify the behaviour of our suite across multiple tests. In this tutorial we will use it to simulate failures later.
+
+For now, save this to `tests/test.ts` for us to use in our upcoming tests instead of `@playwright/test`. [More info on fixtures here](https://playwright.dev/docs/test-fixtures).
+
 ## Generating our first test
 
-Now that we have an MCP user saved to a file and our MCP server configured to use that storage state file when running the browser,
-we are in a good position to start generating tests that require authenticated users.
+Now that we have an MCP user saved to a file, our MCP server configured to use that storage state file when running the browser, and a shared fixture import for generated journey tests, we are in a good position to start generating tests that require authenticated users.
 
 When using an AI in tandem with an MCP server, it's a good idea to take the time to craft a good prompt to help your AI as much as possible when you're trying to generate tests.
 
@@ -161,7 +176,7 @@ Generate comprehensive Playwright tests for one scenario by following a systemat
 You will be given a testing scenario. Your task is to:
 
 1. **Explore First** - Use Playwright MCP tools to navigate and understand the website
-2. **Generate Tests** - Create a well-structured TypeScript test using `@playwright/test` for that one scenario
+2. **Generate Tests** - Create a well-structured TypeScript test using the local fixture import, `import { expect, test } from "./test"`, for that one scenario
 3. **Validate** - Execute test and iterate until it passes consistently
 4. **Refine** - Ensure test follows best practices and is maintainable
 
@@ -215,7 +230,7 @@ Here's a generated test that I got back from the AI. Can you spot any major flaw
 <Tabs>
 <TabItem label="activity-section.spec.ts (Generated)">
 ```ts
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
 test.describe("Activity Section", () => {
 	test("should navigate to dashboard activity section and verify user activities", async ({
@@ -280,7 +295,7 @@ test.describe("Activity Section", () => {
 </TabItem>
 <TabItem label="activity-section.spec.ts (Fixed)">
 ```ts
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
 test.describe("Activity Section", () => {
 	test("should navigate to dashboard activity section and verify user activities", async ({

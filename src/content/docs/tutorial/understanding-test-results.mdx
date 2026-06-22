@@ -64,7 +64,7 @@ Let's see what it's like to work with a flaky test in our suite.
 <Tabs>
   <TabItem label="tests/flaky-test.spec.ts">
 ```ts
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
 test.describe("Flaky Test", () => {
 	test("should pass most of the time, but sometimes fail", async ({ page }) => {
