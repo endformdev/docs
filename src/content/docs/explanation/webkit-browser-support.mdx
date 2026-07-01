@@ -1,0 +1,136 @@
+---
+title: WebKit Browser Support (Experimental)
+description: Limitations and recommendations for using WebKit browser testing on Endform
+sidebar:
+  order: 3
+---
+
+Endform now offers experimental WebKit browser support for testing in AWS Linux. This allows you to test your application with Safari-like behavior on our infrastructure.
+
+## What to Expect
+
+### Tests That Typically Work Well
+
+- Basic page navigation and form interactions
+- DOM manipulation and JavaScript execution
+- Standard web application flows (login, CRUD operations)
+- CSS and layout testing (with some caveats)
+- Cross-browser compatibility validation
+
+### Tests That May Have Issues
+
+- Performance-sensitive tests - WebKit runs significantly slower than Chromium/Firefox
+- Media-heavy pages - Video and audio playback may not work reliably
+- Complex single-page applications - May experience stability issues
+- Visual regression tests - Font rendering differs from macOS Safari
+- Sites with proprietary codecs - Limited media format support on Linux
+
+### Tests That Likely Won't Work
+
+- Real-time video/audio testing - Codec limitations on Linux
+- WebGL/advanced graphics - Software rendering only, no GPU acceleration
+- Browser extension testing - Not supported in Playwright's WebKit
+
+## Known Limitations
+
+### Performance
+
+WebKit on Linux is **significantly slower** than other browsers in our environment:
+
+- Simple interactions: 2-5x slower than Chromium
+- Complex pages: May take 30-60+ seconds to load
+- Test suites: Expect 3-10x longer execution times
+
+This performance difference is a known limitation of WebKit on Linux, documented in upstream issues like [Playwright #31481](https://github.com/microsoft/playwright/issues/31481) and [Playwright #18119](https://github.com/microsoft/playwright/issues/18119), where users report WebKit tests taking 2-3x longer than Chromium/Firefox, with some operations taking 40+ seconds more.
+
+**Recommendation**: Increase timeouts for WebKit tests (90-120 seconds per test minimum).
+
+### Compatibility Differences
+
+WebKit on Linux does not perfectly match Safari on macOS:
+
+- Different font rendering (affects screenshots)
+- Limited media codec support
+- Some CSS properties may render differently
+- JavaScript performance characteristics differ
+
+### Platform-Specific Limitations
+
+As noted in [Playwright's official documentation](https://playwright.dev/docs/browsers#webkit):
+
+> "availability of certain features, which depend heavily on the underlying platform, may vary between operating systems. For example, available media codecs vary substantially between Linux, macOS and Windows."
+
+This means:
+
+- Media playback: Video and audio codecs are limited on Linux compared to macOS
+- Codec support: Proprietary media formats may not work on Linux WebKit
+
+## Recommendations
+
+### For Most Clients
+
+Start with Chromium and Firefox for your primary test coverage. Add WebKit for:
+
+- Cross-browser validation of critical user journeys
+- Catching Safari-specific layout issues early
+- Experimental coverage of edge cases
+
+### Configuration Tips
+
+#### Playwright Configuration
+
+```typescript
+{
+  projects: [
+    {
+      name: "webkit",
+      timeout: 120000, // 2 minutes per test
+      fullyParallel: false, // Run sequentially
+      retries: 1, // Allow one retry for flaky tests
+    },
+  ];
+}
+```
+
+#### Test Writing
+
+- Avoid tight timings: Use generous wait times
+- Skip visual tests: Screenshot comparisons may be unreliable
+- Simplify selectors: Complex CSS may be slower
+- Test critical paths first: Start with your most important user flows
+
+### When to Use WebKit
+
+| Scenario | Recommendation |
+| ---------- | --------------- |
+| Primary test suite | Not recommended (too slow) |
+| Cross-browser validation | Good for critical paths |
+| Safari compatibility | Best available option |
+| Performance testing | Use Chromium instead |
+| Visual regression | Expect differences from macOS |
+| Production monitoring | Not recommended (stability) |
+
+## Support Scope
+
+This is **experimental** support with the following limitations:
+
+Supported:
+
+- Basic WebKit testing on Linux (ARM64)
+
+Not Supported:
+
+- WebKit on other architectures
+- Branded Safari browser (Playwright uses its own WebKit build, not Apple Safari)
+- GPU-accelerated rendering
+- Video/audio playback testing
+- Production synthetic monitoring
+
+## References
+
+- [Playwright WebKit Documentation](https://playwright.dev/docs/browsers#webkit) - Official WebKit browser support details
+- [Playwright Browser Configuration](https://playwright.dev/docs/browsers) - Complete browser setup guide
+
+---
+
+_WebKit support is experimental and provided on a best-effort basis. Endform may modify or discontinue this feature without notice._
