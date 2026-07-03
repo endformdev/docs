@@ -230,21 +230,3 @@ export default defineConfig({
 ```
 
 Then `./custom-reporter.ts` will run once on each remotely running test machine (one per test), and _not_ on the collected result.
-
-### `traceRetention`
-
-Control whether Endform retains Playwright traces for viewing in the dashboard. Accepts `"on"` (default) or `"off"`.
-
-```ts
-import { defineEndformConfig } from "endform";
-
-export default defineEndformConfig({
-  traceRetention: "off",
-});
-```
-
-When set to `"on"` (the default), traces from your test runs are uploaded to Endform and can be viewed later in the dashboard.
-
-When set to `"off"`, traces are not uploaded to Endform. This can be useful for compliance requirements or if you have privacy concerns about trace data.
-
-**Note:** This setting only controls what Endform stores for dashboard viewing. Regardless of this setting, traces are still generated and accessible locally depending on your Playwright `trace` config option.
