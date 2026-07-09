@@ -44,6 +44,11 @@ export default defineConfig({
 					href: "https://endform.dev/app",
 				},
 				{
+					icon: "discord",
+					label: "Discord",
+					href: "https://discord.gg/e4qYXG92b",
+				},
+				{
 					icon: "github",
 					label: "GitHub",
 					href: "https://github.com/endformdev",
