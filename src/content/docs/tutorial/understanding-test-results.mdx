@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 import { Image } from "astro:assets";
 import HtmlReportTrace from "../../../assets/html-report-trace.png";
 import ExampleTrace from "../../../assets/example-trace.png";
@@ -15,8 +15,12 @@ import EndformFilters from "../../../assets/endform-filters.png";
 In this guide, we will use the Endform dashboard to understand the test results.
 
 <Aside>
-To start from this step, check out the [`stage-3-endform-integration` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-3-endform-integration) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
-For more information about getting started with the tutorial repository, go [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
+  To start from this step, check out the [`stage-3-endform-integration`
+  branch](https://github.com/endformdev/playwright-tutorial/tree/stage-3-endform-integration)
+  of the [tutorial
+  repository](https://github.com/endformdev/playwright-tutorial). For more
+  information about getting started with the tutorial repository, go
+  [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
 Real-world tests don't always pass the first time you write them, or forever after.
@@ -28,7 +32,6 @@ This is a great option for understanding what's going on in a test while you're 
 In many cases we want to be able to look at test runs after they've completed.
 Let's take a look at the most powerful options we have available to debug Playwright end-to-end tests after they've completed.
 
-
 ## Playwright traces
 
 Start by setting the `trace` option to `on` in your `playwright.config.ts` file.
@@ -37,16 +40,20 @@ Start by setting the `trace` option to `on` in your `playwright.config.ts` file.
 export default defineConfig({
   // Create an HTML report of the test run
   reporter: [["html", { open: "never" }]],
-	use: {
+  use: {
     // Always create a trace of the test run even if the test passes.
-		trace: "on",
-	},
+    trace: "on",
+  },
 });
 ```
 
 Then kick off a run of your suite with `pnpm playwright test` and boot the HTML report server with `pnpm playwright show-report`.
 
-<Image src={HtmlReportTrace} alt="Playwright HTML reporter with trace" width={900} />
+<Image
+  src={HtmlReportTrace}
+  alt="Playwright HTML reporter with trace"
+  width={900}
+/>
 
 Click on one of the tests. Since we had trace set to `on`, we should have a full trace file for each successful test in our suite.
 
@@ -67,18 +74,20 @@ Let's see what it's like to work with a flaky test in our suite.
 import { expect, test } from "./test";
 
 test.describe("Flaky Test", () => {
-	test("should pass most of the time, but sometimes fail", async ({ page }) => {
-		await page.goto("/dashboard");
-		await expect(
-			page.getByRole("heading", { name: "Team Settings" }),
-		).toBeVisible();
+test("should pass most of the time, but sometimes fail", async ({ page }) => {
+await page.goto("/dashboard");
+await expect(
+page.getByRole("heading", { name: "Team Settings" }),
+).toBeVisible();
 
-		// Let's make this test flaky by randomly failing 30% of the time
-		const randomNumber = Math.random();
-		expect(randomNumber).toBeLessThan(0.7);
-	});
+    	// Let's make this test flaky by randomly failing 30% of the time
+    	const randomNumber = Math.random();
+    	expect(randomNumber).toBeLessThan(0.7);
+    });
+
 });
-```
+
+````
   </TabItem>
 </Tabs>
 
@@ -91,7 +100,7 @@ export default defineConfig({
 		trace: "retain-on-failure",
 	},
 });
-```
+````
 
 Now let's try running the tests again. We will have to run them many times to simulate the flakiness.
 

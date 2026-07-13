@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 import { Image } from "astro:assets";
 import StepOverDebug from "../../../assets/step-over-debug.png";
 
@@ -20,8 +20,12 @@ Some Playwright features we will cover include:
 Let's get started!
 
 <Aside>
-To start from this step, check out the [`stage-0-baseline` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-0-baseline) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
-For more information about getting started with the tutorial repository, go [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
+  To start from this step, check out the [`stage-0-baseline`
+  branch](https://github.com/endformdev/playwright-tutorial/tree/stage-0-baseline)
+  of the [tutorial
+  repository](https://github.com/endformdev/playwright-tutorial). For more
+  information about getting started with the tutorial repository, go
+  [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
 ## Create the base file structure
@@ -45,12 +49,12 @@ Let's modify the `baseURL` to point to our application.
 
 ```ts
 export default defineConfig({
-	use: {
+  use: {
     // If you want to run tests against the pre-deployed application
-		baseURL: "https://endform-playwright-tutorial.vercel.app",
+    baseURL: "https://endform-playwright-tutorial.vercel.app",
     // If you want to run tests against a locally running application
     // baseURL: "http://localhost:3000",
-	}
+  },
 });
 ```
 
@@ -58,12 +62,12 @@ At the moment the Playwright project is configured with three projects that test
 
 ```ts
 projects: [
-	{
-		name: "chromium",
-		use: { ...devices["Desktop Chrome"] },
-	}
+  {
+    name: "chromium",
+    use: { ...devices["Desktop Chrome"] },
+  },
   // Remove the other Firefox and WebKit projects
-]
+];
 ```
 
 ### Run your first test
@@ -76,11 +80,19 @@ Let's check that this works by modifying the `example.spec.ts` test file in the 
 - Watch your test run `pnpm playwright test --debug`
 
 <Aside type="caution">
-When you run Playwright in debug mode for the first time, the browser will open and appear frozen on `about:blank`. This is expected! You need to click the "step over" button in the Playwright Inspector window to start stepping through your test.
+  When you run Playwright in debug mode for the first time, the browser will
+  open and appear frozen on `about:blank`. This is expected! You need to click
+  the "step over" button in the Playwright Inspector window to start stepping
+  through your test.
 </Aside>
 
 You can watch your test step by step by using the "step over" button.
-<Image src={StepOverDebug} alt="Step over button in Playwright's inspector" width={600} />
+
+<Image
+  src={StepOverDebug}
+  alt="Step over button in Playwright's inspector"
+  width={600}
+/>
 
 ## Alternatives for creating temporary test data (like users)
 
@@ -109,16 +121,13 @@ Today we will learn to use both kinds of setup approaches.
 First let's make the test files for setup and teardown:
 
 <Tabs>
-<TabItem label="Linux/macOS">
-```bash
-touch tests/setup.spec.ts tests/teardown.spec.ts
-```
-</TabItem>
-<TabItem label="Windows (PowerShell)">
-```powershell
-New-Item -ItemType File -Path tests/setup.spec.ts, tests/teardown.spec.ts
-```
-</TabItem>
+  <TabItem label="Linux/macOS">
+    ```bash touch tests/setup.spec.ts tests/teardown.spec.ts ```
+  </TabItem>
+  <TabItem label="Windows (PowerShell)">
+    ```powershell New-Item -ItemType File -Path tests/setup.spec.ts,
+    tests/teardown.spec.ts ```
+  </TabItem>
 </Tabs>
 
 For us to use project dependencies to declare our setup and teardown steps, we need to make more modifications to our `playwright.config.ts` file.
@@ -173,7 +182,6 @@ export default defineConfig({
 
 We'll talk more about generating tests in the next step, so here's the completed setup / teardown and modified example tests to copy for now.
 
-
 <Tabs>
 <TabItem label="setup.spec.ts">
 ```ts
@@ -182,33 +190,35 @@ import { expect, test } from "@playwright/test";
 const authFile = ".auth/shared-ui-user.json";
 
 test("user signup and login flow", async ({ page }) => {
-	const randomEmail = `${Math.random().toString(36).substring(2, 15)}@example.com`;
-	const testPassword = "testpassword123";
+const randomEmail = `${Math.random().toString(36).substring(2, 15)}@example.com`;
+const testPassword = "testpassword123";
 
-	await test.step("navigate to signup page", async () => {
-		await page.goto("/sign-up");
-		await expect(
-			page.getByRole("heading", { name: "Create your account" }),
-		).toBeVisible();
-	});
+    await test.step("navigate to signup page", async () => {
+    	await page.goto("/sign-up");
+    	await expect(
+    		page.getByRole("heading", { name: "Create your account" }),
+    	).toBeVisible();
+    });
 
-	await test.step("fill signup form and submit", async () => {
-		await page.getByRole("textbox", { name: "Email" }).fill(randomEmail);
-		await page.getByRole("textbox", { name: "Password" }).fill(testPassword);
-		await page.getByRole("button", { name: "Sign up" }).click();
-	});
+    await test.step("fill signup form and submit", async () => {
+    	await page.getByRole("textbox", { name: "Email" }).fill(randomEmail);
+    	await page.getByRole("textbox", { name: "Password" }).fill(testPassword);
+    	await page.getByRole("button", { name: "Sign up" }).click();
+    });
 
-	await test.step("verify successful signup redirects to dashboard", async () => {
-		await expect(page).toHaveURL("/dashboard");
-		await expect(
-			page.getByRole("heading", { name: "Team Settings" }),
-		).toBeVisible();
-		await expect(page.getByText(randomEmail)).toBeVisible();
-	});
+    await test.step("verify successful signup redirects to dashboard", async () => {
+    	await expect(page).toHaveURL("/dashboard");
+    	await expect(
+    		page.getByRole("heading", { name: "Team Settings" }),
+    	).toBeVisible();
+    	await expect(page.getByText(randomEmail)).toBeVisible();
+    });
 
-	await page.context().storageState({ path: authFile });
+    await page.context().storageState({ path: authFile });
+
 });
-```
+
+````
 </TabItem>
 <TabItem label="teardown.spec.ts">
 ```ts
@@ -238,26 +248,30 @@ test("delete current user account", async ({ page }) => {
 		).toBeVisible();
 	});
 });
-```
+````
+
 </TabItem>
 <TabItem label="example.spec.ts">
 ```ts
 import { expect, test } from "@playwright/test";
 
 test("has title", async ({ page }) => {
-	await page.goto("/");
+await page.goto("/");
 
-	await expect(page).toHaveTitle(/Playwright Tutorial/);
+    await expect(page).toHaveTitle(/Playwright Tutorial/);
+
 });
 
 test("is already logged in", async ({ page }) => {
-	await page.goto("/dashboard");
+await page.goto("/dashboard");
 
-	await expect(
-		page.getByRole("heading", { name: "Team Settings" }),
-	).toBeVisible();
+    await expect(
+    	page.getByRole("heading", { name: "Team Settings" }),
+    ).toBeVisible();
+
 });
-```
+
+````
 </TabItem>
 </Tabs>
 
@@ -294,8 +308,7 @@ export default defineConfig({
 		},
 	],
 });
-```
-
+````
 
 ### Creating / deleting users through an API
 
@@ -308,33 +321,35 @@ git checkout origin/stage-1-setup -- app/api/internal/user/route.ts
 ```
 
 <Aside type="note">
-This step is only necessary if you're running tests against a local Next.js dev application. If you're testing against the remote Vercel deployment, this API endpoint is already available and you can skip this checkout command.
+  This step is only necessary if you're running tests against a local Next.js
+  dev application. If you're testing against the remote Vercel deployment, this
+  API endpoint is already available and you can skip this checkout command.
 </Aside>
 
 This file contains a `POST` and `DELETE` endpoint for creating and deleting users.
 
 ```ts
 function isAuthorized(request: Request) {
-	const authHeader = request.headers.get("authorization");
-	if (!authHeader) return false;
-	const [scheme, token] = authHeader.split(" ");
-	return scheme === "Bearer" && token === "VerySecretDummyToken";
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader) return false;
+  const [scheme, token] = authHeader.split(" ");
+  return scheme === "Bearer" && token === "VerySecretDummyToken";
 }
 
 export async function POST(request: Request) {
-	if (!isAuthorized(request)) {
-		return new Response("Unauthorized", { status: 401 });
-	}
+  if (!isAuthorized(request)) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
-	// Create user in DB
+  // Create user in DB
 }
 
 export async function DELETE(request: Request) {
-	if (!isAuthorized(request)) {
-		return new Response("Unauthorized", { status: 401 });
-	}
+  if (!isAuthorized(request)) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
-	// Delete user from DB
+  // Delete user from DB
 }
 ```
 
@@ -343,24 +358,21 @@ First we need to modify the `playwright.config.ts` file.
 
 ```ts
 export default defineConfig({
-	globalSetup: "./global-setup.ts",
-	globalTeardown: "./global-teardown.ts",
+  globalSetup: "./global-setup.ts",
+  globalTeardown: "./global-teardown.ts",
 });
 ```
 
 Then we need to create the `global-setup.ts` and `global-teardown.ts` files.
 
 <Tabs>
-<TabItem label="Linux/macOS">
-```bash
-touch global-setup.ts global-teardown.ts
-```
-</TabItem>
-<TabItem label="Windows (PowerShell)">
-```powershell
-New-Item -ItemType File -Path global-setup.ts, global-teardown.ts
-```
-</TabItem>
+  <TabItem label="Linux/macOS">
+    ```bash touch global-setup.ts global-teardown.ts ```
+  </TabItem>
+  <TabItem label="Windows (PowerShell)">
+    ```powershell New-Item -ItemType File -Path global-setup.ts,
+    global-teardown.ts ```
+  </TabItem>
 </Tabs>
 
 Can you figure out what these scripts should contain?
@@ -380,17 +392,18 @@ export default async function globalSetup(config: FullConfig) {
 
     // Create a random email and password
 
-	// Make a POST request to the API to create a user
-	await fetch(`${baseURL}/api/internal/user`);
+    // Make a POST request to the API to create a user
+    await fetch(`${baseURL}/api/internal/user`);
 
-	// Save the user to the storage state
-	// The response contains a JSON object with the form:
-	// { user: { id: number, email: string }, session: string }
-	// Look at your existing .auth/shared-ui-user.json file to see how to save the user to the storage state
-	// Save it to the .auth/api-user.json file so that we can use both states
+    // Save the user to the storage state
+    // The response contains a JSON object with the form:
+    // { user: { id: number, email: string }, session: string }
+    // Look at your existing .auth/shared-ui-user.json file to see how to save the user to the storage state
+    // Save it to the .auth/api-user.json file so that we can use both states
+
 }
 
-```
+````
 </TabItem>
 <TabItem label="global-setup.ts (Completed)">
 ```ts
@@ -447,7 +460,8 @@ function writeSessionFile(session: string, baseURL: string) {
 		}),
 	);
 }
-```
+````
+
 </TabItem>
 </Tabs>
 
@@ -464,10 +478,12 @@ export default async function globalTeardown(config: FullConfig) {
 		throw new Error("baseURL is required");
 	}
 
-	// Make a DELETE request to the API to delete the user
-	await fetch(`${baseURL}/api/internal/user`);
+    // Make a DELETE request to the API to delete the user
+    await fetch(`${baseURL}/api/internal/user`);
+
 }
-```
+
+````
 </TabItem>
 <TabItem label="global-teardown.ts (Completed)">
 ```ts
@@ -498,27 +514,30 @@ export default async function globalTeardown(config: FullConfig) {
 		console.error("[globalTeardown] error deleting user:", error);
 	}
 }
-```
+````
+
 </TabItem>
 </Tabs>
 
 Don't forget to modify the `playwright.config.ts` file to use the new `storageState` file. Then try running your tests again to make sure everything is working.
 
 <Aside type="tip">
-Update the `storageState` path in your existing project configurations. Keep all your other settings (like `testMatch`, `testIgnore`, `dependencies`, and device configurations).
+  Update the `storageState` path in your existing project configurations. Keep
+  all your other settings (like `testMatch`, `testIgnore`, `dependencies`, and
+  device configurations).
 </Aside>
 
 ```ts
 export default defineConfig({
-	projects: [
-		{
-			name: "chromium",
-			use: {
-				// Change the storageState path to use the API-created user
-				storageState: ".auth/api-user.json",
-			},
-		},
-	],
+  projects: [
+    {
+      name: "chromium",
+      use: {
+        // Change the storageState path to use the API-created user
+        storageState: ".auth/api-user.json",
+      },
+    },
+  ],
 });
 ```
 

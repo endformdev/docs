@@ -5,15 +5,19 @@ sidebar:
   order: 4
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 import { Image } from "astro:assets";
 import TestTimeChart from "../../../assets/test-time-chart.png";
 
 In this guide, we will use Endform to speed up your test suite.
 
 <Aside>
-To start from this step, check out the [`stage-2-generated-tests` branch](https://github.com/endformdev/playwright-tutorial/tree/stage-2-generated-tests) of the [tutorial repository](https://github.com/endformdev/playwright-tutorial).
-For more information about getting started with the tutorial repository, go [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
+  To start from this step, check out the [`stage-2-generated-tests`
+  branch](https://github.com/endformdev/playwright-tutorial/tree/stage-2-generated-tests)
+  of the [tutorial
+  repository](https://github.com/endformdev/playwright-tutorial). For more
+  information about getting started with the tutorial repository, go
+  [here](/docs/tutorial/playwright-e2e-from-cowboy-to-confidence#getting-started-with-the-tutorial-repository).
 </Aside>
 
 At this point, we have a pretty decent Playwright end-to-end testing suite that can test most of the dummy features in this application.
@@ -65,7 +69,11 @@ Here, Playwright took 30 seconds, and Endform took 25 seconds.
 
 If we plot the results of different repeat counts, we get:
 
-<Image src={TestTimeChart} alt="A chart of the test time for different repeat counts" width={800} />
+<Image
+  src={TestTimeChart}
+  alt="A chart of the test time for different repeat counts"
+  width={800}
+/>
 
 Once we start to add more tests (or if the tests had taken longer to run), Playwright will keep slowing your suite down,
 while Endform will keep the speed constant.
@@ -91,17 +99,15 @@ Let's make a CI workflow that runs the tests with Endform.
 name: Endform tests on main
 
 on:
-  repository_dispatch:
-    types:
-      - 'vercel.deployment.success'
+repository_dispatch:
+types: - 'vercel.deployment.success'
 
 jobs:
-  e2e-tests:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+e2e-tests:
+timeout-minutes: 5
+runs-on: ubuntu-latest
+steps: - name: Checkout code
+uses: actions/checkout@v4
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -119,6 +125,7 @@ jobs:
         run: npx endform@latest test
         env:
           ENDFORM_API_KEY: ${{ secrets.ENDFORM_API_KEY }}
+
 ```
   </TabItem>
 </Tabs>
@@ -130,3 +137,4 @@ Some other things you could try are:
 - Just trigger on commits to the main branch
 - Triggering on pull requests
 - Sending a message to a Slack channel when the tests are successful or fail
+```
