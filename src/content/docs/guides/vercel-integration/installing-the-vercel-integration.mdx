@@ -33,7 +33,7 @@ This means that you can either create a new Endform account through Vercel or co
    on:
      pull_request: # or push: if you want to run on commits to main
        branches:
-       - main
+         - main
 
    permissions:
      contents: read
@@ -43,15 +43,25 @@ This means that you can either create a new Endform account through Vercel or co
      e2e:
        runs-on: ubuntu-latest
        steps:
-         # Checkout, install Node and install dependencies first...
+         # Your usual setup steps, adjust them to match your project
+         - name: Checkout repository
+           uses: actions/checkout@v4
+
+         - name: Install Node
+           uses: actions/setup-node@v4
+
+         - name: Set up pnpm (or whichever package manager you use)
+           uses: pnpm/action-setup@v4
+           with:
+             run_install: true
 
          - name: Wait for Vercel deployment
            uses: endformdev/actions/run-with-vercel-deployment@main
            with:
              project-name: your-vercel-project-name
-              set-url-env-var: BASE_URL # Export the preview URL for your playwright.config.ts to pick up
+             set-url-env-var: BASE_URL # Export the preview URL for your playwright.config.ts to pick up
 
-          - name: Run end-to-end tests with Endform
+         - name: Run end-to-end tests with Endform
            run: npx endform@latest test
    ```
 

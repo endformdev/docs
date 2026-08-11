@@ -99,15 +99,17 @@ Let's make a CI workflow that runs the tests with Endform.
 name: Endform tests on main
 
 on:
-repository_dispatch:
-types: - 'vercel.deployment.success'
+  repository_dispatch:
+    types:
+      - 'vercel.deployment.success'
 
 jobs:
-e2e-tests:
-timeout-minutes: 5
-runs-on: ubuntu-latest
-steps: - name: Checkout code
-uses: actions/checkout@v4
+  e2e-tests:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
