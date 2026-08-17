@@ -108,6 +108,8 @@ Endform associates runs with git metadata when possible. This lets you compare b
 
 If automatic git detection is not correct in your CI environment, use `ENDFORM_GIT_BRANCH` and `ENDFORM_GIT_COMMIT_SHA` to override the reported metadata. See [Environment variables](/docs/reference/environment-variables#git-metadata-overrides).
 
-## Query the same data from the CLI
+## Query the same data outside the dashboard
 
-If you want to script analytics queries or inspect results outside the dashboard, use the `endform query` command. See [Analytics CLI](/docs/reference/analytics-cli).
+Use the [`endform analytics` and `endform samples` commands](/docs/reference/analytics-cli) to query historical test data from a terminal, script, or CI job.
+
+You can also connect the [Endform MCP server](/docs/reference/mcp-server) to an AI coding agent and ask it to investigate your test history. See [Investigate test history with AI](/docs/guides/investigate-test-history-with-ai) for example conversations.

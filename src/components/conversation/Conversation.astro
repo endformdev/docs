@@ -1,0 +1,110 @@
+---
+import { ChevronDown } from "@lucide/astro";
+
+interface Props {
+	title: string;
+	open?: boolean;
+}
+
+const { title, open = false } = Astro.props;
+---
+
+<div class="conversation-wrapper not-content">
+	<details class="conversation" open={open}>
+		<summary>
+			<span class="summary-label">Example conversation</span>
+			<span class="summary-title">{title}</span>
+			<ChevronDown class="chevron" aria-hidden="true" size={20} />
+		</summary>
+		<div class="conversation-body">
+			<slot />
+		</div>
+	</details>
+</div>
+
+<style>
+	.conversation-wrapper {
+		margin-block: 1.5rem;
+	}
+
+	.conversation {
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.75rem;
+		background: var(--sl-color-bg-nav);
+		overflow: hidden;
+	}
+
+	summary {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.15rem 1rem;
+		align-items: center;
+		padding: 1rem 1.125rem;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	summary:hover {
+		background: var(--sl-color-gray-7);
+	}
+
+	summary:focus-visible {
+		outline: 2px solid var(--sl-color-accent-high);
+		outline-offset: -2px;
+	}
+
+	.summary-label {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-xs);
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		line-height: 1.3;
+		text-transform: uppercase;
+	}
+
+	.summary-title {
+		grid-column: 1;
+		font-size: var(--sl-text-lg);
+		font-weight: 600;
+		line-height: 1.4;
+	}
+
+	.chevron {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		color: var(--sl-color-gray-3);
+		transition: transform 160ms ease;
+	}
+
+	.conversation[open] .chevron {
+		transform: rotate(180deg);
+	}
+
+	.conversation-body {
+		display: grid;
+		gap: 1rem;
+		padding: 1.125rem;
+		border-top: 1px solid var(--sl-color-gray-5);
+		background: var(--sl-color-bg);
+	}
+
+	@media (min-width: 50rem) {
+		summary {
+			padding-inline: 1.25rem;
+		}
+
+		.conversation-body {
+			padding: 1.25rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.chevron {
+			transition: none;
+		}
+	}
+</style>

@@ -1,0 +1,223 @@
+---
+title: Endform MCP server
+description: Connect an AI coding agent to Endform test history and interactive test debugging tools
+sidebar:
+  order: 3
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+import ParameterTable from "../../../components/ParameterTable.astro";
+
+The Endform CLI includes a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. It gives AI coding agents tools for analyzing historical test data and debugging a Playwright test on Endform's remote infrastructure.
+
+## Set up the MCP server
+
+Authenticate the Endform CLI first:
+
+```bash
+npx endform@latest login
+```
+
+Then add Endform as a local MCP server in your AI coding tool:
+
+<Tabs syncKey="mcp-client">
+  <TabItem label="Claude Code">
+    Run this command from your project directory:
+
+    ```bash
+    claude mcp add --transport stdio --scope local endform -- npx -y endform@latest mcp
+    ```
+  </TabItem>
+  <TabItem label="OpenCode">
+    Add the server to `opencode.jsonc` in your project:
+
+    ```jsonc
+    {
+      "$schema": "https://opencode.ai/config.json",
+      "mcp": {
+        "endform": {
+          "type": "local",
+          "command": ["npx", "-y", "endform@latest", "mcp"],
+          "enabled": true
+        }
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Cursor">
+    Add the server to `.cursor/mcp.json` in your project:
+
+    ```json
+    {
+      "mcpServers": {
+        "endform": {
+          "type": "stdio",
+          "command": "npx",
+          "args": ["-y", "endform@latest", "mcp"]
+        }
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="VS Code">
+    Add the server to `.vscode/mcp.json` in your project:
+
+    ```json
+    {
+      "servers": {
+        "endform": {
+          "type": "stdio",
+          "command": "npx",
+          "args": ["-y", "endform@latest", "mcp"]
+        }
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Other">
+    Configure a local stdio server using this command and arguments:
+
+    ```json
+    {
+      "mcpServers": {
+        "endform": {
+          "command": "npx",
+          "args": ["-y", "endform@latest", "mcp"]
+        }
+      }
+    }
+    ```
+
+    Your MCP client may use a different key than `mcpServers`. Follow its instructions for adding a local stdio server.
+  </TabItem>
+</Tabs>
+
+Restart the AI coding tool or reload its MCP servers after changing the configuration. The server must run from your project so that its debugging tools can locate your Playwright configuration and tests.
+
+<Aside type="note" title="Non-interactive authentication">
+  Set `ENDFORM_API_KEY` in the MCP server's environment instead of running `endform login`. Do not commit API keys to a project-level MCP configuration.
+</Aside>
+
+## Analyze historical test data
+
+These tools query the same suite and test history that powers the Endform dashboard. See [Investigate test history with AI](/docs/guides/investigate-test-history-with-ai) for example conversations.
+
+### `list_organizations`
+
+Lists the organizations available to the active Endform login. It takes no arguments. An agent can use the returned organization ID in the other historical data tools.
+
+### `query_analytics`
+
+Compares run counts, pass rates, and durations over time. Results are returned as time series with count, percent, or seconds as the unit.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `organizationId` | string | Organization to query. |
+  | `dataset` | `suite-runs` or `test-runs` | Aggregate complete suite runs or individual test runs. |
+  | `metric` | `count`, `pass-rate`, or `average-duration` | Metric to calculate. |
+  | `groupBy` | `outcome`, `branch`, `test`, or `project` | Optional grouping. Suite runs cannot be grouped by test or project. |
+  | `where` | string | Optional filter expression, such as `testRun.outcome = fail, branch = main`. |
+  | `period` | string | Positive integer followed by `H`, `D`, `W`, or `M`. Defaults to `7D`. |
+  | `endingAt` | ISO 8601 string | Optional end of the time window. Defaults to the current time. |
+
+</ParameterTable>
+
+### `query_samples`
+
+Returns concrete suite-run or test-run executions matching a filter. Test-run samples include the test identity, project, outcome, duration, and every attempt in chronological order. Attempts may contain an error message, error location, and `otelTraceId`.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `organizationId` | string | Organization to query. |
+  | `dataset` | `suite-runs` or `test-runs` | Return complete suite runs or individual test runs. |
+  | `where` | string | Optional filter expression, such as `testRun.testAttemptsCount > 1`. |
+  | `period` | string | Positive integer followed by `H`, `D`, `W`, or `M`. Defaults to `7D`. |
+  | `endingAt` | ISO 8601 string | Optional end of the time window. Defaults to the current time. |
+  | `limit` | number | Number of newest records to return. Defaults to 10; maximum 50. |
+  | `cursor` | string | Optional `nextCursor` from an earlier response for pagination. |
+
+</ParameterTable>
+
+Filters are comma-separated clauses. String fields support operators such as `=`, `!=`, `^=`, `$=`, `~=`, `!~=`, `in`, and `!in`; numeric fields support comparisons such as `>`, `>=`, `<`, and `<=`. The tool's input schema contains the complete field and operator reference.
+
+### `get_otel_trace`
+
+Returns raw OpenTelemetry trace data for a test attempt. The trace can show Playwright actions, network activity, timing, and other spans recorded while that attempt ran.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `organizationId` | string | Organization containing the trace. |
+  | `traceId` | string | The `otelTraceId` returned by `query_samples`. |
+
+</ParameterTable>
+
+## Debug tests
+
+These tools let an AI agent pause inside one Playwright test and inspect or interact with its live browser state. See [Debug tests with AI](/docs/guides/debug-tests-with-ai) for example conversations.
+
+### `debug_test_start`
+
+Starts a remote debug session and pauses at a checkpoint inside exactly one matching test. Startup can take a few minutes. The response includes a `sessionId`, the checkpoint location, result and log paths, and an initial ARIA snapshot of the page.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `testFileFilters` | string[] | Playwright-style regular expressions matched against absolute test paths. A filter may include a declaration line, such as `tests/checkout.spec.ts:47`. |
+  | `grep` | string[] | Include tests whose full title chain matches these regular expressions. |
+  | `grepInvert` | string[] | Exclude tests whose full title chain matches these regular expressions. |
+  | `project` | string[] | Include tests from these Playwright projects. |
+  | `line` | number | 1-based source line to pause before. Defaults to the first statement in the test body. |
+  | `organizationId` | string | Optional organization. Defaults to the repository configuration or active login. |
+  | `config` | string | Optional Playwright configuration file or test directory. |
+
+</ParameterTable>
+
+The selection must resolve to one test. Sessions end automatically after 15 minutes.
+
+### `debug_test_run`
+
+Runs JavaScript inside the paused test's scope. The code can use `await` and test fixtures such as `page`. The agent can call this repeatedly to inspect locators, read application state, interact with the page, or create screenshots.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `sessionId` | string | Session returned by `debug_test_start`. |
+  | `code` | string | JavaScript to evaluate at the checkpoint. |
+
+</ParameterTable>
+
+Each call returns standard output, standard error, an exit code, a fresh ARIA snapshot, and paths to newly created artifacts. A non-zero exit code means the code threw; the session remains paused.
+
+### `debug_test_status`
+
+Returns the current session state: `starting`, `paused`, `running`, `ended`, or `stale`. A paused response includes a fresh ARIA snapshot.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `sessionId` | string | Session returned by `debug_test_start`. |
+
+</ParameterTable>
+
+### `debug_test_stop`
+
+Stops a debug session and cleans up its local and remote resources. Agents should call it when debugging is complete rather than waiting for the 15-minute limit.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `sessionId` | string | Session returned by `debug_test_start`. |
+
+</ParameterTable>
+
+The server also exposes `server_info`, which reports the installed Endform CLI version and MCP server command.

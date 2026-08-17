@@ -1,17 +1,20 @@
 ---
-title: Analytics CLI
-description: Query Endform suite and test analytics from the command line
+title: Analytics and samples CLI
+description: Compare Endform test trends and inspect concrete suite and test executions from the command line
 sidebar:
   order: 5
 ---
 
-The `endform query` command returns Endform analytics data as raw JSON. Use it when you want to inspect suite runs or test runs from a terminal, script, or CI job.
+The Endform CLI provides two commands for querying historical test data as JSON:
 
-The same underlying data powers Endform's dashboard analytics: suite outcomes, test outcomes, durations, retries, branches, commits, projects, errors, and trace links.
+- `endform analytics` compares counts, pass rates, and average durations over time.
+- `endform samples` returns concrete suite-run or test-run executions.
+
+Use analytics to identify a trend or group worth investigating, then use samples to inspect the matching executions and errors.
 
 ## Authentication
 
-The command uses your active Endform login or the `ENDFORM_API_KEY` environment variable.
+Both commands use your active Endform login or the `ENDFORM_API_KEY` environment variable.
 
 For local use, run:
 
@@ -19,129 +22,97 @@ For local use, run:
 npx endform@latest login
 ```
 
-For CI, set `ENDFORM_API_KEY` in your CI environment.
-
 If your account has access to multiple organizations, set [`organizationId` in your Endform config](/docs/reference/endform-config-ts#organizationid) or pass `--organization-id`.
 
-## Query kinds
+## Datasets
 
-There are two query kinds:
+Both commands require one of two datasets:
 
-- `suite-runs` returns one row per Endform suite run.
-- `test-runs` returns one row per test result inside suite runs.
+- `suite-runs` represents complete Endform suite runs.
+- `test-runs` represents individual Playwright test results within suite runs.
 
-Use `suite-runs` to understand whole-suite behavior. Use `test-runs` to find individual failing, slow, or flaky tests.
+Use `suite-runs` for overall pass rate, duration, branch behavior, and CI health. Use `test-runs` to find failing, retried, flaky, or slow tests.
 
-## Examples
+## Compare trends with `analytics`
 
-Find recent failing suite runs:
+Pass `--metric` with `count`, `pass-rate`, or `average-duration`.
 
-```bash
-npx endform@latest query suite-runs --where 'suiteRun.outcome = fail' --last 7d --limit 20
-```
-
-Find failing test runs from the last month:
+Count suite runs over the last seven days:
 
 ```bash
-npx endform@latest query test-runs --where 'testRun.outcome = fail' --last 30d --limit 50
+npx endform@latest analytics suite-runs --metric count
 ```
 
-Find tests that needed retries:
+Compare test pass rates by test on the main branch:
 
 ```bash
-npx endform@latest query test-runs --where 'testRun.testAttemptsCount > 1' --last 30d --limit 50
+npx endform@latest analytics test-runs --metric pass-rate --group-by test --where 'branch = main'
 ```
 
-Find slow test runs:
+Track average test duration by Playwright project over a fixed 24-hour window:
 
 ```bash
-npx endform@latest query test-runs --where 'testRun.durationSeconds > 30' --last 7d --limit 50
+npx endform@latest analytics test-runs --metric average-duration --group-by project --period 24H --ending-at 2026-08-11T12:00:00Z
 ```
 
-Find failures inside a specific suite run:
+`--group-by` supports `outcome`, `branch`, `test`, and `project`. Suite runs cannot be grouped by test or project.
+
+The response contains an `interval` and one or more time series. The response `unit` is `count`, `percent`, or `seconds`, depending on the selected metric.
+
+## Inspect executions with `samples`
+
+Find recent failing tests:
 
 ```bash
-npx endform@latest query test-runs --where 'suiteRun.id = sr_123, testRun.outcome = fail' --last 5d
+npx endform@latest samples test-runs --where 'testRun.outcome = fail'
 ```
 
-Find passing suite runs in an absolute time range:
+Find tests that needed retries over the last 30 days:
 
 ```bash
-npx endform@latest query suite-runs --where 'suiteRun.outcome = pass' --from 2026-05-01T00:00:00Z --to 2026-05-28T00:00:00Z
+npx endform@latest samples test-runs --where 'testRun.testAttemptsCount > 1' --period 30D --limit 25
 ```
 
-Find tests whose name contains `checkout`:
+Inspect failures from one suite run:
 
 ```bash
-npx endform@latest query test-runs --where 'test.name ~= checkout' --last 2w
+npx endform@latest samples test-runs --where 'suiteRun.id = sr_123, testRun.outcome = fail'
 ```
 
-## Time ranges
+Suite-run samples include repository, directory, branch, commit, outcome, duration, and retry information. Test-run samples also include the test identity, Playwright project, and every attempt in chronological order, including error and OpenTelemetry trace details when available.
 
-Use exactly one time range mode.
-
-For a relative time range, use `--last` with `h`, `d`, `w`, or `m`:
+`--limit` defaults to 10 and accepts up to 50 records. If a response contains `nextCursor`, pass it to `--cursor` to fetch the next page:
 
 ```bash
-npx endform@latest query test-runs --where 'testRun.outcome = fail' --last 24h
+npx endform@latest samples test-runs --cursor '<nextCursor>'
 ```
 
-For an absolute time range, use both `--from` and `--to` with ISO 8601 timestamps:
+The cursor preserves the original query's time window.
+
+## Filter results
+
+Pass a comma-separated expression to `--where`:
+
+```text
+suite.repository = endformdev/endform, testRun.outcome = fail
+```
+
+Quote values that contain spaces, commas, or pipes. Strings support equality, prefix, suffix, substring, and set operators; numbers support equality and comparison operators. Outcomes are `pass` or `fail`, and durations are measured in seconds.
+
+Test-run filters can target suite, test, test-run, and test-attempt fields. A `testAttempt.*` clause matches a test run when any attempt satisfies it, while the response still includes every attempt. Run either command with `--help` for the complete list of fields and operators.
+
+## Time windows
+
+Use `--period` with a positive integer followed by `H`, `D`, `W`, or `M`. The default is `7D`.
 
 ```bash
-npx endform@latest query suite-runs --where 'suiteRun.outcome = pass' --from 2026-05-01T00:00:00Z --to 2026-05-28T00:00:00Z
+npx endform@latest analytics test-runs --metric pass-rate --period 2W
 ```
 
-## Filters
-
-Filters are passed with `--where`. Separate multiple filters with commas.
-
-Useful suite-level filters include:
-
-- `suiteRun.id`
-- `suiteRun.outcome`
-- `suiteRun.durationSeconds`
-- `suiteRun.maxTestAttemptsCount`
-- `branch`
-- `commitSha`
-- `suite.repository`
-- `suite.directory`
-
-Useful test-level filters include:
-
-- `test.name`
-- `test.location`
-- `test.describes`
-- `testRun.outcome`
-- `testRun.projectName`
-- `testRun.testAttemptsCount`
-- `testRun.durationSeconds`
-- `testAttempt.errorMessage`
-- `testAttempt.errorLocation`
-
-Do not use `testRun.*` or `testAttempt.*` filters with `suite-runs`. Use `test-runs` instead.
-
-## Operators
-
-Supported operators include:
-
-- `=` equals
-- `!=` not equals
-- `^=` starts with
-- `$=` ends with
-- `~=` contains
-- `!~=` does not contain
-- `>` greater than
-- `>=` greater than or equal
-- `<` less than
-- `<=` less than or equal
-- `in` is one of several values
-- `!in` is not one of several values
-
-## Pagination
-
-The response includes pagination information. When `page.hasMore` is true, pass `page.nextCursor` to `--cursor` to fetch the next page.
+Add `--ending-at` with an ISO 8601 timestamp to end the relative window at a fixed time:
 
 ```bash
-npx endform@latest query test-runs --where 'testRun.outcome = fail' --last 30d --cursor <nextCursor>
+npx endform@latest samples suite-runs --period 24H --ending-at 2026-08-11T12:00:00Z
 ```
+
+AI coding agents can query the same data through the [Endform MCP server](/docs/reference/mcp-server#analyze-historical-test-data).
