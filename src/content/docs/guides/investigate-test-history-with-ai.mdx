@@ -19,7 +19,6 @@ The conversations below are representative examples. Your results will use your 
     What were our flakiest tests over the last seven days? Look into the worst one and tell me why it flakes.
   </UserMessage>
 
-  <ToolCall name="list_organizations" summary="find the Endform organization for this repository" />
   <ToolCall name="query_analytics" summary="passing test runs with retries, grouped by test, last 7 days" />
   <ToolCall name="query_samples" summary="recent retried executions of the flakiest test" />
   <ToolCall name="get_otel_trace" summary="inspect telemetry from two failed attempts" />

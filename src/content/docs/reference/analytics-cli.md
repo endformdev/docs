@@ -22,8 +22,6 @@ For local use, run:
 npx endform@latest login
 ```
 
-If your account has access to multiple organizations, set [`organizationId` in your Endform config](/docs/reference/endform-config-ts#organizationid) or pass `--organization-id`.
-
 ## Datasets
 
 Both commands require one of two datasets:

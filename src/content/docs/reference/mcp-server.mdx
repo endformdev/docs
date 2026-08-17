@@ -104,7 +104,7 @@ These tools query the same suite and test history that powers the Endform dashbo
 
 ### `list_organizations`
 
-Lists the organizations available to the active Endform login. It takes no arguments. An agent can use the returned organization ID in the other historical data tools.
+Lists the organizations available to the active Endform login. Agents can use it when another tool asks for organization selection.
 
 ### `query_analytics`
 
@@ -114,7 +114,6 @@ Compares run counts, pass rates, and durations over time. Results are returned a
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `organizationId` | string | Organization to query. |
   | `dataset` | `suite-runs` or `test-runs` | Aggregate complete suite runs or individual test runs. |
   | `metric` | `count`, `pass-rate`, or `average-duration` | Metric to calculate. |
   | `groupBy` | `outcome`, `branch`, `test`, or `project` | Optional grouping. Suite runs cannot be grouped by test or project. |
@@ -132,7 +131,6 @@ Returns concrete suite-run or test-run executions matching a filter. Test-run sa
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `organizationId` | string | Organization to query. |
   | `dataset` | `suite-runs` or `test-runs` | Return complete suite runs or individual test runs. |
   | `where` | string | Optional filter expression, such as `testRun.testAttemptsCount > 1`. |
   | `period` | string | Positive integer followed by `H`, `D`, `W`, or `M`. Defaults to `7D`. |
@@ -152,7 +150,6 @@ Returns raw OpenTelemetry trace data for a test attempt. The trace can show Play
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `organizationId` | string | Organization containing the trace. |
   | `traceId` | string | The `otelTraceId` returned by `query_samples`. |
 
 </ParameterTable>
@@ -174,7 +171,6 @@ Starts a remote debug session and pauses at a checkpoint inside exactly one matc
   | `grepInvert` | string[] | Exclude tests whose full title chain matches these regular expressions. |
   | `project` | string[] | Include tests from these Playwright projects. |
   | `line` | number | 1-based source line to pause before. Defaults to the first statement in the test body. |
-  | `organizationId` | string | Optional organization. Defaults to the repository configuration or active login. |
   | `config` | string | Optional Playwright configuration file or test directory. |
 
 </ParameterTable>
@@ -219,5 +215,3 @@ Stops a debug session and cleans up its local and remote resources. Agents shoul
   | `sessionId` | string | Session returned by `debug_test_start`. |
 
 </ParameterTable>
-
-The server also exposes `server_info`, which reports the installed Endform CLI version and MCP server command.
