@@ -2,7 +2,7 @@
 title: Endform config - endform.jsonc
 description: Configure Endform further with an `endform.jsonc` file
 sidebar:
-  order: 3
+  order: 6
 ---
 
 :::caution

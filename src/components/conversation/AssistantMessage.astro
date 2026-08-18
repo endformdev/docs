@@ -1,0 +1,55 @@
+---
+import { Sparkles } from "@lucide/astro";
+---
+
+<div class="message assistant-message">
+	<div class="message-heading">
+		<Sparkles aria-hidden="true" size={17} />
+		<span>AI response</span>
+	</div>
+	<div class="message-content">
+		<slot />
+	</div>
+</div>
+
+<style>
+	.message {
+		box-sizing: border-box;
+		min-width: 0;
+		max-width: 95%;
+		padding: 0.9rem 1rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.75rem 0.75rem 0.75rem 0.2rem;
+		background: var(--sl-color-bg-nav);
+		justify-self: start;
+	}
+
+	.message-heading {
+		display: flex;
+		gap: 0.4rem;
+		align-items: center;
+		margin-bottom: 0.55rem;
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-xs);
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	.message-content {
+		font-size: var(--sl-text-sm);
+		line-height: 1.65;
+	}
+
+	.message-content :global(> :first-child) {
+		margin-top: 0;
+	}
+
+	.message-content :global(> :last-child) {
+		margin-bottom: 0;
+	}
+
+	.message-content :global(ul),
+	.message-content :global(ol) {
+		padding-inline-start: 1.25rem;
+	}
+</style>

@@ -1,0 +1,98 @@
+---
+title: Investigate test history with AI
+description: Ask an AI coding agent to find flaky, failing, and slow Playwright tests in Endform
+sidebar:
+  order: 5
+---
+
+import Conversation from "../../../components/conversation/Conversation.astro";
+import UserMessage from "../../../components/conversation/UserMessage.astro";
+import ToolCall from "../../../components/conversation/ToolCall.astro";
+import AssistantMessage from "../../../components/conversation/AssistantMessage.astro";
+
+Connect your coding agent to the [Endform MCP server](/docs/reference/mcp-server), then ask questions about the test history for the repository you are working in. The agent can compare trends, inspect individual executions, and open the telemetry from a failed attempt without you copying data out of the dashboard.
+
+The conversations below are representative examples. Your results will use your own tests and Endform history.
+
+<Conversation title="What are our flakiest tests?" open>
+  <UserMessage>
+    What were our flakiest tests over the last seven days? Look into the worst one and tell me why it flakes.
+  </UserMessage>
+
+  <ToolCall name="query_analytics" summary="passing test runs with retries, grouped by test, last 7 days" />
+  <ToolCall name="query_samples" summary="recent retried executions of the flakiest test" />
+  <ToolCall name="get_otel_trace" summary="inspect telemetry from two failed attempts" />
+  <ToolCall name="get_otel_trace" summary="compare another failure from the same test" />
+
+  <AssistantMessage>
+    `checkout.spec.ts › saved card › completes payment` was the flakiest test this week. It passed in 18 runs, but 6 of those runs needed a retry.
+
+    The failed attempts have the same pattern: the test clicks **Pay now** immediately after the saved card request finishes, but before the form enables the button. The successful retries wait long enough for that state transition. Both traces show the first click targeting a disabled element; there is no corresponding `POST /payments` request.
+
+    I would replace the fixed delay before the click with an assertion that the button is enabled:
+
+    ```ts
+    await expect(page.getByRole("button", { name: "Pay now" })).toBeEnabled();
+    await page.getByRole("button", { name: "Pay now" }).click();
+    ```
+  </AssistantMessage>
+</Conversation>
+
+<Conversation title="Did this branch make the suite less reliable?">
+  <UserMessage>
+    Compare this branch with main over the last two weeks. Did it make our tests less reliable?
+  </UserMessage>
+
+  <ToolCall name="query_analytics" summary="test pass rate grouped by branch, last 2 weeks" />
+  <ToolCall name="query_analytics" summary="failure count grouped by test on the current branch" />
+  <ToolCall name="query_samples" summary="sample failures unique to the current branch" />
+
+  <AssistantMessage>
+    The current branch has a 94.8% test pass rate, compared with 98.9% on `main`. Most of the difference comes from two tests:
+
+    - `account.spec.ts › saves notification preferences` failed 7 times on this branch and did not fail on `main`.
+    - `navigation.spec.ts › opens the profile menu` failed 3 times here and once on `main`.
+
+    The notification test failures all start after commit `8f32a1c` and report that the save request returned 409. That points to a regression on this branch rather than general suite flakiness. The profile-menu failures look unrelated: their errors and retry behavior match the existing failures on `main`.
+  </AssistantMessage>
+</Conversation>
+
+<Conversation title="Which tests are slowing down feedback?">
+  <UserMessage>
+    Which individual tests have the biggest effect on our test runtime? Check whether any have become slower recently.
+  </UserMessage>
+
+  <ToolCall name="query_analytics" summary="average test duration grouped by test, last 30 days" />
+  <ToolCall name="query_samples" summary="recent executions of the slowest tests" />
+  <ToolCall name="query_analytics" summary="daily duration trend for the leading slow test" />
+
+  <AssistantMessage>
+    `reports.spec.ts › exports a yearly CSV` is the largest individual bottleneck at an average of 48 seconds. It was averaging 29 seconds at the start of the month and has climbed steadily since August 8.
+
+    The sample runs show that browser setup is stable; almost all of the increase is spent waiting for the export request. `organization.spec.ts › deletes a workspace` is second at 33 seconds, but its duration has not changed materially.
+
+    I would investigate the yearly export endpoint first. Because Endform runs tests in parallel, reducing this longest test is more likely to shorten the overall feedback loop than optimizing several already-fast tests.
+  </AssistantMessage>
+</Conversation>
+
+<Conversation title="Triage today's failures">
+  <UserMessage>
+    Summarize today's test failures. Group related failures together and tell me what to investigate first.
+  </UserMessage>
+
+  <ToolCall name="query_analytics" summary="failed test count grouped by test, last 24 hours" />
+  <ToolCall name="query_samples" summary="latest failed executions and their ordered attempts" />
+  <ToolCall name="get_otel_trace" summary="inspect a representative checkout failure" />
+
+  <AssistantMessage>
+    There are 14 failed test runs across three groups:
+
+    1. **Checkout API unavailable: 9 failures.** Three checkout tests fail after the same `POST /payments` 503 response. This is the highest-priority issue because it affects every browser project and retries do not recover.
+    2. **Profile menu timing: 4 failures.** These pass on retry and share a locator timeout. Treat this as one flaky-test issue.
+    3. **Visual assertion: 1 failure.** The settings-page screenshot differs only in WebKit and did not retry.
+
+    Start with the payments service or its test environment. The representative trace shows the UI behaving normally up to the failed API response, so changing the Playwright assertions would only hide the underlying outage.
+  </AssistantMessage>
+</Conversation>
+
+You can make these questions more specific by naming a branch, commit, Playwright project, test file, title, or time window. The complete historical data tool reference is in [Endform MCP server](/docs/reference/mcp-server#analyze-historical-test-data).
