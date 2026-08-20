@@ -60,4 +60,4 @@ Options that we currently don't support, but will do in future (let us know and 
 
 ## Operating system requirements
 
-- We currently only support Linux and macOS.
+- We currently support Linux, macOS, and Windows.
