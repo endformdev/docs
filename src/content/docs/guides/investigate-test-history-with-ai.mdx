@@ -38,26 +38,7 @@ The conversations below are representative examples. Your results will use your 
   </AssistantMessage>
 </Conversation>
 
-<Conversation title="Did this branch make the suite less reliable?">
-  <UserMessage>
-    Compare this branch with main over the last two weeks. Did it make our tests less reliable?
-  </UserMessage>
-
-  <ToolCall name="query_analytics" summary="test pass rate grouped by branch, last 2 weeks" />
-  <ToolCall name="query_analytics" summary="failure count grouped by test on the current branch" />
-  <ToolCall name="query_samples" summary="sample failures unique to the current branch" />
-
-  <AssistantMessage>
-    The current branch has a 94.8% test pass rate, compared with 98.9% on `main`. Most of the difference comes from two tests:
-
-    - `account.spec.ts › saves notification preferences` failed 7 times on this branch and did not fail on `main`.
-    - `navigation.spec.ts › opens the profile menu` failed 3 times here and once on `main`.
-
-    The notification test failures all start after commit `8f32a1c` and report that the save request returned 409. That points to a regression on this branch rather than general suite flakiness. The profile-menu failures look unrelated: their errors and retry behavior match the existing failures on `main`.
-  </AssistantMessage>
-</Conversation>
-
-<Conversation title="Which tests are slowing down feedback?">
+<Conversation title="Which tests are slowest?">
   <UserMessage>
     Which individual tests have the biggest effect on our test runtime? Check whether any have become slower recently.
   </UserMessage>
