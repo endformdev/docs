@@ -74,15 +74,15 @@ Let's add a script to help us create and remove users for the MCP server when we
 const scriptArg = process.argv[2];
 
 if (scriptArg !== "create" && scriptArg !== "delete") {
-console.error(
-`Error: Invalid argument "${scriptArg}". Expected "create" or "delete".`,
-);
-process.exit(1);
+	console.error(
+		`Error: Invalid argument "${scriptArg}". Expected "create" or "delete".`,
+	);
+	process.exit(1);
 }
 
 // create or delete user based on script arg
 
-````
+```
 </TabItem>
 <TabItem label="mcp-user.ts (Completed)">
 ```ts
@@ -111,7 +111,7 @@ import { createUserInFile, deleteUserFromFile } from "./setup-utils";
 	}
 })();
 
-````
+```
 
 </TabItem>
 </Tabs>
@@ -305,7 +305,7 @@ page.getByRole("heading", { name: "Team Settings" }),
 
 });
 
-````
+```
 </TabItem>
 <TabItem label="activity-section.spec.ts (Fixed)">
 ```ts
@@ -363,7 +363,7 @@ test.describe("Activity Section", () => {
 		// The extra step is a bit unnecessary, would be a shame if this test failed because more activities were added
 	});
 });
-````
+```
 
 </TabItem>
 </Tabs>

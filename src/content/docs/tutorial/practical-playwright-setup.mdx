@@ -218,7 +218,7 @@ const testPassword = "testpassword123";
 
 });
 
-````
+```
 </TabItem>
 <TabItem label="teardown.spec.ts">
 ```ts
@@ -248,7 +248,7 @@ test("delete current user account", async ({ page }) => {
 		).toBeVisible();
 	});
 });
-````
+```
 
 </TabItem>
 <TabItem label="example.spec.ts">
@@ -271,7 +271,7 @@ await page.goto("/dashboard");
 
 });
 
-````
+```
 </TabItem>
 </Tabs>
 
@@ -308,7 +308,7 @@ export default defineConfig({
 		},
 	],
 });
-````
+```
 
 ### Creating / deleting users through an API
 
@@ -403,7 +403,7 @@ export default async function globalSetup(config: FullConfig) {
 
 }
 
-````
+```
 </TabItem>
 <TabItem label="global-setup.ts (Completed)">
 ```ts
@@ -460,7 +460,7 @@ function writeSessionFile(session: string, baseURL: string) {
 		}),
 	);
 }
-````
+```
 
 </TabItem>
 </Tabs>
@@ -483,7 +483,7 @@ export default async function globalTeardown(config: FullConfig) {
 
 }
 
-````
+```
 </TabItem>
 <TabItem label="global-teardown.ts (Completed)">
 ```ts
@@ -514,7 +514,7 @@ export default async function globalTeardown(config: FullConfig) {
 		console.error("[globalTeardown] error deleting user:", error);
 	}
 }
-````
+```
 
 </TabItem>
 </Tabs>
