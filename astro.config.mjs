@@ -1,6 +1,7 @@
 // @ts-check
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import starlightLlmsTxt from "starlight-llms-txt";
 import starlightThemeRapide from "starlight-theme-rapide";
 
 // https://astro.build/config
@@ -18,7 +19,48 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Endform docs",
-			plugins: [starlightThemeRapide()],
+			plugins: [
+				starlightThemeRapide(),
+				starlightLlmsTxt({
+					projectName: "Endform",
+					description:
+						"TODO",
+					details: [
+						"## Working with Endform",
+						"",
+						"- TODO",
+					].join("\n"),
+					customSets: [
+						{
+							label: "Reference",
+							paths: ["reference/**"],
+							description:
+								"configuration file options, environment variables, the analytics CLI, the MCP server, and Playwright requirements",
+						},
+						{
+							label: "Guides",
+							paths: ["guides/**"],
+							description:
+								"task-oriented guides for getting started, CI setup, the Vercel integration, and debugging with AI",
+						},
+						{
+							label: "Explanation",
+							paths: ["explanation/**"],
+							description:
+								"how Endform runs your tests, its architecture, and product background",
+						},
+						{
+							label: "Tutorial",
+							paths: ["tutorial/**"],
+							description:
+								"a step-by-step walkthrough from a local Playwright suite to running on Endform",
+						},
+					],
+					promote: ["index*", "guides/getting-started*"],
+					demote: ["guides/getting-started/*/*/*"],
+					exclude: ["guides/getting-started/*/*/*"],
+				}),
+			],
 			customCss: [
 				"@fontsource/inter/400.css",
 				"@fontsource/inter/400-italic.css",
