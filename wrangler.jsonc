@@ -5,8 +5,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "endform-docs",
-	"compatibility_date": "2025-03-21",
-	"compatibility_flags": ["nodejs_compat"],
+	"compatibility_date": "2026-08-26",
 	"assets": {
 		"directory": "./dist",
 		"html_handling": "drop-trailing-slash",

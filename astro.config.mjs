@@ -57,19 +57,19 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: "Explanation",
-					autogenerate: { directory: "explanation" },
+					items: [{ autogenerate: { directory: "explanation" } }],
 				},
 				{
 					label: "Guides",
-					autogenerate: { directory: "guides" },
+					items: [{ autogenerate: { directory: "guides" } }],
 				},
 				{
 					label: "Tutorial",
-					autogenerate: { directory: "tutorial" },
+					items: [{ autogenerate: { directory: "tutorial" } }],
 				},
 				{
 					label: "Reference",
-					autogenerate: { directory: "reference" },
+					items: [{ autogenerate: { directory: "reference" } }],
 				},
 			],
 
@@ -204,5 +204,4 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 						],
 		}),
 	],
-
 });
