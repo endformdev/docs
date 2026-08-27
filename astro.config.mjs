@@ -1,5 +1,4 @@
 // @ts-check
-import cloudflare from "@astrojs/cloudflare";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightThemeRapide from "starlight-theme-rapide";
@@ -8,6 +7,7 @@ import starlightThemeRapide from "starlight-theme-rapide";
 export default defineConfig({
 	site: "https://endform.dev",
 	base: "/docs",
+	outDir: "./dist/docs",
 	trailingSlash: "never",
 
 	build: {
@@ -205,10 +205,4 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		}),
 	],
 
-	adapter: cloudflare({
-		imageService: "passthrough",
-		platformProxy: {
-			enabled: true,
-		},
-	}),
 });

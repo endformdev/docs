@@ -5,13 +5,12 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "endform-docs",
-	"main": "./dist/_worker.js/index.js",
 	"compatibility_date": "2025-03-21",
 	"compatibility_flags": ["nodejs_compat"],
 	"assets": {
-		"binding": "ASSETS",
 		"directory": "./dist",
-		"html_handling": "drop-trailing-slash"
+		"html_handling": "drop-trailing-slash",
+		"not_found_handling": "404-page"
 	},
 	"observability": {
 		"enabled": false

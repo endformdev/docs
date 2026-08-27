@@ -12,11 +12,9 @@
 		"build": "astro build && node strip-html-extensions.ts",
 		"preview": "wrangler dev",
 		"astro": "astro",
-		"deploy": "cp .assetsignore dist/ && wrangler deploy",
-		"cf-typegen": "wrangler types"
+		"deploy": "wrangler deploy"
 	},
 	"dependencies": {
-		"@astrojs/cloudflare": "^12.6.6",
 		"@astrojs/starlight": "^0.35.2",
 		"@fontsource/inter": "^5.2.8",
 		"@lucide/astro": "^0.544.0",
