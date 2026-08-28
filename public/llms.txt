@@ -1,0 +1,22 @@
+# Endform
+
+> Endform is managed infrastructure for running and maintaining Playwright end-to-end test suites at scale. It runs your existing suite in parallel on isolated machines by changing one CLI command.
+
+- Run tests from your Playwright project with `npx endform@latest test`.
+- Authenticate locally with `npx endform@latest login`. In CI, create an API key and set it as `ENDFORM_API_KEY`.
+- Keep existing Playwright tests and `playwright.config.ts` files. Use Endform configuration only for documented Endform-specific options.
+- Use the Endform CLI and MCP server to query test history and debug tests on remote runners.
+- Endform can run Playwright tests against services running on your local machine.
+
+## Documentation
+
+- [Getting started](https://endform.dev/docs/_llms-txt/getting-started.txt): set up Endform and run an existing Playwright suite for the first time
+- [Run and configure Endform](https://endform.dev/docs/_llms-txt/run-and-configure-endform.txt): use the Endform CLI with your existing Playwright setup and configure remote test execution
+- [Test health and history](https://endform.dev/docs/_llms-txt/test-health-and-history.txt): use the dashboard, Endform CLI, or MCP server to find flaky, failing, and slow tests and inspect past runs and traces
+- [Debugging tests](https://endform.dev/docs/_llms-txt/debugging-tests.txt): set up and use the Endform MCP server to query test history and debug Playwright tests with your AI agent
+- [How Endform works](https://endform.dev/docs/_llms-txt/how-endform-works.txt): what Endform is and how it runs Playwright tests in parallel on isolated machines
+- [GitHub Actions, CI, and Vercel](https://endform.dev/docs/_llms-txt/github-actions-ci-and-vercel.txt): run Endform in GitHub Actions or another CI system and test Vercel preview deployments
+
+## Optional
+
+- [Complete documentation](https://endform.dev/docs/llms-full.txt): all Endform documentation in one Markdown file
