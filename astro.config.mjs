@@ -89,6 +89,12 @@ export default defineConfig({
 								"run Endform in GitHub Actions or another CI system and test Vercel preview deployments",
 						},
 					],
+					minify: {
+						whitespace: false,
+					},
+					customSelectors: {
+						all: [".sl-anchor-link", ".selector-panel"],
+					},
 					promote: ["index", "guides/getting-started"],
 					exclude: ["guides/getting-started/*/*/*"],
 				}),

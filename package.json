@@ -9,7 +9,7 @@
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
-		"build": "astro build && node strip-html-extensions.ts",
+		"build": "astro build && cp _headers dist/_headers && node strip-html-extensions.ts",
 		"preview": "wrangler dev",
 		"astro": "astro",
 		"deploy": "wrangler deploy"
