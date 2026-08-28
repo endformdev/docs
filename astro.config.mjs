@@ -1,6 +1,7 @@
 // @ts-check
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import starlightLlmsTxt from "starlight-llms-txt";
 import starlightThemeRapide from "starlight-theme-rapide";
 
 // https://astro.build/config
@@ -18,7 +19,80 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Endform docs",
-			plugins: [starlightThemeRapide()],
+			plugins: [
+				starlightThemeRapide(),
+				starlightLlmsTxt({
+					projectName: "Endform",
+					customSets: [
+						{
+							label: "Getting started",
+							paths: [
+								"index",
+								"guides/getting-started",
+								"guides/getting-started/local-cli/**",
+								"reference/requirements",
+							],
+							description:
+								"set up Endform and run an existing Playwright suite for the first time",
+						},
+						{
+							label: "Run and configure Endform",
+							paths: [
+								"explanation/custom-reporters",
+								"explanation/transfer-state-to-remote-runners",
+								"explanation/webkit-browser-support",
+								"guides/getting-started",
+								"guides/proxy-via-local",
+								"guides/tune-playwright-suite-performance",
+								"reference/endform-config*",
+								"reference/environment-variables",
+								"reference/requirements",
+							],
+							description:
+								"use the Endform CLI with your existing Playwright setup and configure remote test execution",
+						},
+						{
+							label: "Test health and history",
+							paths: [
+								"explanation/dashboard-analytics",
+								"reference/analytics-cli",
+								"reference/mcp-server",
+								"guides/investigate-test-history-with-ai",
+							],
+							description:
+								"use the dashboard, Endform CLI, or MCP server to find flaky, failing, and slow tests and inspect past runs and traces",
+						},
+						{
+							label: "Debugging tests",
+							paths: ["reference/mcp-server", "guides/debug-tests-with-ai"],
+							description:
+								"set up and use the Endform MCP server to query test history and debug Playwright tests with your AI agent",
+						},
+						{
+							label: "How Endform works",
+							paths: [
+								"index",
+								"explanation/what-is-endform",
+								"explanation/how-your-tests-are-run",
+							],
+							description:
+								"what Endform is and how it runs Playwright tests in parallel on isolated machines",
+						},
+						{
+							label: "GitHub Actions, CI, and Vercel",
+							paths: [
+								"guides/getting-started/github-actions/**",
+								"guides/getting-started/other-ci/**",
+								"guides/vercel-integration/**",
+							],
+							description:
+								"run Endform in GitHub Actions or another CI system and test Vercel preview deployments",
+						},
+					],
+					promote: ["index", "guides/getting-started"],
+					exclude: ["guides/getting-started/*/*/*"],
+				}),
+			],
 			customCss: [
 				"@fontsource/inter/400.css",
 				"@fontsource/inter/400-italic.css",
