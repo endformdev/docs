@@ -156,29 +156,3 @@ Available values are `"eu"` and `"us"`.
   "region": "eu"
 }
 ```
-
-### `remoteReporters`
-
-An array of reporter names that should run exclusively during remote execution of tests.
-Must correspond to the name of a reporter configured in your Playwright config.
-
-For example, if `endform.jsonc` is:
-```json
-{
-  "remoteReporters": ["./custom-reporter.ts"]
-}
-```
-
-And `playwright.config.ts` is set to:
-```ts
-import { defineConfig, devices } from "@playwright/test";
-
-export default defineConfig({
-  reporter: [
-    ["./custom-reporter.ts", { myCustomReporterOption: true }]
-  ],
-});
-
-```
-
-Then `./custom-reporter.ts` will run once on each remotely running test machine (one per test), and _not_ on the collected result.
