@@ -1,0 +1,167 @@
+---
+title: Quarantine tests
+description: Keep tests running while temporarily preventing their failures from blocking your Endform suite
+sidebar:
+  order: 7
+---
+
+import { Image } from "astro:assets";
+import QuarantineTestBefore from "../../../assets/quarantine-test-before.png";
+import QuarantineAddRule from "../../../assets/quarantine-add-rule.png";
+import QuarantineTestAfter from "../../../assets/quarantine-test-after.png";
+import QuarantineSuiteResults from "../../../assets/quarantine-suite-results.png";
+
+Quarantine lets you keep selected tests running while you investigate a known
+failure or flaky test. When a quarantined test fails, the suite does not fail.
+Endform still records their actual results, retries, and metrics.
+
+Use a quarantine rule when you want to keep collecting evidence while allowing
+the rest of your suite to determine whether CI passes. Tests still execute and
+use runner time.
+
+## Create a quarantine rule
+
+Run your suite in Endform first so you can select it in the dashboard.
+
+1. Open your organization's **Settings → Quarantine rules**.
+2. Select **Add quarantine rule** and choose a **Suite**.
+3. Fill in at least one matching field:
+   - **Test:** Search for and select a test, or paste its test ID.
+   - **Playwright project:** Match a project such as `chromium`.
+   - **Branch:** Match a branch such as `main`.
+4. Select **Preview matches** to check the scope.
+5. Under **Reason & expiry**, optionally add context for your team and an expiry
+   date. The expiry input uses your local time.
+6. Select **Create rule**. The rule applies to matching tests in new suite runs.
+
+All filled-in fields must match exactly. Empty fields match any value within the
+selected suite. For example, selecting only a branch quarantines every test in
+that suite on that branch. Add a test or project condition when you need a
+narrower rule.
+
+The preview uses the latest completed run for the selected suite and branch. It
+counts each matching test once across projects and does not consider other
+quarantine rules. Future runs may contain different tests, so the preview is a
+guide to the rule's scope.
+
+## Example: quarantine a failing Firefox test
+
+This test, `launches firefox in lambda on arm64`, fails because its assertion
+expects `firefox` but receives `chrome`. Before quarantine, the dashboard shows
+the failed result and the assertion error.
+
+<figure>
+  <Image
+    src={QuarantineTestBefore}
+    alt="Failed Firefox test with one failed attempt: expected firefox, received chrome. No quarantine badge is present."
+    width={1200}
+  />
+  <figcaption>Before quarantine: the test records a failure.</figcaption>
+</figure>
+
+To keep this test running while investigating, select the `endform · e2e` suite
+and the test in **Add quarantine rule**. In this example, **Playwright project**
+and **Branch** are empty, so the rule matches this test across all projects and
+branches in the selected suite.
+
+<figure>
+  <Image
+    src={QuarantineAddRule}
+    alt="Add quarantine rule dialog with the endform e2e suite and Firefox test selected, with project and branch left empty."
+    width={580}
+  />
+  <figcaption>
+    Select the test, preview the matches, and choose Create rule. Reason and
+    expiry are optional.
+  </figcaption>
+</figure>
+
+The selected test is matched by its ID. Renaming or moving it, or changing its
+describe blocks, creates a different test ID that this rule will not match.
+
+On a new run, the test still executes with its configured retries. If it fails
+after exhausting retries, the suite can still pass when the other tests pass
+and there are no blocking errors.
+
+<figure>
+  <Image
+    src={QuarantineTestAfter}
+    alt="The Firefox test on a later run has both Failed and Quarantined badges, with the original assertion error and trace links still visible."
+    width={1200}
+  />
+  <figcaption>
+    After quarantine: the test still shows Failed, alongside a Quarantined
+    badge. Its error and trace links remain available.
+  </figcaption>
+</figure>
+
+Select the **Quarantined** badge to see the rule that applied. The CLI also
+marks the test as quarantined and includes quarantine counts in the summary.
+
+The suite result shows the effect of the rule. The earlier run failed; the new
+run passes even though its one test still fails, because that test is now
+quarantined.
+
+<figure>
+  <Image
+    src={QuarantineSuiteResults}
+    alt="Two runs of the endform e2e suite, each containing one test: the newer run at the top passed, while the earlier run below failed."
+    width={1200}
+  />
+  <figcaption>
+    The newer suite run passes after quarantine. The earlier run keeps its
+    failed outcome.
+  </figcaption>
+</figure>
+
+## What quarantine changes
+
+Quarantine changes whether a test failure blocks the suite. It does not change
+how the test executes:
+
+- Configured retries still run, including immediate and isolated retries.
+- Quarantined test failures do not count toward `maxFailures`.
+- Actual test outcomes and metrics remain in Endform's history, so you can see
+  whether the test is recovering.
+
+:::caution[Some failures still block the suite]
+Infrastructure errors still fail
+the suite. Quarantine also preserves Playwright project dependencies: if a
+quarantined test fails in a setup project, dependent projects cannot run, and
+the suite fails.
+:::
+
+A passing suite can therefore contain failed quarantined tests. See
+[Dashboard analytics](/docs/explanation/dashboard-analytics#quarantined-test-results)
+for how to interpret those results.
+
+Merged Playwright reports present quarantined attempts differently from
+Endform's stored outcomes. If you use HTML, JUnit, or custom reporters, read
+[Quarantined results in custom reporters](/docs/explanation/custom-reporters#quarantined-results).
+
+## Rule timing and overlapping rules
+
+Endform determines which rule applies when a suite run starts. Creating,
+expiring, or deactivating a rule does not change an ongoing run or rewrite
+historical results.
+
+When several active rules match a test, the oldest matching rule applies. After
+it expires or is deactivated, the next matching active rule can apply to future
+runs.
+
+A rule without an expiry stays active until you deactivate it. Expired and
+deactivated rules remain visible for reference.
+
+## Remove or change quarantine
+
+Once you have fixed the test, inspect its recent outcomes and retries in the
+dashboard. To restore normal failure behavior, open **Settings → Quarantine
+rules** and choose **Deactivate rule** from the rule's actions menu.
+
+Check for other matching active rules: deactivating one rule does not remove
+quarantine if another still matches. Start a new suite run to verify the test is
+no longer quarantined.
+
+To change a rule's conditions, reason, or expiry, deactivate it and create a
+replacement. Historical runs keep their association with the rule that
+originally applied.

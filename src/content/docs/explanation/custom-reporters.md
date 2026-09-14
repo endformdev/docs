@@ -120,3 +120,41 @@ onTestEnd(test: TestCase, result: TestResult) {
 ```
 
 This annotation is only present when the remote runner produced a Playwright OpenTelemetry trace for that test attempt.
+
+## Quarantined results
+
+[Quarantine rules](/docs/guides/quarantine-tests) allow selected tests to keep running without their failures normally failing the suite. Endform's dashboard and analytics preserve the actual outcomes. The merged blob reports consumed by Playwright reporters use a passing representation for quarantined attempts whose original status is `passed`, `failed`, or `timedOut`.
+
+For those attempts, the reported status and expected status are `passed`, and the reported errors are cleared. This means an HTML, JUnit, or custom reporter can show a passing result where Endform's dashboard shows a quarantined failure. Skipped, interrupted, and attempts that did not run are not converted to passing results by quarantine.
+
+The original information is available in two places:
+
+- An `endform-quarantined` annotation identifies the quarantine rule and original status.
+- An `application/json` attachment named `endform-quarantined-original-result` contains `quarantineRuleId`, `status`, `expectedStatus`, `errors`, and `annotations` from the original attempt.
+
+If your reporter needs the original outcome, read the attachment rather than relying only on `result.status`. Attachments can be supplied as an inline body or a file path:
+
+```typescript
+import { readFileSync } from "node:fs";
+import type { Reporter, TestCase, TestResult } from "@playwright/test/reporter";
+
+export default class QuarantineReporter implements Reporter {
+  onTestEnd(test: TestCase, result: TestResult) {
+    const attachment = result.attachments.find(
+      (item) => item.name === "endform-quarantined-original-result",
+    );
+    if (!attachment) return;
+
+    const body =
+      attachment.body ??
+      (attachment.path ? readFileSync(attachment.path) : null);
+    if (!body) return;
+
+    const original = JSON.parse(body.toString("utf8"));
+    console.log(`${test.title}: ${original.status} (quarantined)`);
+    console.log("Quarantine rule:", original.quarantineRuleId);
+  }
+}
+```
+
+Endform's built-in terminal reporter reads these diagnostics to display original outcomes with quarantine labels and counts. Using the original failure to fail a separate reporting check can make that check fail even when Endform considers the suite passing.
