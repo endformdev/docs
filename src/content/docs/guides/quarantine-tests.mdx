@@ -5,6 +5,12 @@ sidebar:
   order: 7
 ---
 
+import { Image } from "astro:assets";
+import QuarantineTestBefore from "../../../assets/quarantine-test-before.png";
+import QuarantineAddRule from "../../../assets/quarantine-add-rule.png";
+import QuarantineTestAfter from "../../../assets/quarantine-test-after.png";
+import QuarantineSuiteResults from "../../../assets/quarantine-suite-results.png";
+
 Quarantine lets you keep selected tests running while you investigate a known
 failure or flaky test. When a quarantined test fails, the suite does not fail.
 Endform still records their actual results, retries, and metrics.
@@ -38,30 +44,75 @@ counts each matching test once across projects and does not consider other
 quarantine rules. Future runs may contain different tests, so the preview is a
 guide to the rule's scope.
 
-## Example: quarantine a checkout test
+## Example: quarantine a failing Firefox test
 
-Suppose `completes checkout` intermittently fails in the `chromium` project on
-`main`, and your team is investigating it in issue `ENG-123`.
+This test, `launches firefox in lambda on arm64`, fails because its assertion
+expects `firefox` but receives `chrome`. Before quarantine, the dashboard shows
+the failed result and the assertion error.
 
-Create a rule with these values:
+<figure>
+  <Image
+    src={QuarantineTestBefore}
+    alt="Failed Firefox test with one failed attempt: expected firefox, received chrome. No quarantine badge is present."
+    width={1200}
+  />
+  <figcaption>Before quarantine: the test records a failure.</figcaption>
+</figure>
 
-| Field              | Value                                                  |
-| ------------------ | ------------------------------------------------------ |
-| Suite              | Your checkout suite                                    |
-| Test               | Select `completes checkout`                            |
-| Playwright project | `chromium`                                             |
-| Branch             | `main`                                                 |
-| Reason             | `Investigating intermittent checkout timeout: ENG-123` |
-| Expiry             | One week from now                                      |
+To keep this test running while investigating, select the `endform · e2e` suite
+and the test in **Add quarantine rule**. In this example, **Playwright project**
+and **Branch** are empty, so the rule matches this test across all projects and
+branches in the selected suite.
 
-On the next run on `main`, that test still executes with its configured retries.
-If it fails after exhausting retries, the suite can still pass when the other
-tests pass and there are no blocking errors. The same test on another branch or
-in another project is unaffected by this rule.
+<figure>
+  <Image
+    src={QuarantineAddRule}
+    alt="Add quarantine rule dialog with the endform e2e suite and Firefox test selected, with project and branch left empty."
+    width={580}
+  />
+  <figcaption>
+    Select the test, preview the matches, and choose Create rule. Reason and
+    expiry are optional.
+  </figcaption>
+</figure>
 
-In the dashboard, the test retains its failed outcome and has a **Quarantined**
-badge. The CLI marks it as quarantined and includes quarantine counts in the
-summary. Follow the badge to see the rule that applied.
+The selected test is matched by its ID. Renaming or moving it, or changing its
+describe blocks, creates a different test ID that this rule will not match.
+
+On a new run, the test still executes with its configured retries. If it fails
+after exhausting retries, the suite can still pass when the other tests pass
+and there are no blocking errors.
+
+<figure>
+  <Image
+    src={QuarantineTestAfter}
+    alt="The Firefox test on a later run has both Failed and Quarantined badges, with the original assertion error and trace links still visible."
+    width={1200}
+  />
+  <figcaption>
+    After quarantine: the test still shows Failed, alongside a Quarantined
+    badge. Its error and trace links remain available.
+  </figcaption>
+</figure>
+
+Select the **Quarantined** badge to see the rule that applied. The CLI also
+marks the test as quarantined and includes quarantine counts in the summary.
+
+The suite result shows the effect of the rule. The earlier run failed; the new
+run passes even though its one test still fails, because that test is now
+quarantined.
+
+<figure>
+  <Image
+    src={QuarantineSuiteResults}
+    alt="Two runs of the endform e2e suite, each containing one test: the newer run at the top passed, while the earlier run below failed."
+    width={1200}
+  />
+  <figcaption>
+    The newer suite run passes after quarantine. The earlier run keeps its
+    failed outcome.
+  </figcaption>
+</figure>
 
 ## What quarantine changes
 
@@ -73,10 +124,12 @@ how the test executes:
 - Actual test outcomes and metrics remain in Endform's history, so you can see
   whether the test is recovering.
 
-:::caution[Some failures still block the suite] Infrastructure errors still fail
+:::caution[Some failures still block the suite]
+Infrastructure errors still fail
 the suite. Quarantine also preserves Playwright project dependencies: if a
 quarantined test fails in a setup project, dependent projects cannot run, and
-the suite fails. :::
+the suite fails.
+:::
 
 A passing suite can therefore contain failed quarantined tests. See
 [Dashboard analytics](/docs/explanation/dashboard-analytics#quarantined-test-results)
