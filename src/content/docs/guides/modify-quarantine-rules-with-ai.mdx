@@ -1,0 +1,43 @@
+---
+title: Modify quarantine rules with AI
+description: Ask an AI coding agent to create and deactivate Endform quarantine rules
+sidebar:
+  order: 8
+---
+
+import Conversation from "../../../components/conversation/Conversation.astro";
+import UserMessage from "../../../components/conversation/UserMessage.astro";
+import ToolCall from "../../../components/conversation/ToolCall.astro";
+import AssistantMessage from "../../../components/conversation/AssistantMessage.astro";
+
+After you [connect the Endform MCP server](/docs/reference/mcp-server), your coding agent can inspect recent test runs and manage quarantine rules. The agent uses `query_samples` to retrieve the exact persisted suite and test IDs needed to create a rule.
+
+<Conversation title="Quarantine a failing test" open>
+  <UserMessage>
+    Quarantine the failing saved-card checkout test on the `main` branch while we investigate. Set it to expire on September 23, 2026 and explain exactly what the rule will match.
+  </UserMessage>
+
+  <ToolCall name="query_samples" summary="find recent failures for the saved-card checkout test" />
+  <ToolCall name="list_quarantine_rules" summary="check the current quarantine rules" />
+  <ToolCall name="create_quarantine_rule" summary="quarantine the exact test and branch until September 23" />
+
+  <AssistantMessage>
+    I created a rule for `checkout.spec.ts › saved card › completes payment` in the sampled suite. It matches that exact persisted test ID on the `main` branch across all Playwright projects and expires on September 23, 2026.
+  </AssistantMessage>
+</Conversation>
+
+<Conversation title="Remove quarantine after a fix">
+  <UserMessage>
+    Check whether the saved-card checkout test has recovered over the last seven days. If it has, deactivate its quarantine rule.
+  </UserMessage>
+
+  <ToolCall name="query_samples" summary="inspect the test's recent outcomes and retries" />
+  <ToolCall name="list_quarantine_rules" summary="find the active rule for the test" />
+  <ToolCall name="deactivate_quarantine_rule" summary="deactivate the exact quarantine rule" />
+
+  <AssistantMessage>
+    The test passed its last 18 runs without a retry, including six runs after the fix. I deactivated its quarantine rule, so it will return to normal failure behavior on new suite runs.
+  </AssistantMessage>
+</Conversation>
+
+See [Quarantine tests](/docs/guides/quarantine-tests) for how rules affect test execution and suite results. The complete tool reference is in [Endform MCP server](/docs/reference/mcp-server#manage-quarantine-rules).

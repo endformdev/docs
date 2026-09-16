@@ -45,6 +45,34 @@ counts each matching test once across projects and does not consider other
 quarantine rules. Future runs may contain different tests, so the preview is a
 guide to the rule's scope.
 
+## Manage rules from the CLI or AI
+
+Use `endform samples` to find the exact persisted suite and test IDs, then use
+them to create a rule:
+
+```bash
+npx endform@latest samples test-runs --where 'testRun.outcome = fail' --limit 10
+npx endform@latest quarantine create \
+  --suite-id suite_123 \
+  --test-id test_456 \
+  --reason 'Investigating checkout failures' \
+  --ends-at 2026-09-23T12:00:00Z
+```
+
+Creation requires `--suite-id` and at least one of `--test-id`, `--project`, or
+`--branch`. List active rules, include inactive rules, or deactivate a rule by
+its exact ID:
+
+```bash
+npx endform@latest quarantine list
+npx endform@latest quarantine list --all
+npx endform@latest quarantine deactivate rule_789
+```
+
+An AI coding agent can follow the same sample-driven workflow through the
+[Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai)
+guide.
+
 ## Example: quarantine a failing Firefox test
 
 This test, `launches firefox in lambda on arm64`, fails because its assertion

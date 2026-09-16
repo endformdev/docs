@@ -8,7 +8,7 @@ sidebar:
 import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 import ParameterTable from "../../../components/ParameterTable.astro";
 
-The Endform CLI includes a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. It gives AI coding agents tools for analyzing historical test data and debugging a Playwright test on Endform's remote infrastructure.
+The Endform CLI includes a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. It gives AI coding agents tools for analyzing historical test data, managing quarantine rules, and debugging a Playwright test on Endform's remote infrastructure.
 
 ## Set up the MCP server
 
@@ -151,6 +151,56 @@ Returns raw OpenTelemetry trace data for a test attempt. The trace can show Play
   | Parameter | Type | Description |
   | --- | --- | --- |
   | `traceId` | string | The `otelTraceId` returned by `query_samples`. |
+
+</ParameterTable>
+
+## Manage quarantine rules
+
+These tools let an AI agent list, create, and deactivate quarantine rules. See [Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai) for example conversations.
+
+### `list_quarantine_rules`
+
+Lists active quarantine rules and their exact rule IDs, scope, reason, and expiry.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
+  | `includeInactive` | boolean | Include expired and deactivated rules. Defaults to `false`. |
+
+</ParameterTable>
+
+### `create_quarantine_rule`
+
+Creates a quarantine rule for an exact suite and scope. Use `query_samples` to retrieve the persisted `suite.id` and, when selecting a test, `test.id`. Test names, file paths, and Playwright worker IDs are not test IDs.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `suiteId` | string | Exact persisted `suite.id` returned by `query_samples`. |
+  | `testId` | string | Optional exact persisted `test.id`. Omit it to match all tests in the suite. |
+  | `projectName` | string | Optional exact Playwright project name. |
+  | `branch` | string | Optional exact branch name. |
+  | `reason` | string | Optional reason for quarantining the matching tests. |
+  | `endsAt` | RFC 3339 string | Optional future expiry timestamp. Omit it for no expiry. |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
+
+</ParameterTable>
+
+In addition to `suiteId`, provide at least one of `testId`, `projectName`, or `branch`. Omitted scope fields match any value within the suite.
+
+### `deactivate_quarantine_rule`
+
+Deactivates one quarantine rule by its exact ID. Use `list_quarantine_rules` to retrieve the ID.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `ruleId` | string | Exact quarantine rule ID returned by `list_quarantine_rules`. |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
 
 </ParameterTable>
 
