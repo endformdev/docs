@@ -29,7 +29,7 @@ Your tests may depend on things like:
 Endform will try to detect and transfer many commonly used pieces of state to the remote runners automatically.
 You may need to do some additional configuration to transfer more state, depending on your setup.
 
-If you want to understand exactly which state Endform will transfer to the remote runners, you can use the `--dry-run` flag to show the files and environment variables that need to be transferred in order to run your tests: `endform test --dry-run`.
+If you want to understand exactly which state Endform will transfer to the remote runners, you can use the `--debug` flag to show the files and environment variables that are transferred: `endform test --debug`.
 
 ## Automatically transferred state
 
@@ -51,9 +51,6 @@ In order for Endform to reduce its exposure to sensitive data, only some environ
 - Environment variables that are used / referenced from your tests via `process.env` are picked up.
 
 The _values_ of the environment variables are taken while running your `playwright.config.ts`, so using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your Playwright config is supported.
-
-In order to get a better understanding of which environment variables are transferred, you can use the `--dry-run` flag to show the complete set of dependencies of your tests: `endform test --debug`.
-This will print out the environment variables that are transferred to the remote runners.
 
 ## Additional configuration
 
