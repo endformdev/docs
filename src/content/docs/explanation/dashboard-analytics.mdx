@@ -108,7 +108,7 @@ A suite can pass even when it contains failed quarantined tests. Quarantine norm
 
 Quarantined tests have a **Quarantined** badge in test run tables and on the test run page. Select the badge to view the rule that applied to that run. The association remains visible after the rule expires or is deactivated.
 
-For example, `testRun.outcome = fail` still includes quarantined failures. When investigating a quarantined test, use its individual outcomes and retry history to judge whether it has recovered; a passing suite alone does not show that the test is healthy.
+For example, `testRun.outcome = fail` still includes quarantined failures. Quarantined tests run once without retries, so use their outcomes across subsequent suite runs to judge whether they have recovered; a passing suite alone does not show that a test is healthy.
 
 See [Quarantine tests](/docs/guides/quarantine-tests) to create, expire, or deactivate rules and understand which failures still block a suite.
 

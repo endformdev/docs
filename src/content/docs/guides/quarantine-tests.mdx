@@ -13,7 +13,8 @@ import QuarantineSuiteResults from "../../../assets/quarantine-suite-results.png
 
 Quarantine lets you keep selected tests running while you investigate a known
 failure or flaky test. When a quarantined test fails, the suite does not fail.
-Endform still records their actual results, retries, and metrics.
+Quarantined tests run once without retries. Endform still records their actual
+results and metrics.
 
 Use a quarantine rule when you want to keep collecting evidence while allowing
 the rest of your suite to determine whether CI passes. Tests still execute and
@@ -116,10 +117,11 @@ quarantined.
 
 ## What quarantine changes
 
-Quarantine changes whether a test failure blocks the suite. It does not change
-how the test executes:
+Quarantine changes retry behavior and whether a test failure blocks the suite:
 
-- Configured retries still run, including immediate and isolated retries.
+- Quarantined tests run once and are not retried, even when the project has
+  retries configured. This applies to both immediate and isolated retry
+  strategies. Tests outside quarantine keep their configured retries.
 - Quarantined test failures do not count toward `maxFailures`.
 - Actual test outcomes and metrics remain in Endform's history, so you can see
   whether the test is recovering.
