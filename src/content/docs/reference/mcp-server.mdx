@@ -208,9 +208,9 @@ Deactivates one quarantine rule by its exact ID. Use `list_quarantine_rules` to 
 
 These tools let an AI agent pause inside one Playwright test and inspect or interact with its live browser state. See [Debug tests with AI](/docs/guides/debug-tests-with-ai) for example conversations.
 
-### `debug_test_start`
+### `live_test_start`
 
-Starts a remote debug session and pauses at a checkpoint inside exactly one matching test. Startup can take a few minutes. The response includes a `sessionId`, the checkpoint location, result and log paths, and an initial ARIA snapshot of the page.
+Starts a remote live session and pauses at a checkpoint inside exactly one matching test. Startup can take a few minutes. The response includes a `sessionId`, the checkpoint location, result and log paths, and an initial ARIA snapshot of the page.
 
 <ParameterTable>
 
@@ -227,7 +227,7 @@ Starts a remote debug session and pauses at a checkpoint inside exactly one matc
 
 The selection must resolve to one test. Sessions end automatically after 15 minutes.
 
-### `debug_test_run`
+### `live_test_run`
 
 Runs JavaScript inside the paused test's scope. The code can use `await` and test fixtures such as `page`. The agent can call this repeatedly to inspect locators, read application state, interact with the page, or create screenshots.
 
@@ -235,14 +235,14 @@ Runs JavaScript inside the paused test's scope. The code can use `await` and tes
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `sessionId` | string | Session returned by `debug_test_start`. |
+  | `sessionId` | string | Session returned by `live_test_start`. |
   | `code` | string | JavaScript to evaluate at the checkpoint. |
 
 </ParameterTable>
 
 Each call returns standard output, standard error, an exit code, a fresh ARIA snapshot, and paths to newly created artifacts. A non-zero exit code means the code threw; the session remains paused.
 
-### `debug_test_status`
+### `live_test_status`
 
 Returns the current session state: `starting`, `paused`, `running`, `ended`, or `stale`. A paused response includes a fresh ARIA snapshot.
 
@@ -250,18 +250,18 @@ Returns the current session state: `starting`, `paused`, `running`, `ended`, or 
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `sessionId` | string | Session returned by `debug_test_start`. |
+  | `sessionId` | string | Session returned by `live_test_start`. |
 
 </ParameterTable>
 
-### `debug_test_stop`
+### `live_test_stop`
 
-Stops a debug session and cleans up its local and remote resources. Agents should call it when debugging is complete rather than waiting for the 15-minute limit.
+Stops a live session and cleans up its local and remote resources. Agents should call it when debugging is complete rather than waiting for the 15-minute limit.
 
 <ParameterTable>
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `sessionId` | string | Session returned by `debug_test_start`. |
+  | `sessionId` | string | Session returned by `live_test_start`. |
 
 </ParameterTable>

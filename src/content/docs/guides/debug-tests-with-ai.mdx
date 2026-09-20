@@ -19,11 +19,11 @@ Start from your project directory and identify the test you want to debug as pre
     Debug the checkout test called "completes payment with a saved card". It times out waiting for Pay now to become enabled. Find out what state the page is in at that point.
   </UserMessage>
 
-  <ToolCall name="debug_test_start" summary="checkout test by file and title, paused before the failing assertion" />
-  <ToolCall name="debug_test_run" summary="inspect the Pay now button and visible form state" />
-  <ToolCall name="debug_test_run" summary="read saved-card requests and client-side errors" />
-  <ToolCall name="debug_test_run" summary="capture a screenshot of the paused checkout" />
-  <ToolCall name="debug_test_stop" summary="clean up the completed debug session" />
+  <ToolCall name="live_test_start" summary="checkout test by file and title, paused before the failing assertion" />
+  <ToolCall name="live_test_run" summary="inspect the Pay now button and visible form state" />
+  <ToolCall name="live_test_run" summary="read saved-card requests and client-side errors" />
+  <ToolCall name="live_test_run" summary="capture a screenshot of the paused checkout" />
+  <ToolCall name="live_test_stop" summary="clean up the completed live session" />
 
   <AssistantMessage>
     The button is disabled because the saved-card request completed with 401. The page is showing a visually hidden "Session expired" alert, and the card selector has no options. The screenshot confirms that the form otherwise rendered normally.
@@ -37,10 +37,10 @@ Start from your project directory and identify the test you want to debug as pre
     Debug `settings.spec.ts` at the assertion on line 84. Playwright says the dialog locator resolves to two elements, but I only see one dialog in the trace.
   </UserMessage>
 
-  <ToolCall name="debug_test_start" summary="settings test declaration, paused at source line 84" />
-  <ToolCall name="debug_test_run" summary="list every dialog with visibility and ARIA details" />
-  <ToolCall name="debug_test_run" summary="inspect the duplicate dialog's DOM ancestry" />
-  <ToolCall name="debug_test_stop" summary="clean up the completed debug session" />
+  <ToolCall name="live_test_start" summary="settings test declaration, paused at source line 84" />
+  <ToolCall name="live_test_run" summary="list every dialog with visibility and ARIA details" />
+  <ToolCall name="live_test_run" summary="inspect the duplicate dialog's DOM ancestry" />
+  <ToolCall name="live_test_stop" summary="clean up the completed live session" />
 
   <AssistantMessage>
     There are two dialogs in the DOM. The visible dialog is the current preferences modal. A second, hidden dialog remains mounted inside the previous route and has the same accessible name.
@@ -56,11 +56,11 @@ Start from your project directory and identify the test you want to debug as pre
     The profile-menu test only fails in our WebKit project. Pause before it clicks the menu item and compare what is actually available.
   </UserMessage>
 
-  <ToolCall name="debug_test_start" summary="profile-menu test in the WebKit project" />
-  <ToolCall name="debug_test_run" summary="open the menu and inspect its accessible items" />
-  <ToolCall name="debug_test_run" summary="compare focus and element geometry after the click" />
-  <ToolCall name="debug_test_run" summary="try the keyboard interaction used by the component" />
-  <ToolCall name="debug_test_stop" summary="clean up the completed debug session" />
+  <ToolCall name="live_test_start" summary="profile-menu test in the WebKit project" />
+  <ToolCall name="live_test_run" summary="open the menu and inspect its accessible items" />
+  <ToolCall name="live_test_run" summary="compare focus and element geometry after the click" />
+  <ToolCall name="live_test_run" summary="try the keyboard interaction used by the component" />
+  <ToolCall name="live_test_stop" summary="clean up the completed live session" />
 
   <AssistantMessage>
     The menu opens in WebKit, but focus stays on the trigger. The component's `requestAnimationFrame` callback that focuses the first menu item runs after the test presses Enter, so the key event goes to the trigger and closes the menu again.
@@ -81,10 +81,10 @@ Start from your project directory and identify the test you want to debug as pre
     I think the failing assertion should wait for the success toast instead of the response. Try that in the paused test and tell me whether it proves the save completed.
   </UserMessage>
 
-  <ToolCall name="debug_test_start" summary="account settings test paused before its save assertion" />
-  <ToolCall name="debug_test_run" summary="perform the save and wait for the success toast" />
-  <ToolCall name="debug_test_run" summary="verify the persisted value through the page UI" />
-  <ToolCall name="debug_test_stop" summary="clean up the completed debug session" />
+  <ToolCall name="live_test_start" summary="account settings test paused before its save assertion" />
+  <ToolCall name="live_test_run" summary="perform the save and wait for the success toast" />
+  <ToolCall name="live_test_run" summary="verify the persisted value through the page UI" />
+  <ToolCall name="live_test_stop" summary="clean up the completed live session" />
 
   <AssistantMessage>
     Waiting for the toast succeeds, but it does not prove persistence: reloading the page restores the old value. The application shows the success toast before the update request has completed, and this attempt's request then fails with 409.
@@ -93,4 +93,4 @@ Start from your project directory and identify the test you want to debug as pre
   </AssistantMessage>
 </Conversation>
 
-Debug sessions select exactly one test and end automatically after 15 minutes. The agent should stop the session when it finishes. See the [debugging tool reference](/docs/reference/mcp-server#debug-tests) for selection options and return values.
+Live sessions select exactly one test and end automatically after 15 minutes. The agent should stop the session when it finishes. See the [debugging tool reference](/docs/reference/mcp-server#debug-tests) for selection options and return values.
