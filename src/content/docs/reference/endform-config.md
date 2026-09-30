@@ -84,6 +84,16 @@ By default the following environment variables are automatically transferred:
 - Environment variables that start with `E2E_`
 - All environment variables that are set in your `playwright.config.ts`
 
+#### Excluding environment variables
+
+Prefix a pattern with `!` to exclude matching environment variables, including ones that would be transferred automatically:
+
+```json
+{
+  "environmentVariables": ["!^PLAYWRIGHT_BDD_CONFIGS$"]
+}
+```
+
 ### `extraHttpHeaders`
 
 Set extra HTTP headers that will be applied to the Playwright browser contexts when tests run on remote runners. The value is a JSON object mapping header names to string values.

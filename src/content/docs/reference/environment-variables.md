@@ -14,6 +14,7 @@ At a high level:
 - `E2E_*` variables are transferred automatically.
 - Variables referenced from tests via `process.env` are transferred automatically.
 - You can explicitly include additional variables with `environmentVariables`.
+- You can exclude variables with `!`-prefixed patterns in `environmentVariables`, for example `"!^PLAYWRIGHT_BDD_CONFIGS$"`. Exclusions take precedence over everything above.
 
 ## Runtime marker: `ENDFORM=true`
 
