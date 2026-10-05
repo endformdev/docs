@@ -110,6 +110,7 @@ export default defineConfig({
 			components: {
 				Sidebar: "./src/components/Sidebar.astro",
 			},
+			routeMiddleware: "./src/routeData.ts",
 			logo: {
 				dark: "./src/assets/endform-logo-wordmark-colored-on-dark-padding.svg",
 				light:
