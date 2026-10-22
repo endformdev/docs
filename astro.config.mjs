@@ -282,6 +282,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 										document.getElementsByTagName("script")[0].parentNode.insertBefore(s, document.getElementsByTagName("script")[0]);
 									}("VN080H3J986J");`,
 							},
+							{
+								tag: "script",
+								// Clay Web Intent
+								attrs: {
+									async: true,
+									src: "https://static.claydar.com/init.v1.js?id=cAPprSVTJS",
+								},
+							},
 						],
 		}),
 	],
