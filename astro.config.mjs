@@ -269,23 +269,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 							},
 							{
 								tag: "script",
+								// Clay Web Intent, held back by Usercentrics until the visitor consents to the "Clay" service
 								attrs: {
-									type: "text/javascript",
-								},
-								content: `
-									!function(key) {
-										if (window.reb2b) return;
-										window.reb2b = {loaded: true};
-										var s = document.createElement("script");
-										s.async = true;
-										s.src = "https://ddwl4m2hdecbv.cloudfront.net/b/" + key + "/" + key + ".js.gz";
-										document.getElementsByTagName("script")[0].parentNode.insertBefore(s, document.getElementsByTagName("script")[0]);
-									}("VN080H3J986J");`,
-							},
-							{
-								tag: "script",
-								// Clay Web Intent
-								attrs: {
+									type: "text/plain",
+									"data-usercentrics": "Clay",
 									async: true,
 									src: "https://static.claydar.com/init.v1.js?id=cAPprSVTJS",
 								},
