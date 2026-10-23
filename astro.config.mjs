@@ -277,6 +277,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 									src: "https://static.claydar.com/init.v1.js?id=cAPprSVTJS",
 								},
 							},
+							{
+								tag: "script",
+								// Sends PostHog's IDs along with Clay's visitor data, so a visit Clay reports can be
+								// opened as a PostHog replay. Before consent, Claydar is a plain queue that Clay's
+								// script replays once it loads; nothing leaves the browser until then.
+								content: `
+					posthog.onSessionId((sessionId) => {
+						const traits = {
+							posthog_session_id: sessionId,
+							posthog_distinct_id: posthog.get_distinct_id(),
+						}
+						const clay = (window.Claydar ??= [])
+						if (typeof clay.register === "function") clay.register(traits)
+						else clay.push(["register", traits])
+					})
+				`,
+							},
 						],
 		}),
 	],
