@@ -51,6 +51,8 @@ Options that we currently don't support, but will do in future (let us know and 
 
 ## Node requirements
 
+The Endform CLI is the [`endform` package on npm](https://www.npmjs.com/package/endform).
+
 - A version of Node.js that is more recent than the latest LTS version (Node 22+).
 - In the remote test environment, your tests will run on Node LTS.
 
