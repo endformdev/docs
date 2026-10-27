@@ -1,0 +1,51 @@
+---
+title: Frequently asked questions
+description: Answers to common questions about the Netlify extension
+sidebar:
+  order: 3
+---
+
+## Why doesn't my pull request show an Endform check?
+
+The Netlify deploy log explains it with a line that starts with `GitHub check not reported:`. The reasons are:
+
+| Reason | What to do |
+| --- | --- |
+| `repository_not_connected` | [Install the Endform GitHub app](https://endform.dev/app/docs-link?link=settings-integrations) on the repository, from the Endform organization the project is connected to. |
+| `reconfigure_project` | The project's key was created before Endform recorded its repository. Disconnect the project and configure it again. |
+| `missing_permission` | The Endform GitHub app doesn't have permission to create checks on the repository. Accept the app's updated permissions in your GitHub settings. |
+| `commit_not_found` | GitHub doesn't know the commit, for example after a force push. The next deploy reports normally. |
+| `repository_not_found` | GitHub can't find the repository, for example after it was renamed or moved. |
+| `not_github` | The project's repository isn't on GitHub. The tests still run, but there's no check. |
+
+If the log says `Could not report the GitHub check (403)` instead, the key belongs to a different project or repository. Configure the project again.
+
+## Why does Netlify's secrets scan fail my build?
+
+Build tools like Next.js cache the build environment, so the scan can find secrets in the build output.
+The extension adds its own key, `ENDFORM_NETLIFY_API_KEY`, to the project's `SECRETS_SCAN_OMIT_KEYS` and keeps any keys you already listed.
+
+If you set `SECRETS_SCAN_OMIT_KEYS` in `netlify.toml`, which takes precedence, add `ENDFORM_NETLIFY_API_KEY` there.
+Do the same for other secrets your tests use, such as `E2E_NETLIFY_PREVIEW_PASSWORD`.
+
+## Why do all my tests fail on Netlify's password page?
+
+Your Deploy Previews are protected. See [Password-protected Deploy Previews](/docs/guides/netlify-integration/password-protected-deploy-previews).
+
+## Can I block a merge when the tests fail?
+
+Yes. A failed run is only a warning in Netlify, but you can make the **Endform (your-project-name)** check required in your GitHub branch protection rules.
+
+## Which code hosting platforms are supported?
+
+The tests run for any Netlify project with Deploy Previews. Pull request checks are only reported for GitHub repositories.
+
+## Can I run Endform locally?
+
+Yes. Run the Endform CLI in the standard way:
+
+```sh
+npx endform@latest test
+```
+
+See the [local CLI getting started guide for remote servers](/docs/guides/getting-started/local-cli/existing/remote).
