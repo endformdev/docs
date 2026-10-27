@@ -1,0 +1,70 @@
+---
+title: Installing the Netlify extension
+description: Install the extension, connect your Endform organization, and configure your projects
+sidebar:
+  order: 1
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+<Aside>
+You need to be an owner or admin of the Endform organization you connect, and your Netlify project needs a Git repository with Playwright tests.
+</Aside>
+
+<Steps>
+
+1. ### Install the extension
+
+   Install the **Endform** extension on your Netlify team from Netlify's **Extensions** page.
+
+2. ### Connect your Endform organization
+
+   In the extension's team configuration, click **Connect** and sign in to Endform.
+   Choose the Endform organization to use and approve access.
+
+3. ### Configure each project
+
+   Open each Netlify project you want to test, go to its Endform configuration, and click **Configure project**.
+
+   If your Playwright config isn't in the project's base directory or one of its parents, set **Playwright config path** to the config file or the directory that contains it, relative to the base directory, for example `e2e` or `e2e/playwright.config.ts`.
+   Leave it empty to detect it automatically.
+
+4. ### Point Playwright at the Deploy Preview
+
+   The extension sets `BASE_URL` to the Deploy Preview's URL when it runs your tests:
+
+   ```ts
+   import { defineConfig } from "@playwright/test";
+
+   export default defineConfig({
+     use: {
+       baseURL: process.env.BASE_URL || "https://your-project.netlify.app",
+     },
+   });
+   ```
+
+5. ### Show results on pull requests (optional)
+
+   [Install the Endform GitHub app](https://endform.dev/app/docs-link?link=settings-integrations) on the repository to get an **Endform** check on each pull request.
+
+</Steps>
+
+## How it works
+
+Configuring a project creates an Endform API key for it.
+Netlify stores the key as a secret environment variable, `ENDFORM_NETLIFY_API_KEY`, that's only available to Deploy Preview builds.
+
+On every Deploy Preview:
+
+1. When the build starts, the GitHub check is created as queued.
+2. Once Netlify publishes the Deploy Preview, the extension runs your tests with Endform against its URL and marks the check as running.
+3. The deploy log shows the run and links to the Endform report, and the check completes as passed or failed with the same link.
+
+If the build fails, the check is marked as skipped, since there's nothing to test.
+
+## Notes
+
+- Only Deploy Previews are tested, not production or branch deploys.
+- A failed test run shows as a warning in Netlify and doesn't fail the deploy. Use the GitHub check as a required status check to block merging.
+- Each Netlify project gets its own check, named **Endform (your-project-name)**, so several projects building the same repository don't overwrite each other.
+- Disconnecting a project revokes its key. Uninstalling the extension revokes the keys of every project in the team.

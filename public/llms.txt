@@ -16,6 +16,7 @@
 - [Debugging tests](https://endform.dev/docs/_llms-txt/debugging-tests.txt): set up and use the Endform MCP server to query test history and debug Playwright tests with your AI agent
 - [How Endform works](https://endform.dev/docs/_llms-txt/how-endform-works.txt): what Endform is and how it runs Playwright tests in parallel on isolated machines
 - [GitHub Actions, CI, and Vercel](https://endform.dev/docs/_llms-txt/github-actions-ci-and-vercel.txt): run Endform in GitHub Actions or another CI system and test Vercel preview deployments
+- [Netlify](https://endform.dev/docs/_llms-txt/netlify.txt): run Endform against Netlify Deploy Previews with the Endform Netlify extension
 
 ## Optional
 

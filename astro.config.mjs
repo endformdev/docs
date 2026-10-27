@@ -88,6 +88,12 @@ export default defineConfig({
 							description:
 								"run Endform in GitHub Actions or another CI system and test Vercel preview deployments",
 						},
+						{
+							label: "Netlify",
+							paths: ["guides/netlify-integration/**"],
+							description:
+								"run Endform against Netlify Deploy Previews with the Endform Netlify extension",
+						},
 					],
 					minify: {
 						whitespace: false,

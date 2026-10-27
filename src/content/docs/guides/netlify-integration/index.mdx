@@ -1,0 +1,39 @@
+---
+title: Netlify integration
+description: Run Endform tests against Netlify Deploy Previews
+sidebar:
+  order: 3
+  collapsed: true
+---
+
+import { LinkCard } from "@astrojs/starlight/components";
+
+The Endform Netlify extension runs your Playwright end-to-end tests against every Netlify Deploy Preview, without a separate CI workflow.
+
+It:
+
+- runs your suite with Endform as soon as a Deploy Preview is published
+- shows the run and a link to the report in the Netlify deploy log
+- reports the result as an **Endform** check on the GitHub pull request
+
+Try it with our [demo repository](https://github.com/endformdev/playwright-tutorial), which deploys to Netlify as is.
+
+## Pages
+
+<LinkCard
+  title="Installing the Netlify extension"
+  description="Install the extension, connect your Endform organization, and configure your projects."
+  href="/docs/guides/netlify-integration/installing-the-netlify-extension"
+/>
+
+<LinkCard
+  title="Password-protected Deploy Previews"
+  description="Let your tests get past Netlify's password page."
+  href="/docs/guides/netlify-integration/password-protected-deploy-previews"
+/>
+
+<LinkCard
+  title="Frequently asked questions"
+  description="Answers to common questions about the Netlify extension, and what to do when a check is missing."
+  href="/docs/guides/netlify-integration/frequently-asked-questions"
+/>
