@@ -43,7 +43,13 @@ You need to be an owner or admin of the Endform organization you connect, and yo
    });
    ```
 
-5. ### Show results on pull requests (optional)
+5. ### Make your Deploy Previews reachable
+
+   Endform's runners open your Deploy Previews like any visitor, so they can't sign in to Netlify.
+   New Netlify projects are private by default, so check **Project configuration > General > Visitor access > Project visibility** and set previews to public, or to password protected on Pro plans.
+   See [Private and password-protected Deploy Previews](/docs/guides/netlify-integration/password-protected-deploy-previews).
+
+6. ### Show results on pull requests (optional)
 
    [Install the Endform GitHub app](https://endform.dev/app/docs-link?link=settings-integrations) on the repository to get an **Endform** check on each pull request.
 
@@ -52,7 +58,7 @@ You need to be an owner or admin of the Endform organization you connect, and yo
 ## How it works
 
 Configuring a project creates an Endform API key for it.
-Netlify stores the key as a secret environment variable, `ENDFORM_NETLIFY_API_KEY`, that's only available to Deploy Preview builds.
+The extension keeps the key in its own settings for the project, not in your project's environment variables, and only uses it in Deploy Preview builds.
 
 On every Deploy Preview:
 

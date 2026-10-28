@@ -23,14 +23,16 @@ If the log says `Could not report the GitHub check (403)` instead, the key belon
 ## Why does Netlify's secrets scan fail my build?
 
 Build tools like Next.js cache the build environment, so the scan can find secrets in the build output.
-The extension adds its own key, `ENDFORM_NETLIFY_API_KEY`, to the project's `SECRETS_SCAN_OMIT_KEYS` and keeps any keys you already listed.
+The extension's own key isn't an environment variable, so the scan never sees it.
 
-If you set `SECRETS_SCAN_OMIT_KEYS` in `netlify.toml`, which takes precedence, add `ENDFORM_NETLIFY_API_KEY` there.
-Do the same for other secrets your tests use, such as `E2E_NETLIFY_PREVIEW_PASSWORD`.
+Secrets your tests use, such as `E2E_NETLIFY_PREVIEW_PASSWORD`, can still trip the scan.
+Add them to the project's `SECRETS_SCAN_OMIT_KEYS` variable, or to `netlify.toml` if you set it there.
 
-## Why do all my tests fail on Netlify's password page?
+## Why do all my tests fail with 401 Unauthorized?
 
-Your Deploy Previews are protected. See [Password-protected Deploy Previews](/docs/guides/netlify-integration/password-protected-deploy-previews).
+Your Deploy Previews are protected, so your tests get Netlify's login or password page instead of your app.
+New Netlify projects are private by default.
+See [Private and password-protected Deploy Previews](/docs/guides/netlify-integration/password-protected-deploy-previews).
 
 ## Can I block a merge when the tests fail?
 
