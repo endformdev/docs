@@ -33,8 +33,8 @@ Run your suite in Endform first so you can select it in the dashboard.
    - **Playwright project:** Match a project such as `chromium`.
    - **Branch:** Match a branch such as `main`.
 4. Select **Preview matches** to check the scope.
-5. Under **Reason & expiry**, optionally add context for your team and an expiry
-   date. The expiry input uses your local time.
+5. Optionally add **Context** for your team and an **Expiry** date. The expiry
+   input uses your local time.
 6. Select **Create rule**. The rule applies to matching tests in new suite runs.
 
 All filled-in fields must match exactly. Empty fields match any value within the
@@ -62,14 +62,19 @@ npx endform@latest quarantine create \
 ```
 
 Creation requires `--suite-id` and at least one of `--test-id`, `--project`, or
-`--branch`. List active rules, include inactive rules, or deactivate a rule by
-its exact ID:
+`--branch`. List active rules, include inactive rules, update an active rule, or
+deactivate a rule by its exact ID:
 
 ```bash
 npx endform@latest quarantine list
 npx endform@latest quarantine list --all
+npx endform@latest quarantine update rule_789 --test-id test_456 --ends-at 2026-12-01T12:00:00Z
 npx endform@latest quarantine deactivate rule_789
 ```
+
+`quarantine update` replaces all of a rule's settings. Omitted `--test-id`,
+`--project`, or `--branch` options match any value, and an omitted `--reason`
+or `--ends-at` is cleared. The suite cannot change.
 
 An AI coding agent can follow the same sample-driven workflow through the
 [Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai)
@@ -110,9 +115,8 @@ branches in the selected suite.
 The selected test is matched by its ID. Renaming or moving it, or changing its
 describe blocks, creates a different test ID that this rule will not match.
 
-On a new run, the test still executes with its configured retries. If it fails
-after exhausting retries, the suite can still pass when the other tests pass
-and there are no blocking errors.
+On a new run, the test runs once, without retries. If it fails, the suite can
+still pass when the other tests pass and there are no blocking errors.
 
 <figure>
   <Image
@@ -174,8 +178,8 @@ Endform's stored outcomes. If you use HTML, JUnit, or custom reporters, read
 ## Rule timing and overlapping rules
 
 Endform determines which rule applies when a suite run starts. Creating,
-expiring, or deactivating a rule does not change an ongoing run or rewrite
-historical results.
+editing, expiring, or deactivating a rule does not change an ongoing run or
+rewrite historical results.
 
 When several active rules match a test, the oldest matching rule applies. After
 it expires or is deactivated, the next matching active rule can apply to future
@@ -194,6 +198,8 @@ Check for other matching active rules: deactivating one rule does not remove
 quarantine if another still matches. Start a new suite run to verify the test is
 no longer quarantined.
 
-To change a rule's conditions, reason, or expiry, deactivate it and create a
-replacement. Historical runs keep their association with the rule that
-originally applied.
+To change an active rule's conditions, context, or expiry, choose **Edit rule**
+from its actions menu, or run `quarantine update`. The rule keeps its ID and its
+priority among overlapping rules, and the changes apply to new runs. Expired and
+deactivated rules cannot be edited, so create a new rule instead. Historical
+runs keep their association with the rule that originally applied.
