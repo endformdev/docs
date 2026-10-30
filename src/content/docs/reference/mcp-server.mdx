@@ -156,7 +156,7 @@ Returns raw OpenTelemetry trace data for a test attempt. The trace can show Play
 
 ## Manage quarantine rules
 
-These tools let an AI agent list, create, and deactivate quarantine rules. See [Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai) for example conversations.
+These tools let an AI agent list, create, update, and deactivate quarantine rules. See [Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai) for example conversations.
 
 ### `list_quarantine_rules`
 
@@ -190,6 +190,26 @@ Creates a quarantine rule for an exact suite and scope. Use `query_samples` to r
 </ParameterTable>
 
 In addition to `suiteId`, provide at least one of `testId`, `projectName`, or `branch`. Omitted scope fields match any value within the suite.
+
+### `update_quarantine_rule`
+
+Replaces all editable settings of an active quarantine rule, keeping its ID and its priority among overlapping rules. Use `list_quarantine_rules` to retrieve the ID. The suite cannot change, and inactive rules cannot be edited.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `ruleId` | string | Exact quarantine rule ID returned by `list_quarantine_rules`. |
+  | `testId` | string \| null | Exact persisted `test.id`, or null to match all tests in the suite. |
+  | `projectName` | string \| null | Exact Playwright project name, or null to match any project. |
+  | `branch` | string \| null | Exact branch name, or null to match any branch. |
+  | `reason` | string \| null | Reason for quarantining the matching tests, or null to clear it. |
+  | `endsAt` | RFC 3339 string \| null | Future expiry timestamp, or null for no expiry. |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
+
+</ParameterTable>
+
+Supply every editable field explicitly. At least one of `testId`, `projectName`, or `branch` must remain set.
 
 ### `deactivate_quarantine_rule`
 
