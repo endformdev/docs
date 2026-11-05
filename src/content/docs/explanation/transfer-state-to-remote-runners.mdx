@@ -52,6 +52,8 @@ In order for Endform to reduce its exposure to sensitive data, only some environ
 
 The _values_ of the environment variables are taken while running your `playwright.config.ts`, so using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your Playwright config is supported.
 
+Environment variables that `globalSetup` sets do not reach the remote runners, even `E2E_*` ones, because it runs after the values are taken. Set them in your `playwright.config.ts` instead.
+
 ## Additional configuration
 
 Endform has two additional ways of transferring state to the remote runners:
