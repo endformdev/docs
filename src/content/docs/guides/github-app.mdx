@@ -1,0 +1,45 @@
+---
+title: GitHub app
+description: What the Endform GitHub app does, and the permissions it asks for
+sidebar:
+  order: 4
+---
+
+[Install the Endform GitHub app](https://endform.dev/app/docs-link?link=settings-integrations) from your organization's integration settings in the Endform dashboard, and choose which repositories it can access.
+
+With the app installed, Endform can:
+
+- authenticate test runs from GitHub Actions in those repositories, without an API key
+- report each run's results on the pull request, with a check and a summary comment
+- comment on the line where a test failed, when that line is part of the pull request's changes
+
+## Permissions
+
+The app asks only for the access these features need.
+
+### Repository permissions
+
+| Permission    | Access       | What Endform uses it for                                                                                        |
+| ------------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
+| Pull requests | Read & write | Finds the pull request for a run's commit, posts and updates the results comment, and comments on failing tests |
+| Checks        | Read & write | Adds an **Endform** check with the run's results to the commit                                                  |
+| Actions       | Read         | Matches a test run to the GitHub Actions workflow run that started it                                           |
+| Metadata      | Read         | Lists the repositories the app is installed on. GitHub requires this for every app                              |
+
+### Account permissions
+
+| Permission      | Access | What Endform uses it for                                         |
+| --------------- | ------ | ---------------------------------------------------------------- |
+| Email addresses | Read   | Reads your email address when you sign in to Endform with GitHub |
+
+### Events
+
+The app receives these webhook events from the repositories it's installed on:
+
+| Event          | What Endform uses it for                                      |
+| -------------- | ------------------------------------------------------------- |
+| `workflow_run` | Links test runs to the workflow runs that started them        |
+| `pull_request` | Links test runs to their pull request and keeps it up to date |
+| `repository`   | Keeps repository names up to date when one is renamed         |
+
+The app never reads your repository's code. The test code Endform runs is uploaded by the Endform CLI from your CI job.
