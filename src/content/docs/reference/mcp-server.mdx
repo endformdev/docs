@@ -196,7 +196,7 @@ The result contains a player URL to embed in an iframe and a URL for the full re
 
 These tools let an AI agent list, create, update, and deactivate quarantine rules. See [Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai) for example conversations.
 
-### `quarantine_rule_list`
+### `quarantine_list`
 
 Lists active quarantine rules and their exact rule IDs, scope, reason, and expiry.
 
@@ -209,7 +209,7 @@ Lists active quarantine rules and their exact rule IDs, scope, reason, and expir
 
 </ParameterTable>
 
-### `quarantine_rule_create`
+### `quarantine_create`
 
 Creates a quarantine rule for an exact suite and scope. Use `samples_query` to retrieve the persisted `suite.id` and, when selecting a test, `test.id`. Test names, file paths, and Playwright worker IDs are not test IDs.
 
@@ -229,15 +229,15 @@ Creates a quarantine rule for an exact suite and scope. Use `samples_query` to r
 
 In addition to `suiteId`, provide at least one of `testId`, `projectName`, or `branch`. Omitted scope fields match any value within the suite.
 
-### `quarantine_rule_update`
+### `quarantine_update`
 
-Replaces all editable settings of an active quarantine rule, keeping its ID and its priority among overlapping rules. Use `quarantine_rule_list` to retrieve the ID. The suite cannot change, and inactive rules cannot be edited.
+Replaces all editable settings of an active quarantine rule, keeping its ID and its priority among overlapping rules. Use `quarantine_list` to retrieve the ID. The suite cannot change, and inactive rules cannot be edited.
 
 <ParameterTable>
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `ruleId` | string | Exact quarantine rule ID returned by `quarantine_rule_list`. |
+  | `ruleId` | string | Exact quarantine rule ID returned by `quarantine_list`. |
   | `testId` | string \| null | Exact persisted `test.id`, or null to match all tests in the suite. |
   | `projectName` | string \| null | Exact Playwright project name, or null to match any project. |
   | `branch` | string \| null | Exact branch name, or null to match any branch. |
@@ -249,15 +249,15 @@ Replaces all editable settings of an active quarantine rule, keeping its ID and 
 
 Supply every editable field explicitly. At least one of `testId`, `projectName`, or `branch` must remain set.
 
-### `quarantine_rule_deactivate`
+### `quarantine_deactivate`
 
-Deactivates one quarantine rule by its exact ID. Use `quarantine_rule_list` to retrieve the ID.
+Deactivates one quarantine rule by its exact ID. Use `quarantine_list` to retrieve the ID.
 
 <ParameterTable>
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `ruleId` | string | Exact quarantine rule ID returned by `quarantine_rule_list`. |
+  | `ruleId` | string | Exact quarantine rule ID returned by `quarantine_list`. |
   | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
 
 </ParameterTable>
@@ -377,20 +377,3 @@ Stops a live session and cleans up its local and remote resources. Agents should
   | `sessionId` | string | Session returned by `live_test_start`. |
 
 </ParameterTable>
-
-## Renamed tools
-
-Each tool is named after the CLI command that does the same thing, such as `test_attempt_inspect` for `endform test-attempt inspect`. Earlier versions of the CLI used the names below. If your AI coding tool allows tools by name, such as `mcp__endform__create_quarantine_rule` in Claude Code's permission settings, update those entries to the new names.
-
-| Earlier name | Current name |
-| --- | --- |
-| `list_organizations` | `organization_list` |
-| `query_analytics` | `analytics_query` |
-| `query_samples` | `samples_query` |
-| `list_quarantine_rules` | `quarantine_rule_list` |
-| `create_quarantine_rule` | `quarantine_rule_create` |
-| `update_quarantine_rule` | `quarantine_rule_update` |
-| `deactivate_quarantine_rule` | `quarantine_rule_deactivate` |
-| `get_otel_trace` | Removed. `test_attempt_inspect` downloads the same traces with their screenshots. |
-
-The `live_test_*` and `suite_run_*` tools keep their names.

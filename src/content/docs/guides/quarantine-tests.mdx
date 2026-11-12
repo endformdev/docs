@@ -54,7 +54,7 @@ them to create a rule:
 
 ```bash
 npx endform@latest samples test-runs --where 'testRun.outcome = fail' --limit 10
-npx endform@latest quarantine-rule create \
+npx endform@latest quarantine create \
   --suite-id suite_123 \
   --test-id test_456 \
   --reason 'Investigating checkout failures' \
@@ -66,17 +66,15 @@ Creation requires `--suite-id` and at least one of `--test-id`, `--project`, or
 deactivate a rule by its exact ID:
 
 ```bash
-npx endform@latest quarantine-rule list
-npx endform@latest quarantine-rule list --all
-npx endform@latest quarantine-rule update rule_789 --test-id test_456 --ends-at 2026-12-01T12:00:00Z
-npx endform@latest quarantine-rule deactivate rule_789
+npx endform@latest quarantine list
+npx endform@latest quarantine list --all
+npx endform@latest quarantine update rule_789 --test-id test_456 --ends-at 2026-12-01T12:00:00Z
+npx endform@latest quarantine deactivate rule_789
 ```
 
-`quarantine-rule update` replaces all of a rule's settings. Omitted `--test-id`,
+`quarantine update` replaces all of a rule's settings. Omitted `--test-id`,
 `--project`, or `--branch` options match any value, and an omitted `--reason`
 or `--ends-at` is cleared. The suite cannot change.
-
-Earlier versions of the CLI called this command `endform quarantine`, which still works as an alias.
 
 An AI coding agent can follow the same sample-driven workflow through the
 [Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai)

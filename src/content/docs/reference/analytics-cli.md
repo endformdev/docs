@@ -1,5 +1,5 @@
 ---
-title: Test history CLI
+title: Test analytics CLI
 description: Compare Endform test trends, inspect concrete suite and test executions, and replay test attempts from the command line
 sidebar:
   order: 5

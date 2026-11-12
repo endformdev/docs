@@ -83,7 +83,6 @@ export default defineEndformConfig({
 By default the following environment variables are automatically transferred:
 
 - Environment variables that start with `E2E_`
-- `CI`, when it is set
 - All environment variables that are set in your `playwright.config.ts`
 
 #### Excluding environment variables
