@@ -10,7 +10,7 @@ import UserMessage from "../../../components/conversation/UserMessage.astro";
 import ToolCall from "../../../components/conversation/ToolCall.astro";
 import AssistantMessage from "../../../components/conversation/AssistantMessage.astro";
 
-Connect your coding agent to the [Endform MCP server](/docs/reference/mcp-server), then ask questions about the test history for the repository you are working in. The agent can compare trends, inspect individual executions, and open the telemetry from a failed attempt without you copying data out of the dashboard.
+Connect your coding agent to the [Endform MCP server](/docs/reference/mcp-server), then ask questions about the test history for the repository you are working in. The agent can compare trends, inspect individual executions, compare a failed attempt step by step with a passing run, and link you to a replay of what it found, without you copying data out of the dashboard.
 
 The conversations below are representative examples. Your results will use your own tests and Endform history.
 
@@ -19,15 +19,16 @@ The conversations below are representative examples. Your results will use your 
     What were our flakiest tests over the last seven days? Look into the worst one and tell me why it flakes.
   </UserMessage>
 
-  <ToolCall name="query_analytics" summary="passing test runs with retries, grouped by test, last 7 days" />
-  <ToolCall name="query_samples" summary="recent retried executions of the flakiest test" />
-  <ToolCall name="get_otel_trace" summary="inspect telemetry from two failed attempts" />
-  <ToolCall name="get_otel_trace" summary="compare another failure from the same test" />
+  <ToolCall name="analytics_query" summary="passing test runs with retries, grouped by test, last 7 days" />
+  <ToolCall name="samples_query" summary="recent retried executions of the flakiest test" />
+  <ToolCall name="test_attempt_inspect" summary="compare a failed attempt with its passing retry" />
+  <ToolCall name="test_attempt_inspect" summary="check another failed attempt of the same test" />
+  <ToolCall name="test_attempt_replay_link" summary="replay the failed click beside the passing retry" />
 
   <AssistantMessage>
     `checkout.spec.ts › saved card › completes payment` was the flakiest test this week. It passed in 18 runs, but 6 of those runs needed a retry.
 
-    The failed attempts have the same pattern: the test clicks **Pay now** immediately after the saved card request finishes, but before the form enables the button. The successful retries wait long enough for that state transition. Both traces show the first click targeting a disabled element; there is no corresponding `POST /payments` request.
+    The failed attempts have the same pattern: the test clicks **Pay now** immediately after the saved card request finishes, but before the form enables the button. The successful retries wait long enough for that state transition. In both failed attempts, the first change from the passing retry is the click on a disabled button, and there is no corresponding `POST /payments` request. I've linked a replay that plays a failed attempt beside its passing retry, opened on that click.
 
     I would replace the fixed delay before the click with an assertion that the button is enabled:
 
@@ -43,9 +44,9 @@ The conversations below are representative examples. Your results will use your 
     Which individual tests have the biggest effect on our test runtime? Check whether any have become slower recently.
   </UserMessage>
 
-  <ToolCall name="query_analytics" summary="average test duration grouped by test, last 30 days" />
-  <ToolCall name="query_samples" summary="recent executions of the slowest tests" />
-  <ToolCall name="query_analytics" summary="daily duration trend for the leading slow test" />
+  <ToolCall name="analytics_query" summary="average test duration grouped by test, last 30 days" />
+  <ToolCall name="samples_query" summary="recent executions of the slowest tests" />
+  <ToolCall name="analytics_query" summary="daily duration trend for the leading slow test" />
 
   <AssistantMessage>
     `reports.spec.ts › exports a yearly CSV` is the largest individual bottleneck at an average of 48 seconds. It was averaging 29 seconds at the start of the month and has climbed steadily since August 8.
@@ -61,9 +62,9 @@ The conversations below are representative examples. Your results will use your 
     Summarize today's test failures. Group related failures together and tell me what to investigate first.
   </UserMessage>
 
-  <ToolCall name="query_analytics" summary="failed test count grouped by test, last 24 hours" />
-  <ToolCall name="query_samples" summary="latest failed executions and their ordered attempts" />
-  <ToolCall name="get_otel_trace" summary="inspect a representative checkout failure" />
+  <ToolCall name="analytics_query" summary="failed test count grouped by test, last 24 hours" />
+  <ToolCall name="samples_query" summary="latest failed executions and their ordered attempts" />
+  <ToolCall name="test_attempt_inspect" summary="inspect a representative checkout failure" />
 
   <AssistantMessage>
     There are 14 failed test runs across three groups:
@@ -72,7 +73,7 @@ The conversations below are representative examples. Your results will use your 
     2. **Profile menu timing: 4 failures.** These pass on retry and share a locator timeout. Treat this as one flaky-test issue.
     3. **Visual assertion: 1 failure.** The settings-page screenshot differs only in WebKit and did not retry.
 
-    Start with the payments service or its test environment. The representative trace shows the UI behaving normally up to the failed API response, so changing the Playwright assertions would only hide the underlying outage.
+    Start with the payments service or its test environment. The representative attempt shows the UI behaving normally up to the failed API response, so changing the Playwright assertions would only hide the underlying outage.
   </AssistantMessage>
 </Conversation>
 

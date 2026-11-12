@@ -1,6 +1,6 @@
 ---
 title: Endform MCP server
-description: Connect an AI coding agent to Endform test history and interactive test debugging tools
+description: Connect an AI coding agent to Endform test history, test runs, and interactive test debugging tools
 sidebar:
   order: 3
 ---
@@ -8,7 +8,7 @@ sidebar:
 import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 import ParameterTable from "../../../components/ParameterTable.astro";
 
-The Endform CLI includes a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. It gives AI coding agents tools for analyzing historical test data, managing quarantine rules, and debugging a Playwright test on Endform's remote infrastructure.
+The Endform CLI includes a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. It gives AI coding agents tools for analyzing historical test data, inspecting and replaying test attempts, managing quarantine rules, running tests, and debugging a Playwright test on Endform's remote infrastructure. Each tool is named after the CLI command that does the same thing.
 
 ## Set up the MCP server
 
@@ -102,11 +102,11 @@ Restart the AI coding tool or reload its MCP servers after changing the configur
 
 These tools query the same suite and test history that powers the Endform dashboard. See [Investigate test history with AI](/docs/guides/investigate-test-history-with-ai) for example conversations.
 
-### `list_organizations`
+### `organization_list`
 
 Lists the organizations available to the active Endform login. Agents can use it when another tool asks for organization selection.
 
-### `query_analytics`
+### `analytics_query`
 
 Compares run counts, pass rates, and durations over time. Results are returned as time series with count, percent, or seconds as the unit.
 
@@ -120,12 +120,13 @@ Compares run counts, pass rates, and durations over time. Results are returned a
   | `where` | string | Optional filter expression, such as `testRun.outcome = fail, branch = main`. |
   | `period` | string | Positive integer followed by `H`, `D`, `W`, or `M`. Defaults to `7D`. |
   | `endingAt` | ISO 8601 string | Optional end of the time window. Defaults to the current time. |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
 
 </ParameterTable>
 
-### `query_samples`
+### `samples_query`
 
-Returns concrete suite-run or test-run executions matching a filter. Test-run samples include the test identity, project, outcome, duration, and every attempt in chronological order. Attempts may contain an error message, error location, and `otelTraceId`.
+Returns concrete suite-run or test-run executions matching a filter. Test-run samples include the test identity, project, outcome, duration, and every attempt in chronological order. Each attempt has an `id` to pass to [`test_attempt_inspect`](#test_attempt_inspect), and may contain an error message and error location.
 
 <ParameterTable>
 
@@ -137,20 +138,57 @@ Returns concrete suite-run or test-run executions matching a filter. Test-run sa
   | `endingAt` | ISO 8601 string | Optional end of the time window. Defaults to the current time. |
   | `limit` | number | Number of newest records to return. Defaults to 10; maximum 50. |
   | `cursor` | string | Optional `nextCursor` from an earlier response for pagination. |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
 
 </ParameterTable>
 
 Filters are comma-separated clauses. String fields support operators such as `=`, `!=`, `^=`, `$=`, `~=`, `!~=`, `in`, and `!in`; numeric fields support comparisons such as `>`, `>=`, `<`, and `<=`. The tool's input schema contains the complete field and operator reference.
 
-### `get_otel_trace`
+## Inspect test attempts
 
-Returns raw OpenTelemetry trace data for a test attempt. The trace can show Playwright actions, network activity, timing, and other spans recorded while that attempt ran.
+These tools show an agent what a single test attempt did, and let it show you. Find a test attempt ID with `samples_query`. The run data lives in Endform, so they work for branches that aren't checked out or pushed.
+
+### `test_attempt_inspect`
+
+Inspects a test attempt: what it did, where and how it failed, and how it compares with a passing run. By default, a failed attempt is compared with a passing retry in the same test run when there is one, and otherwise with recent passing runs on the suite's default branch.
+
+The result contains the attempt's test and error, its steps aligned with the compared run's steps, the first step that changed and the step that failed, and one step's screenshot from both runs. The tool also downloads both runs' traces and screenshots and writes `steps.json`, which maps each step to its span and screenshot in both runs, so the agent can read further without another call.
 
 <ParameterTable>
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `traceId` | string | The `otelTraceId` returned by `query_samples`. |
+  | `testAttemptId` | string | The test attempt to inspect, from `samples_query`. |
+  | `compareWith` | `auto` or `none` | `auto`, the default, picks a passing run to compare with. `none` skips the comparison, which is faster when the agent only needs what happened. |
+  | `branch` | string | Optional branch to compare with instead, such as a pull request's base branch. |
+  | `compareTestAttemptId` | string | Optional test attempt to compare with instead, such as a passing run found with `samples_query`. |
+  | `stepIndex` | number | Optional step to return screenshots for, by its index in the step list. Defaults to the first change, else the failed step. |
+  | `outputDirectory` | string | Optional absolute directory to download the files into. Defaults to the system temporary directory. |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
+
+</ParameterTable>
+
+<Aside type="tip" title="Download into your workspace">
+  Some AI coding tools, such as Claude Code, ask for permission to read the system temporary directory. Ask the agent to pass an `outputDirectory` inside your project, such as a gitignored scratch directory, to avoid the prompts.
+</Aside>
+
+### `test_attempt_replay_link`
+
+Creates a replay link that shows a test attempt's run step by step with screenshots. The replay can play the attempt beside another attempt's run, and can open on a chosen span with a caption. Agents use it after `test_attempt_inspect` to show you the moment that explains a failure or a change.
+
+The result contains a player URL to embed in an iframe and a URL for the full replay in a browser. Both work without a login until `expiresAt`.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `testAttemptId` | string | The test attempt to show, from `samples_query` or `test_attempt_inspect`. |
+  | `compareTestAttemptId` | string | Optional test attempt whose run plays beside this one, such as the one `test_attempt_inspect` compared with. |
+  | `compareLabel` | string | Optional name for the run beside this one, such as `Passing retry`. Requires `compareTestAttemptId`. Defaults to its outcome and branch. |
+  | `spanId` | string | Optional span to open on and mark, such as a step's `spanId` from `test_attempt_inspect` or `steps.json`. |
+  | `spanLabel` | string | Optional caption for the marked span, at most 80 characters. Requires `spanId`. |
+  | `at` | `end` or `start` | Open on the span's result (`end`, the default) or its start. Requires `spanId`. |
+  | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
 
 </ParameterTable>
 
@@ -158,7 +196,7 @@ Returns raw OpenTelemetry trace data for a test attempt. The trace can show Play
 
 These tools let an AI agent list, create, update, and deactivate quarantine rules. See [Modify quarantine rules with AI](/docs/guides/modify-quarantine-rules-with-ai) for example conversations.
 
-### `list_quarantine_rules`
+### `quarantine_list`
 
 Lists active quarantine rules and their exact rule IDs, scope, reason, and expiry.
 
@@ -171,15 +209,15 @@ Lists active quarantine rules and their exact rule IDs, scope, reason, and expir
 
 </ParameterTable>
 
-### `create_quarantine_rule`
+### `quarantine_create`
 
-Creates a quarantine rule for an exact suite and scope. Use `query_samples` to retrieve the persisted `suite.id` and, when selecting a test, `test.id`. Test names, file paths, and Playwright worker IDs are not test IDs.
+Creates a quarantine rule for an exact suite and scope. Use `samples_query` to retrieve the persisted `suite.id` and, when selecting a test, `test.id`. Test names, file paths, and Playwright worker IDs are not test IDs.
 
 <ParameterTable>
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `suiteId` | string | Exact persisted `suite.id` returned by `query_samples`. |
+  | `suiteId` | string | Exact persisted `suite.id` returned by `samples_query`. |
   | `testId` | string | Optional exact persisted `test.id`. Omit it to match all tests in the suite. |
   | `projectName` | string | Optional exact Playwright project name. |
   | `branch` | string | Optional exact branch name. |
@@ -191,15 +229,15 @@ Creates a quarantine rule for an exact suite and scope. Use `query_samples` to r
 
 In addition to `suiteId`, provide at least one of `testId`, `projectName`, or `branch`. Omitted scope fields match any value within the suite.
 
-### `update_quarantine_rule`
+### `quarantine_update`
 
-Replaces all editable settings of an active quarantine rule, keeping its ID and its priority among overlapping rules. Use `list_quarantine_rules` to retrieve the ID. The suite cannot change, and inactive rules cannot be edited.
+Replaces all editable settings of an active quarantine rule, keeping its ID and its priority among overlapping rules. Use `quarantine_list` to retrieve the ID. The suite cannot change, and inactive rules cannot be edited.
 
 <ParameterTable>
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `ruleId` | string | Exact quarantine rule ID returned by `list_quarantine_rules`. |
+  | `ruleId` | string | Exact quarantine rule ID returned by `quarantine_list`. |
   | `testId` | string \| null | Exact persisted `test.id`, or null to match all tests in the suite. |
   | `projectName` | string \| null | Exact Playwright project name, or null to match any project. |
   | `branch` | string \| null | Exact branch name, or null to match any branch. |
@@ -211,16 +249,69 @@ Replaces all editable settings of an active quarantine rule, keeping its ID and 
 
 Supply every editable field explicitly. At least one of `testId`, `projectName`, or `branch` must remain set.
 
-### `deactivate_quarantine_rule`
+### `quarantine_deactivate`
 
-Deactivates one quarantine rule by its exact ID. Use `list_quarantine_rules` to retrieve the ID.
+Deactivates one quarantine rule by its exact ID. Use `quarantine_list` to retrieve the ID.
 
 <ParameterTable>
 
   | Parameter | Type | Description |
   | --- | --- | --- |
-  | `ruleId` | string | Exact quarantine rule ID returned by `list_quarantine_rules`. |
+  | `ruleId` | string | Exact quarantine rule ID returned by `quarantine_list`. |
   | `organizationId` | string | Optional organization. Omit it to use the organization from the active login. |
+
+</ParameterTable>
+
+## Run tests
+
+These tools let an AI agent run tests or a whole suite on Endform from your project, as `endform test` does, and follow the run while it carries on in the background.
+
+### `suite_run_start`
+
+Starts a suite run from a local project directory and returns as soon as the suite has started, with a `suiteRunId`. Omit `testFileFilters`, `grep`, `grepInvert`, and `project` to run the whole suite.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `directory` | string | Absolute path of the directory to run from, as if `endform test` were started there. |
+  | `testFileFilters` | string[] | Playwright-style regular expressions matched against absolute test paths. A filter may include a declaration line, such as `tests/checkout.spec.ts:47`. |
+  | `grep` | string[] | Include tests whose full title chain matches these regular expressions. |
+  | `grepInvert` | string[] | Exclude tests whose full title chain matches these regular expressions. |
+  | `project` | string[] | Include tests from these Playwright projects. |
+  | `repeatEach` | number | Run each selected test this many times, like Playwright's `--repeat-each`. |
+  | `maxFailures` | number | Stop the suite after this many failures. Defaults to the Playwright configuration; `0` removes the limit. |
+  | `retries` | number | Maximum retries for each failed test. Defaults to the Playwright configuration. |
+  | `config` | string | Optional Playwright configuration file or test directory. Relative paths resolve against `directory`. |
+  | `organizationId` | string | Optional organization. Defaults to the organization configured for the repository or the active login. |
+
+</ParameterTable>
+
+To measure how flaky a test is, an agent can select it, set `retries` to `0`, and repeat it with `repeatEach`, for example 100 times before a fix and 100 times after.
+
+### `suite_run_status`
+
+Shows the progress of a suite run. `status` is `running` until the tests and local cleanup have finished, then `passed`, `failed`, `stopped`, or `error`. Failures, the report URL, and the local results path are set once the run is over.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `suiteRunId` | string | Suite run returned by `suite_run_start`. |
+
+</ParameterTable>
+
+Use `status` to tell whether the suite passed. The failed count can include quarantined tests.
+
+### `suite_run_stop`
+
+Stops a suite run, cancels its remaining tests, cleans up its local web servers, and returns the final status. Stopping a run that is already over returns its status.
+
+<ParameterTable>
+
+  | Parameter | Type | Description |
+  | --- | --- | --- |
+  | `suiteRunId` | string | Suite run returned by `suite_run_start`. |
 
 </ParameterTable>
 
@@ -242,6 +333,7 @@ Starts a remote live session and pauses at a checkpoint inside exactly one match
   | `project` | string[] | Include tests from these Playwright projects. |
   | `line` | number | 1-based source line to pause before. Defaults to the first statement in the test body. |
   | `config` | string | Optional Playwright configuration file or test directory. |
+  | `organizationId` | string | Optional organization. Defaults to the organization configured for the repository or the active login. |
 
 </ParameterTable>
 
