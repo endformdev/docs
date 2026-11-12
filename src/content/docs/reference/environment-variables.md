@@ -12,6 +12,7 @@ Endform transfers selected environment variables to remote runners. For details,
 At a high level:
 
 - `E2E_*` variables are transferred automatically.
+- `CI` is transferred automatically when it is set, so tests and tools on remote runners see the same value as the machine that started the run.
 - Variables referenced from tests via `process.env` are transferred automatically.
 - You can explicitly include additional variables with `environmentVariables`.
 - You can exclude variables with `!`-prefixed patterns in `environmentVariables`, for example `"!^PLAYWRIGHT_BDD_CONFIGS$"`. Exclusions take precedence over everything above.

@@ -48,6 +48,7 @@ Environment variables are often highly sensitive in nature.
 In order for Endform to reduce its exposure to sensitive data, only some environment variables are automatically transferred to the remote runners.
 
 - `E2E_*` - any environment variables that start with `E2E_` are transferred
+- `CI` - transferred when it is set, so remote runners see the same value as the machine that started the run
 - Environment variables that are used / referenced from your tests via `process.env` are picked up.
 
 The _values_ of the environment variables are taken while running your `playwright.config.ts`, so using a package like [dotenv](https://www.npmjs.com/package/dotenv) in your Playwright config is supported.
