@@ -47,7 +47,7 @@ For `label`:
 
 - use `tag:@my-tag` to limit by [test tag](https://playwright.dev/docs/test-annotations#tag-tests)
 - use `project:project-name` to limit runs of tests within a project
-- use `lock:lock-name` to limit tests that use a Playwright lock, set with `{ lock: 'lock-name' }` (Playwright 1.63+) - see [locks](#locks)
+- use `lock:lock-name` to limit tests that use a Playwright lock, set with `{ lock: 'lock-name' }` - see [locks](#locks)
 - if not set, the limit applies to all tests in the run
 
 A label must start with `tag:`, `project:` or `lock:`.
