@@ -47,9 +47,12 @@ For `label`:
 
 - use `tag:@my-tag` to limit by [test tag](https://playwright.dev/docs/test-annotations#tag-tests)
 - use `project:project-name` to limit runs of tests within a project
+- use `lock:lock-name` to limit tests that use a Playwright lock, set with `{ lock: 'lock-name' }` - see [locks](#locks)
 - if not set, the limit applies to all tests in the run
 
-Then set `limit` for the maximum number of allowed concurrent tests to run within that group.
+A label must start with `tag:`, `project:` or `lock:`.
+
+Then set `limit` for the maximum number of allowed concurrent tests to run within that group. `limit` must be greater than 0.
 
 ```ts
 import { defineEndformConfig } from "endform";
@@ -59,6 +62,7 @@ export default defineEndformConfig({
     { scope: "within-suite-run", limit: 20 },
     { scope: "within-suite-run", label: "tag:@smoke", limit: 2 },
     { scope: "across-all-runs", label: "project:slow-backend", limit: 10 },
+    { scope: "across-all-runs", label: "lock:shared-account", limit: 1 },
   ],
 });
 ```
@@ -67,6 +71,17 @@ Running tests must satisfy all applicable limits. In this example:
 
 - Within the suite run, 20 tests can run concurrently, with at most 2 tagged `@smoke` tests running
 - No more than 10 tests in the `slow-backend` project can run at the same time, across all currently running test suites in your organization
+- Only one test that uses the `shared-account` lock can run at a time, across all currently running test suites in your organization
+
+#### Locks
+
+Playwright gives every lock a default limit of 1, and Endform applies it within a suite run.
+Tests that share a lock never run at the same time in one suite run, without any config.
+
+Add a `lock:` entry to change that limit, to make it `"across-all-runs"` so it applies across your whole organization, or both. For example:
+
+- `limit: 1` with `"across-all-runs"` keeps a lock exclusive across CI jobs, so two suite runs never use the same shared resource at once
+- `limit: 10` protects the performance of a constrained environment, such as a small staging server that slows down when too many tests use it at once
 
 ### `environmentVariables`
 

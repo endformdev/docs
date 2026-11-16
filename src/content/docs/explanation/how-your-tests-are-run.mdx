@@ -25,9 +25,10 @@ To see what code and environment variables endform detects, run `npx endform tes
 
 ### Step 2: Distributed execution
 
-- Endform starts a fully isolated machine for each test. Your tests run in dedicated Firecracker MicroVMs.
+- Endform starts fully isolated machines to run your tests: one for each test if you set [`fullyParallel: true`](/docs/reference/requirements#parallel), otherwise one for each test file, with all of the file's tests running on that machine. Your tests run in dedicated Firecracker MicroVMs.
 - Each machine receives only the specific test files and dependencies it requires.
 - Each machine only ever runs one attempt of a test. The test runner can immediately schedule _more than one_ retry of a test when the first run fails.
+  A test that uses a [lock](/docs/reference/endform-config-ts#locks) retries one attempt at a time, because each retry waits for the lock to be released.
 
 ### Step 3: Result coordination
 
