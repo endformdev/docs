@@ -75,7 +75,7 @@ Running tests must satisfy all applicable limits. In this example:
 
 #### Locks
 
-Endform already gives every lock a default limit of 1 within a suite run.
+Playwright gives every lock a default limit of 1, and Endform applies it within a suite run.
 Tests that share a lock never run at the same time in one suite run, without any config.
 
 Add a `lock:` entry to change that limit, to make it `"across-all-runs"` so it applies across your whole organization, or both. For example:
