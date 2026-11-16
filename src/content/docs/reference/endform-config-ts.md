@@ -81,7 +81,7 @@ Tests that share a lock never run at the same time in one suite run, without any
 Add a `lock:` entry to change that limit, to make it `"across-all-runs"` so it applies across your whole organization, or both. For example:
 
 - `limit: 1` with `"across-all-runs"` keeps a lock exclusive across CI jobs, so two suite runs never use the same shared resource at once
-- `limit: 3` suits a sandbox environment that allows three sessions at a time
+- `limit: 10` protects the performance of a constrained environment, such as a small staging server that slows down when too many tests use it at once
 
 ### `environmentVariables`
 
