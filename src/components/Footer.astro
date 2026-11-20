@@ -1,0 +1,184 @@
+---
+import Default from "@astrojs/starlight/components/Footer.astro";
+---
+
+<Default {...Astro.props} />
+
+{
+	import.meta.env.PROD && (
+		<>
+			<section
+				id="consent-banner"
+				class="consent-banner"
+				aria-labelledby="consent-banner-title"
+				hidden
+			>
+				<h2 id="consent-banner-title">Cookie choices</h2>
+				<p>
+					Endform uses optional cookies to see how the site is used and to
+					measure ads. <a href="/privacy">Privacy policy</a>
+				</p>
+
+				<button
+					type="button"
+					class="consent-text-button"
+					data-consent-customize
+					aria-expanded="false"
+					aria-controls="consent-details"
+				>
+					Customize
+				</button>
+
+				<fieldset id="consent-details" data-consent-details hidden>
+					<legend class="sr-only">Optional cookies</legend>
+					<label>
+						<input type="checkbox" name="analytics" />
+						<span>
+							<strong>Analytics</strong>
+							<span>
+								How visitors use the site, measured with PostHog and Google.
+							</span>
+						</span>
+					</label>
+					<label>
+						<input type="checkbox" name="marketing" />
+						<span>
+							<strong>Marketing</strong>
+							<span>
+								Ad measurement with Google, LinkedIn and Meta, and company
+								identification with Snitcher.
+							</span>
+						</span>
+					</label>
+				</fieldset>
+
+				<div class="consent-actions">
+					<button type="button" class="consent-save" data-consent-save hidden>
+						Save choices
+					</button>
+					<button type="button" data-consent-reject>
+						Reject all
+					</button>
+					<button type="button" data-consent-accept>
+						Accept all
+					</button>
+				</div>
+			</section>
+		</>
+	)
+}
+
+<script>
+	import { startConsentManager } from "../consent/consent-manager";
+
+	const banner = document.getElementById("consent-banner");
+	if (banner) {
+		// Out of the content column, so the sidebar can't cover it.
+		document.body.appendChild(banner);
+		startConsentManager(banner);
+	}
+</script>
+
+<style>
+	.consent-banner {
+		position: fixed;
+		inset-inline: 1rem;
+		bottom: 1rem;
+		z-index: 200;
+		padding: 1rem;
+		border: 1px solid var(--sl-color-hairline-light);
+		border-radius: 0.75rem;
+		background: var(--sl-color-bg);
+		color: var(--sl-color-gray-2);
+		font-size: var(--sl-text-sm);
+		line-height: 1.5;
+		box-shadow: var(--sl-shadow-lg);
+	}
+	@media (min-width: 40rem) {
+		.consent-banner {
+			inset-inline: 1rem auto;
+			max-width: 24rem;
+		}
+	}
+	.consent-banner [hidden],
+	.consent-banner[hidden] {
+		display: none !important;
+	}
+	.consent-banner h2 {
+		margin: 0;
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.consent-banner p {
+		margin: 0.25rem 0 0;
+	}
+	.consent-banner a,
+	.consent-text-button {
+		color: var(--sl-color-white);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+	.consent-text-button {
+		margin-top: 0.5rem;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		font-weight: 500;
+		cursor: pointer;
+	}
+	.consent-banner fieldset {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		margin: 0.75rem 0 0;
+		padding: 0;
+		border: 0;
+	}
+	.consent-banner label {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+		cursor: pointer;
+	}
+	.consent-banner label input {
+		flex-shrink: 0;
+		margin: 0.25rem 0 0;
+		accent-color: var(--sl-color-accent);
+	}
+	.consent-banner label strong {
+		display: block;
+		color: var(--sl-color-white);
+		font-weight: 500;
+	}
+	.consent-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.5rem;
+		margin-top: 1rem;
+	}
+	.consent-actions button {
+		min-height: 2rem;
+		padding: 0 0.75rem;
+		border: 1px solid var(--sl-color-hairline-light);
+		border-radius: 0.375rem;
+		background: none;
+		color: var(--sl-color-white);
+		font: inherit;
+		font-weight: 500;
+		cursor: pointer;
+	}
+	.consent-actions button:hover {
+		background: var(--sl-color-gray-6);
+	}
+	.consent-actions .consent-save {
+		grid-column: span 2;
+	}
+	@media (pointer: coarse) {
+		.consent-actions button,
+		.consent-text-button {
+			min-height: 2.75rem;
+		}
+	}
+</style>
