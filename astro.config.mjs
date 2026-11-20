@@ -197,8 +197,7 @@ export default defineConfig({
 							},
 							{
 								tag: "script",
-								// Google Tag Manager, run by the cookie banner (src/components/Footer.astro)
-								// once the visitor allows analytics or marketing cookies
+								// Google Tag Manager
 								attrs: {
 									type: "text/plain",
 									"data-consent": "analytics marketing",
@@ -211,7 +210,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 							},
 							{
 								tag: "script",
-								// Snitcher, run by the cookie banner once the visitor allows marketing cookies
+								// Snitcher
 								attrs: {
 									type: "text/plain",
 									"data-consent": "marketing",
@@ -225,8 +224,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 							},
 							{
 								tag: "script",
-								// LinkedIn Insight Tag, run by the cookie banner once the visitor allows marketing cookies.
-								// The <noscript> image fallback is left out, since it would fire without consent.
+								// LinkedIn Insight Tag
 								attrs: {
 									type: "text/plain",
 									"data-consent": "marketing",
@@ -251,8 +249,7 @@ window._linkedin_data_partner_ids.push(window._linkedin_partner_id);
 							},
 							{
 								tag: "script",
-								// Meta Pixel, run by the cookie banner once the visitor allows marketing cookies.
-								// The <noscript> image fallback is left out, since it would fire without consent.
+								// Meta Pixel
 								attrs: {
 									type: "text/plain",
 									"data-consent": "marketing",
