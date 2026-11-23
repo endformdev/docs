@@ -17,12 +17,12 @@ const CONSENT_MAX_AGE_SECONDS = 180 * 24 * 60 * 60;
 const POSTHOG_KEY = "phc_CFBLzSpXHQAX9UYMiHudLL3iYWgXfnUVOCuEd079EV1";
 
 /**
- * First-party cookies set by each category's scripts, removed when the visitor
- * withdraws that category.
+ * Prefixes of the first-party cookies and local and session storage keys set
+ * by each category's scripts, removed when the visitor withdraws that category.
  */
-const COOKIE_PREFIXES: Record<ConsentCategory, string[]> = {
+const TRACKING_PREFIXES: Record<ConsentCategory, string[]> = {
 	analytics: ["ph_", "_ga"],
-	marketing: ["endform_gclid", "_gcl_", "_fbp", "_fbc", "li_fat_id"],
+	marketing: ["endform_gclid", "_gcl_", "_fbp", "_fbc", "li_fat_id", "dayly_"],
 };
 
 /**
@@ -71,7 +71,9 @@ function saveConsent(choices: ConsentChoices) {
 	);
 	if (withdrawn.length > 0) {
 		// Scripts that already run can't be stopped, so start over without them.
-		deleteCookies(withdrawn.flatMap((category) => COOKIE_PREFIXES[category]));
+		deleteTrackingData(
+			withdrawn.flatMap((category) => TRACKING_PREFIXES[category]),
+		);
 		location.reload();
 		return;
 	}
@@ -204,7 +206,7 @@ function storeGclid() {
 	document.cookie = `endform_gclid=${encodeURIComponent(gclid)}; Path=/; Max-Age=${90 * 24 * 60 * 60}; SameSite=Lax; Secure`;
 }
 
-function deleteCookies(prefixes: string[]) {
+function deleteTrackingData(prefixes: string[]) {
 	const names = document.cookie
 		.split(";")
 		.map((cookie) => cookie.split("=")[0]!.trim())
@@ -220,8 +222,10 @@ function deleteCookies(prefixes: string[]) {
 		}
 	}
 
-	for (const key of Object.keys(localStorage)) {
-		if (prefixes.some((prefix) => key.startsWith(prefix)))
-			localStorage.removeItem(key);
+	for (const storage of [localStorage, sessionStorage]) {
+		for (const key of Object.keys(storage)) {
+			if (prefixes.some((prefix) => key.startsWith(prefix)))
+				storage.removeItem(key);
+		}
 	}
 }
