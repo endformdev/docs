@@ -224,6 +224,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 							},
 							{
 								tag: "script",
+								// Dayly
+								attrs: {
+									type: "text/plain",
+									"data-consent": "marketing",
+								},
+								content: `(function (d) {
+  var s = d.createElement("script");
+  s.async = true;
+  s.src = "https://cdn.dayly.io/t/v1.js";
+  s.setAttribute("data-site", "dk_97cd67ed0ee8b90c438bf1988db72da7");
+  d.head.appendChild(s);
+})(document);`,
+							},
+							{
+								tag: "script",
 								// LinkedIn Insight Tag
 								attrs: {
 									type: "text/plain",
